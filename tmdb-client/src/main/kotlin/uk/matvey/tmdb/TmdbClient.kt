@@ -8,8 +8,10 @@ import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import java.time.LocalDate
 
 class TmdbClient {
 
@@ -27,13 +29,18 @@ class TmdbClient {
     data class SearchMovieResponse(
         val page: Int,
         val results: List<ResultItem>,
+        @SerialName("total_pages") val totalPages: Int,
+        @SerialName("total_results") val totalResults: Int,
     ) {
 
         @Serializable
         data class ResultItem(
             val id: Int,
             val title: String,
-        )
+            @SerialName("release_date") val releaseDate: String,
+        ) {
+            fun releaseDate() = releaseDate.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
+        }
     }
 
     suspend fun searchMovies(query: String): SearchMovieResponse {

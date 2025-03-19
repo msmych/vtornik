@@ -22,10 +22,12 @@ class SearchTest {
         val movie1 = TmdbClient.SearchMovieResponse.ResultItem(
             id = 1,
             title = "Movie 1",
+            releaseDate = "2025-03-19"
         )
         val movie2 = TmdbClient.SearchMovieResponse.ResultItem(
             id = 2,
             title = "Movie 2",
+            releaseDate = "",
         )
         coEvery {
             TestServerModule.tmdbClient.searchMovies("movie")
@@ -35,6 +37,8 @@ class SearchTest {
                 movie1,
                 movie2,
             ),
+            totalPages = 1,
+            totalResults = 2,
         )
 
         // when

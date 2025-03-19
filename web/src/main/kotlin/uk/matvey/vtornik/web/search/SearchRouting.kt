@@ -23,6 +23,7 @@ fun Route.searchRouting(
                         movies.results.forEach {
                             li {
                                 +it.title
+                                it.releaseDate()?.let { releaseDate -> +" ($releaseDate)" }
                             }
                         }
                     }
