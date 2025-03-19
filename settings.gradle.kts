@@ -1,5 +1,6 @@
 rootProject.name = "vtornik"
 
 include(
-  "web"
+  "web",
+  "tmdb-client",
 )
