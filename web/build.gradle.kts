@@ -11,7 +11,9 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:3.1.0")
     implementation("io.ktor:ktor-client-content-negotiation:3.1.0")
     implementation("io.ktor:ktor-client-logging:3.1.0")
+    implementation("io.ktor:ktor-server-auth:3.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+    implementation("com.auth0:java-jwt:4.5.0")
 
     implementation(project(":tmdb-client"))
 
