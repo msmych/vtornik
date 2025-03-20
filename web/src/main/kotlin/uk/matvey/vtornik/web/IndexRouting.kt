@@ -5,6 +5,7 @@ import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import kotlinx.html.HTMLTag
 import kotlinx.html.ScriptCrossorigin
+import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.div
 import kotlinx.html.form
@@ -20,7 +21,7 @@ import kotlinx.html.submitInput
 import kotlinx.html.title
 import kotlinx.html.visit
 
-fun Routing.indexRouting() {
+fun Routing.indexRouting(githubClientId: String?) {
     get {
         call.respondHtml {
             head {
@@ -35,6 +36,12 @@ fun Routing.indexRouting() {
                 header {
                     h1 {
                         +"Vtornik"
+                    }
+                    githubClientId?.let {
+                        a {
+                            href = "https://github.com/login/oauth/authorize?client_id=$it"
+                            +"Login with GitHub"
+                        }
                     }
                 }
                 main {

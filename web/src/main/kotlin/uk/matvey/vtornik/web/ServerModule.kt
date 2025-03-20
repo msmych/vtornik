@@ -13,7 +13,11 @@ fun Application.serverModule(tmdbClient: TmdbClient) {
         get("/health") {
             call.respondText("OK")
         }
-        indexRouting()
+        val githubClientId = System.getenv("GITHUB_CLIENT_ID")
+        indexRouting(githubClientId)
+        githubClientId?.let {
+            githubRouting(it)
+        }
         route("/html") {
             searchRouting(tmdbClient)
         }
