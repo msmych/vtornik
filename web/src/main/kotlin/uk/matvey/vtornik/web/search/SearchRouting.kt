@@ -5,9 +5,9 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.util.getOrFail
+import kotlinx.html.a
 import kotlinx.html.body
-import kotlinx.html.li
-import kotlinx.html.ul
+import kotlinx.html.p
 import uk.matvey.tmdb.TmdbClient
 
 fun Route.searchRouting(
@@ -19,9 +19,13 @@ fun Route.searchRouting(
             val movies = tmdbClient.searchMovies(q)
             call.respondHtml {
                 body {
-                    ul {
-                        movies.results.forEach {
-                            li {
+                    movies.results.forEach {
+                        p {
+                            a {
+                                href = "#"
+                                attributes["hx-get"] = "/html/movies/${it.id}"
+                                attributes["hx-target"] = "#main"
+                                attributes["hx-push-url"] = "true"
                                 +it.title
                                 it.releaseDate()?.let { releaseDate -> +" ($releaseDate)" }
                             }

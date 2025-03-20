@@ -68,7 +68,7 @@ fun Routing.indexRouting(githubClientId: String?) {
                         ).visit {
                             this@main.form {
                                 attributes["hx-get"] = "/html/search"
-                                attributes["hx-target"] = "#search-result"
+                                attributes["hx-target"] = "#main"
                                 searchInput {
                                     name = "q"
                                     placeholder = "Brutalist"
@@ -82,7 +82,7 @@ fun Routing.indexRouting(githubClientId: String?) {
                             }
                         }
                         div {
-                            id = "search-result"
+                            id = "main"
                         }
                     }
                 }

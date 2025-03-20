@@ -34,6 +34,7 @@ fun Application.serverModule(config: VtornikConfig, tmdbClient: TmdbClient) {
         }
         route("/html") {
             searchRouting(tmdbClient)
+            movieRouting(tmdbClient)
         }
     }
 }

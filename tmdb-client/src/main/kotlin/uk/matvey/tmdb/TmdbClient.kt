@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -20,6 +21,9 @@ import java.time.LocalDate
 class TmdbClient {
 
     private val httpClient = HttpClient(engineFactory = CIO) {
+        defaultRequest {
+            bearerAuth(System.getenv("TMDB_API_KEY"))
+        }
         install(ContentNegotiation) {
             json(
                 Json {
@@ -31,6 +35,17 @@ class TmdbClient {
             logger = Logger.DEFAULT
             level = LogLevel.INFO
         }
+    }
+
+    @Serializable
+    data class MovieDetailsResponse(
+        val id: Long,
+        val overview: String,
+        val title: String,
+    )
+
+    suspend fun getMovieDetails(movieId: Long): MovieDetailsResponse {
+        return httpClient.get("https://api.themoviedb.org/3/movie/$movieId").body()
     }
 
     @Serializable
@@ -53,7 +68,6 @@ class TmdbClient {
 
     suspend fun searchMovies(query: String): SearchMovieResponse {
         return httpClient.get("https://api.themoviedb.org/3/search/movie") {
-            bearerAuth(System.getenv("TMDB_API_KEY"))
             parameter("query", query)
         }.body()
     }
