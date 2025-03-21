@@ -11,12 +11,11 @@ import io.ktor.util.date.plus
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SAMESITE
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import uk.matvey.vtornik.web.TestServerModule.testServerModule
 import java.time.Instant
 import kotlin.time.Duration.Companion.days
 import kotlin.time.toJavaDuration
 
-class IndexTest {
+class IndexTest : WebTestSetup() {
 
     @Test
     fun `should return index page`() = testApplication {
@@ -52,7 +51,7 @@ class IndexTest {
                 .withClaim("username", "username1")
                 .withClaim("name", "Name")
                 .withExpiresAt(Instant.now().plus(7.days.toJavaDuration()))
-                .sign(TestServerModule.config.jwtAlgorithm())
+                .sign(config.jwtAlgorithm())
             cookie(
                 name = "jwt",
                 value = jwt,

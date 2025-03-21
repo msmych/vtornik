@@ -8,10 +8,9 @@ import io.mockk.coEvery
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.matvey.tmdb.TmdbClient
-import uk.matvey.vtornik.web.TestServerModule
-import uk.matvey.vtornik.web.TestServerModule.testServerModule
+import uk.matvey.vtornik.web.WebTestSetup
 
-class MovieTest {
+class MovieTest : WebTestSetup() {
 
     @Test
     fun `should return movie details by id`() = testApplication {
@@ -20,7 +19,7 @@ class MovieTest {
             testServerModule()
         }
         coEvery {
-            TestServerModule.tmdbClient.getMovieDetails(1234)
+            tmdbClient.getMovieDetails(1234)
         } returns TmdbClient.MovieDetailsResponse(
             id = 1234,
             title = "Title",

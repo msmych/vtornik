@@ -9,11 +9,10 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.util.date.GMTDate
-import uk.matvey.tmdb.TmdbClient
 import uk.matvey.vtornik.web.config.VtornikConfig
 import uk.matvey.vtornik.web.search.searchRouting
 
-fun Application.serverModule(config: VtornikConfig, tmdbClient: TmdbClient) {
+fun Application.serverModule(config: VtornikConfig, services: Services) {
     val appSecret = System.getenv("APP_SECRET")
     val optionalJwtAuthProvider = OptionalJwtAuthProvider(config)
     install(Authentication) {
@@ -26,15 +25,15 @@ fun Application.serverModule(config: VtornikConfig, tmdbClient: TmdbClient) {
         val githubClientId = System.getenv("GITHUB_CLIENT_ID")
         indexRouting(githubClientId)
         githubClientId?.let {
-            githubRouting(it, appSecret)
+            githubRouting(it, appSecret, services.userRepository)
         }
         get("/logout") {
             call.response.cookies.append(name = "jwt", value = "", expires = GMTDate.START)
             call.respondRedirect("/")
         }
         route("/html") {
-            searchRouting(tmdbClient)
-            movieRouting(tmdbClient)
+            searchRouting(services.tmdbClient)
+            movieRouting(services.tmdbClient)
         }
     }
 }

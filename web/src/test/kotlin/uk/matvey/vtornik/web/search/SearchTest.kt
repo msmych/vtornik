@@ -8,10 +8,9 @@ import io.mockk.coEvery
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.matvey.tmdb.TmdbClient
-import uk.matvey.vtornik.web.TestServerModule
-import uk.matvey.vtornik.web.TestServerModule.testServerModule
+import uk.matvey.vtornik.web.WebTestSetup
 
-class SearchTest {
+class SearchTest : WebTestSetup() {
 
     @Test
     fun `should return movies search result`() = testApplication {
@@ -30,7 +29,7 @@ class SearchTest {
             releaseDate = "",
         )
         coEvery {
-            TestServerModule.tmdbClient.searchMovies("movie")
+            tmdbClient.searchMovies("movie")
         } returns TmdbClient.SearchMovieResponse(
             page = 1,
             results = listOf(

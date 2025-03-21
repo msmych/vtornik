@@ -14,8 +14,16 @@ dependencies {
     implementation("io.ktor:ktor-server-auth:3.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     implementation("com.auth0:java-jwt:4.5.0")
+    implementation("org.flywaydb:flyway-core:11.0.1")
+    implementation("com.github.jasync-sql:jasync-postgresql:2.2.4")
 
+    runtimeOnly("org.flywaydb:flyway-database-postgresql:11.0.1")
+    testImplementation("org.testcontainers:postgresql:1.20.0")
+    runtimeOnly("org.postgresql:postgresql:42.7.4")
+
+    implementation(project(":domain"))
     implementation(project(":tmdb-client"))
 
     testImplementation("io.ktor:ktor-server-test-host:3.1.0")
+    testImplementation(testFixtures(project(":slon")))
 }

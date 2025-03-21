@@ -6,10 +6,9 @@ import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
-import uk.matvey.tmdb.TmdbClient
 import uk.matvey.vtornik.web.config.VtornikConfig
 
-fun server(): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
+fun server(config: VtornikConfig, services: Services): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
     val server = embeddedServer(
         factory = Netty,
         environment = applicationEnvironment { },
@@ -19,7 +18,7 @@ fun server(): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Conf
             }
         },
     ) {
-        serverModule(VtornikConfig.fromEnv(), TmdbClient())
+        serverModule(config, services)
     }
     return server
 }

@@ -29,11 +29,12 @@ import io.netty.handler.codec.http.cookie.CookieHeaderNames.SAMESITE
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import uk.matvey.vtornik.user.UserRepository
 import java.time.Instant
 import kotlin.time.Duration.Companion.days
 import kotlin.time.toJavaDuration
 
-fun Routing.githubRouting(clientId: String, appSecret: String) {
+fun Routing.githubRouting(clientId: String, appSecret: String, userRepository: UserRepository) {
     val httpClient = HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
@@ -61,6 +62,7 @@ fun Routing.githubRouting(clientId: String, appSecret: String) {
             val userInfo = httpClient.get("https://api.github.com/user") {
                 bearerAuth(tokenData.accessToken)
             }.body<GithubUserInfoResponse>()
+            userRepository.createUserIfNotExists(userInfo.id, userInfo.login, userInfo.name)
             val jwt = JWT.create()
                 .withIssuer("vtornik")
                 .withAudience("vtornik")
