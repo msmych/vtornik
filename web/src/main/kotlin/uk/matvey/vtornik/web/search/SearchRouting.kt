@@ -22,10 +22,8 @@ fun Route.searchRouting(
                     movies.results.forEach {
                         p {
                             a {
-                                href = "#"
-                                attributes["hx-get"] = "/html/movies/${it.id}"
-                                attributes["hx-target"] = "#main"
-                                attributes["hx-push-url"] = "true"
+                                href = "/html/movies/${it.id}"
+                                attributes["hx-boost"] = "true"
                                 +it.title
                                 it.releaseDate()?.let { releaseDate -> +" ($releaseDate)" }
                             }

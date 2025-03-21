@@ -26,6 +26,7 @@ open class WebTestSetup : PostgresTestSetup() {
                 dbUrl = postgres.jdbcUrl,
                 dbUsername = postgres.username,
                 dbPassword = postgres.password,
+                githubClientId = null,
             )
         }
     }

@@ -24,6 +24,7 @@ class MovieTest : WebTestSetup() {
             id = 1234,
             title = "Title",
             overview = "Overview",
+            releaseDate = "2025-03-19",
         )
 
         // when
@@ -32,7 +33,9 @@ class MovieTest : WebTestSetup() {
         // then
         assertThat(rs.status).isEqualTo(OK)
         assertThat(rs.bodyAsText())
+            .contains("<head>")
             .contains("Title")
             .contains("Overview")
+            .contains("2025")
     }
 }

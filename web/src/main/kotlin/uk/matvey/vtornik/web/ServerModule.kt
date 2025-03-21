@@ -33,7 +33,7 @@ fun Application.serverModule(config: VtornikConfig, services: Services) {
         }
         route("/html") {
             searchRouting(services.tmdbClient)
-            movieRouting(services.tmdbClient)
+            movieRouting(config, services.tmdbClient, services.movieRepository)
         }
     }
 }

@@ -42,7 +42,10 @@ class TmdbClient {
         val id: Long,
         val overview: String,
         val title: String,
-    )
+        @SerialName("release_date") val releaseDate: String,
+    ) {
+        fun releaseDate() = releaseDate.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
+    }
 
     suspend fun getMovieDetails(movieId: Long): MovieDetailsResponse {
         return httpClient.get("https://api.themoviedb.org/3/movie/$movieId").body()

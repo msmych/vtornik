@@ -10,7 +10,9 @@ fun main() {
     val services = Services(tmdbClient, config)
     val flyway = Flyway.configure()
         .dataSource(config.dbUrl, config.dbUsername, config.dbPassword)
+        .cleanDisabled(false)
         .load()
+    flyway.clean()
     flyway.migrate()
     val server = server(config, services)
     Runtime.getRuntime().addShutdownHook(Thread {

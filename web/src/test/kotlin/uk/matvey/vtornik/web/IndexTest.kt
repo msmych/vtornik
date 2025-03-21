@@ -31,7 +31,7 @@ class IndexTest : WebTestSetup() {
         assertThat(rs.status).isEqualTo(OK)
         assertThat(rs.bodyAsText())
             .contains("<html>")
-            .contains("<head")
+            .contains("<head>")
             .contains("<body>")
     }
 
