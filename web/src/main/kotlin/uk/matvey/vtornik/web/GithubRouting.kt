@@ -62,11 +62,11 @@ fun Routing.githubRouting(clientId: String, appSecret: String, userRepository: U
             val userInfo = httpClient.get("https://api.github.com/user") {
                 bearerAuth(tokenData.accessToken)
             }.body<GithubUserInfoResponse>()
-            userRepository.createUserIfNotExists(userInfo.id, userInfo.login, userInfo.name)
+            val id = userRepository.createUserIfNotExists(userInfo.id, userInfo.login, userInfo.name)
             val jwt = JWT.create()
                 .withIssuer("vtornik")
                 .withAudience("vtornik")
-                .withSubject(userInfo.id.toString())
+                .withSubject(id.toString())
                 .withClaim("username", userInfo.login)
                 .withClaim("name", userInfo.name)
                 .withExpiresAt(Instant.now().plus(7.days.toJavaDuration()))
@@ -74,7 +74,7 @@ fun Routing.githubRouting(clientId: String, appSecret: String, userRepository: U
             call.response.cookies.append(
                 name = "jwt",
                 value = jwt,
-                encoding = CookieEncoding.RAW,
+                encoding = CookieEncoding.URI_ENCODING,
                 expires = GMTDate() + 7.days,
                 path = "/",
                 httpOnly = true,

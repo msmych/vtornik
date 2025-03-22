@@ -1,4 +1,4 @@
-package uk.matvey.vtornik.web
+package uk.matvey.vtornik.web.movie
 
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.principal
@@ -15,7 +15,9 @@ import uk.matvey.tmdb.TmdbClient
 import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.tag.TagRepository
+import uk.matvey.vtornik.web.UserPrincipal
 import uk.matvey.vtornik.web.config.VtornikConfig
+import uk.matvey.vtornik.web.page
 
 fun Route.movieRouting(
     config: VtornikConfig,
@@ -58,14 +60,21 @@ fun Route.movieRouting(
                                 h3 { +it.toString() }
                             }
                             principal?.let {
-                                setOf("to_watch", "watched").forEach { tag ->
-                                    button {
-                                        if (movieTags?.contains(tag) == true) {
+                                setOf("watchlist", "watched").forEach { tag ->
+                                    if (movieTags?.contains(tag) == true) {
+                                        button {
+                                            attributes["hx-delete"] = "/html/movies/${movie.id}/tags/$tag"
+                                            attributes["hx-swap"] = "outerHTML"
                                             +"Remove from "
-                                        } else {
-                                            +"Add to "
+                                            +tag
                                         }
-                                        +tag
+                                    } else {
+                                        button {
+                                            attributes["hx-post"] = "/html/movies/${movie.id}/tags/$tag"
+                                            attributes["hx-swap"] = "outerHTML"
+                                            +"Add to "
+                                            +tag
+                                        }
                                     }
                                 }
                             }

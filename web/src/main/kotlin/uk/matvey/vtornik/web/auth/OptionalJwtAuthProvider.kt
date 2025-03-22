@@ -1,8 +1,9 @@
-package uk.matvey.vtornik.web
+package uk.matvey.vtornik.web.auth
 
 import com.auth0.jwt.JWT
 import io.ktor.server.auth.AuthenticationContext
 import io.ktor.server.auth.AuthenticationProvider
+import uk.matvey.vtornik.web.UserPrincipal
 import uk.matvey.vtornik.web.config.VtornikConfig
 
 class OptionalJwtAuthProvider(
@@ -22,7 +23,7 @@ class OptionalJwtAuthProvider(
                 .verify(decoded)
             context.principal(
                 UserPrincipal(
-                    userId = decoded.subject.toLong(),
+                    userId = decoded.subject.toInt(),
                     username = decoded.getClaim("username").asString(),
                     name = decoded.getClaim("name").asString()
                 )

@@ -10,6 +10,23 @@ class TagRepository(
     private val db: ConnectionPool<PostgreSQLConnection>,
 ) {
 
+    suspend fun add(userId: Int, movieId: Long, tag: String) {
+        db.sendPreparedStatement(
+            """
+                |insert into tags (user_id, movie_id, tag, created_at)
+                | values (?, ?, ?, now())
+                |""".trimMargin(),
+            listOf(userId, movieId, tag)
+        ).await()
+    }
+
+    suspend fun delete(userId: Int, movieId: Long, tag: String) {
+        db.sendPreparedStatement(
+            "delete from tags where user_id = ? and movie_id = ? and tag = ?",
+            listOf(userId, movieId, tag)
+        ).await()
+    }
+
     suspend fun findAllByUserIdAndMovieId(userId: Int, movieId: Long): List<Tag> {
         val result = db.sendPreparedStatement(
             "select * from tags where user_id = ? and movie_id = ?",

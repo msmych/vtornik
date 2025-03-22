@@ -9,14 +9,20 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.util.date.GMTDate
+import uk.matvey.vtornik.web.auth.OptionalJwtAuthProvider
+import uk.matvey.vtornik.web.auth.RequiredJwtAuthProvider
 import uk.matvey.vtornik.web.config.VtornikConfig
+import uk.matvey.vtornik.web.movie.movieRouting
+import uk.matvey.vtornik.web.movie.tagRouting
 import uk.matvey.vtornik.web.search.searchRouting
 
 fun Application.serverModule(config: VtornikConfig, services: Services) {
     val appSecret = System.getenv("APP_SECRET")
     val optionalJwtAuthProvider = OptionalJwtAuthProvider(config)
+    val requiredJwtAuthProvider = RequiredJwtAuthProvider(config)
     install(Authentication) {
         register(optionalJwtAuthProvider)
+        register(requiredJwtAuthProvider)
     }
     routing {
         get("/health") {
@@ -39,6 +45,7 @@ fun Application.serverModule(config: VtornikConfig, services: Services) {
                 services.movieRepository,
                 services.tagRepository
             )
+            tagRouting(services.tagRepository)
         }
     }
 }
