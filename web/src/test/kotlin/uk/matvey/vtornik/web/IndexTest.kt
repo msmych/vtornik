@@ -44,22 +44,7 @@ class IndexTest : WebTestSetup() {
 
         // when
         val rs = client.get("/") {
-            val jwt = JWT.create()
-                .withIssuer("vtornik")
-                .withAudience("vtornik")
-                .withSubject("1")
-                .withClaim("username", "username1")
-                .withClaim("name", "Name")
-                .withExpiresAt(Instant.now().plus(7.days.toJavaDuration()))
-                .sign(config.jwtAlgorithm())
-            cookie(
-                name = "jwt",
-                value = jwt,
-                expires = GMTDate() + 7.days,
-                path = "/",
-                httpOnly = true,
-                extensions = mapOf(SAMESITE to "Lax")
-            )
+            appendJwtCookie()
         }
 
         // then

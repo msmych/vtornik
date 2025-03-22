@@ -9,11 +9,11 @@ import kotlinx.html.body
 import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
-import kotlinx.html.h3
 import kotlinx.html.head
 import kotlinx.html.header
 import kotlinx.html.id
 import kotlinx.html.main
+import kotlinx.html.p
 import kotlinx.html.script
 import kotlinx.html.searchInput
 import kotlinx.html.submitInput
@@ -35,24 +35,28 @@ fun HTML.page(
     }
     body {
         header {
-            h1 {
-                +"Vtornik"
+            a {
+                href = "/"
+                h1 {
+                    +"Vtornik"
+                }
             }
             if (principal != null) {
-                +"Logged in as ${principal.username}. "
-                a {
-                    href = "/logout"
-                    +"Logout"
+                p {
+                    +"Logged in as ${principal.username}. "
+                    a {
+                        href = "/logout"
+                        +"Logout"
+                    }
                 }
             } else if (githubClientId != null) {
-                a {
-                    href = "https://github.com/login/oauth/authorize?client_id=$githubClientId"
-                    +"Login with GitHub"
+                p {
+                    a {
+                        href = "https://github.com/login/oauth/authorize?client_id=$githubClientId"
+                        +"Login with GitHub"
+                    }
                 }
             }
-        }
-        h3 {
-            +"Search a movie"
         }
         HTMLTag(
             tagName = "search",
@@ -67,7 +71,7 @@ fun HTML.page(
                 attributes["hx-target"] = "#search-results"
                 searchInput {
                     name = "q"
-                    placeholder = "Brutalist"
+                    placeholder = "The Brutalist"
                 }
                 submitInput {
                     value = "Search"

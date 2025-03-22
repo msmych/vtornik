@@ -6,18 +6,15 @@ import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.server.testing.testApplication
 import io.mockk.coEvery
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.vtornik.web.WebTestSetup
 
 class MovieTest : WebTestSetup() {
 
-    @Test
-    fun `should return movie details by id`() = testApplication {
-        // given
-        application {
-            testServerModule()
-        }
+    @BeforeEach
+    fun setup() {
         coEvery {
             tmdbClient.getMovieDetails(1234)
         } returns TmdbClient.MovieDetailsResponse(
@@ -26,6 +23,14 @@ class MovieTest : WebTestSetup() {
             overview = "Overview",
             releaseDate = "2025-03-19",
         )
+    }
+
+    @Test
+    fun `should return movie details by id`() = testApplication {
+        // given
+        application {
+            testServerModule()
+        }
 
         // when
         val rs = client.get("/html/movies/1234")
@@ -37,5 +42,23 @@ class MovieTest : WebTestSetup() {
             .contains("Title")
             .contains("Overview")
             .contains("2025")
+    }
+
+    @Test
+    fun `should return movie details with tags for authenticated user`() = testApplication {
+        // given
+        application {
+            testServerModule()
+        }
+
+        // when
+        val rs = client.get("/html/movies/1234") {
+            appendJwtCookie()
+        }
+
+        // then
+        assertThat(rs.status).isEqualTo(OK)
+        assertThat(rs.bodyAsText())
+            .contains("Add to")
     }
 }
