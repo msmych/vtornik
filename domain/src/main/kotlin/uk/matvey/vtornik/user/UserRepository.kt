@@ -8,6 +8,9 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
+import uk.matvey.slon.sql.getDateOrFail
+import uk.matvey.slon.sql.getIntOrFail
+import uk.matvey.slon.sql.getStringOrFail
 import java.time.ZoneOffset.UTC
 
 class UserRepository(
@@ -48,10 +51,10 @@ class UserRepository(
     }
 
     private fun toUser(data: RowData): User = User(
-        id = data.getInt("id")!!,
-        username = data.getString("username")!!,
-        details = Json.decodeFromString(data.getString("details")!!),
-        createdAt = data.getDate("created_at")!!.toInstant(UTC),
-        updatedAt = data.getDate("updated_at")!!.toInstant(UTC),
+        id = data.getIntOrFail("id"),
+        username = data.getStringOrFail("username"),
+        details = Json.decodeFromString(data.getStringOrFail("details")),
+        createdAt = data.getDateOrFail("created_at").toInstant(UTC),
+        updatedAt = data.getDateOrFail("updated_at").toInstant(UTC),
     )
 }

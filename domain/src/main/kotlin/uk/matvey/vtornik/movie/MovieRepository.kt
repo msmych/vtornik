@@ -5,11 +5,20 @@ import com.github.jasync.sql.db.pool.ConnectionPool
 import com.github.jasync.sql.db.postgresql.PostgreSQLConnection
 import kotlinx.coroutines.future.await
 import kotlinx.serialization.json.Json
+import uk.matvey.slon.sql.getDateOrFail
+import uk.matvey.slon.sql.getLongOrFail
+import uk.matvey.slon.sql.getStringOrFail
 import java.time.ZoneOffset.UTC
 
 class MovieRepository(
     private val db: ConnectionPool<PostgreSQLConnection>,
 ) {
+
+    suspend fun getById(id: Long): Movie {
+        return requireNotNull(findById(id)) {
+            "Not found movie by id $id"
+        }
+    }
 
     suspend fun findById(id: Long): Movie? {
         return db.sendPreparedStatement(
@@ -36,18 +45,18 @@ class MovieRepository(
                 details.releaseDateOrNull()?.year,
                 Json.encodeToString(Movie.Details(tmdb = details)),
             )
-        ).await().rows.single().getLong("id")!!
+        ).await().rows.single().getLongOrFail("id")
     }
 
     private fun toMovie(data: RowData): Movie {
-        val details = Json.decodeFromString<Movie.Details>(data.getString("details")!!)
+        val details = Json.decodeFromString<Movie.Details>(data.getStringOrFail("details"))
         return Movie(
-            id = data.getLong("id")!!,
-            title = data.getString("title")!!,
+            id = data.getLongOrFail("id"),
+            title = data.getStringOrFail("title"),
             year = details.tmdb?.releaseDateOrNull()?.year,
             details = details,
-            createdAt = data.getDate("created_at")!!.toInstant(UTC),
-            updatedAt = data.getDate("updated_at")!!.toInstant(UTC),
+            createdAt = data.getDateOrFail("created_at").toInstant(UTC),
+            updatedAt = data.getDateOrFail("updated_at").toInstant(UTC),
         )
     }
 }

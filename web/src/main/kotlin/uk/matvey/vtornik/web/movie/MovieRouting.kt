@@ -42,7 +42,7 @@ fun Route.movieRouting(
                                 releaseDate = movieDetails.releaseDate()?.toString(),
                             )
                         )
-                        movieRepository.findById(id)!!
+                        movieRepository.getById(id)
                     }
 
                     val movieTags = principal?.let {
@@ -78,7 +78,7 @@ fun Route.movieRouting(
                                 }
                             }
                             p {
-                                +movie.details.tmdb!!.overview
+                                +movie.details.tmdb().overview
                             }
                         }
                     }

@@ -4,6 +4,10 @@ import com.github.jasync.sql.db.RowData
 import com.github.jasync.sql.db.pool.ConnectionPool
 import com.github.jasync.sql.db.postgresql.PostgreSQLConnection
 import kotlinx.coroutines.future.await
+import uk.matvey.slon.sql.getDateOrFail
+import uk.matvey.slon.sql.getIntOrFail
+import uk.matvey.slon.sql.getLongOrFail
+import uk.matvey.slon.sql.getStringOrFail
 import java.time.ZoneOffset.UTC
 
 class TagRepository(
@@ -44,10 +48,10 @@ class TagRepository(
 
     fun toTag(data: RowData): Tag {
         return Tag(
-            userId = data.getInt("user_id")!!,
-            movieId = data.getLong("movie_id")!!,
-            tag = data.getString("tag")!!,
-            createdAt = data.getDate("created_at")!!.toInstant(UTC),
+            userId = data.getIntOrFail("user_id"),
+            movieId = data.getLongOrFail("movie_id"),
+            tag = data.getStringOrFail("tag"),
+            createdAt = data.getDateOrFail("created_at").toInstant(UTC),
         )
     }
 }
