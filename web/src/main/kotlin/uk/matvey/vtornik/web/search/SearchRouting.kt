@@ -1,6 +1,5 @@
 package uk.matvey.vtornik.web.search
 
-import io.ktor.server.auth.authenticate
 import io.ktor.server.html.respondHtml
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
@@ -9,10 +8,12 @@ import io.ktor.server.util.getOrFail
 import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.p
+import uk.matvey.slon.html.hxBoost
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipal
+import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.page
 
@@ -22,7 +23,7 @@ fun Route.searchRouting(
     tagRepository: TagRepository,
     movieRepository: MovieRepository,
 ) {
-    authenticate("jwt-optional") {
+    authJwtOptional {
         route("/movies/search") {
             get {
                 call.parameters["q"]?.let { q ->
@@ -33,7 +34,7 @@ fun Route.searchRouting(
                                 p {
                                     a {
                                         href = "/html/movies/${it.id}"
-                                        attributes["hx-boost"] = "true"
+                                        hxBoost()
                                         +it.title
                                         it.releaseDate()?.let { releaseDate -> +" (${releaseDate.year})" }
                                     }
@@ -44,7 +45,7 @@ fun Route.searchRouting(
                 } ?: run {
                     val principal = call.userPrincipal()
                     val tag = call.parameters.getOrFail("tag")
-                    val tags = tagRepository.findAllByUserAndTag(principal.userId, tag)
+                    val tags = tagRepository.findAllByUserAndTag(principal.id, tag)
                     val movies = movieRepository.findAllByIds(tags.map { it.movieId })
                     call.respondHtml {
                         page(config, principal) {
@@ -52,7 +53,7 @@ fun Route.searchRouting(
                                 p {
                                     a {
                                         href = "/html/movies/${movie.details.tmdb().id}"
-                                        attributes["hx-boost"] = "true"
+                                        hxBoost()
                                         +movie.title
                                         movie.year?.let { +" ($it)" }
                                     }

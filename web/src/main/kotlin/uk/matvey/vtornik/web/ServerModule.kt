@@ -9,8 +9,6 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.util.date.GMTDate
-import uk.matvey.vtornik.web.auth.OptionalJwtAuthProvider
-import uk.matvey.vtornik.web.auth.RequiredJwtAuthProvider
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.config.WebConfig.Profile
 import uk.matvey.vtornik.web.movie.movieRouting
@@ -19,11 +17,9 @@ import uk.matvey.vtornik.web.search.searchRouting
 
 fun Application.serverModule(config: WebConfig, services: Services) {
     val appSecret = System.getenv("APP_SECRET")
-    val optionalJwtAuthProvider = OptionalJwtAuthProvider(config)
-    val requiredJwtAuthProvider = RequiredJwtAuthProvider(config)
     install(Authentication) {
-        register(optionalJwtAuthProvider)
-        register(requiredJwtAuthProvider)
+        register(services.auth.optionalJwtAuthProvider)
+        register(services.auth.requiredJwtAuthProvider)
     }
     routing {
         get("/health") {

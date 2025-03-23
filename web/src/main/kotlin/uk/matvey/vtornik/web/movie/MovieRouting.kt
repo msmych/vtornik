@@ -1,6 +1,5 @@
 package uk.matvey.vtornik.web.movie
 
-import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.principal
 import io.ktor.server.html.respondHtml
 import io.ktor.server.routing.Route
@@ -11,12 +10,16 @@ import kotlinx.html.button
 import kotlinx.html.h1
 import kotlinx.html.h3
 import kotlinx.html.p
+import uk.matvey.slon.html.hxDelete
+import uk.matvey.slon.html.hxPost
+import uk.matvey.slon.html.hxSwap
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.UserPrincipal
 import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipalOrNull
+import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.page
 
@@ -26,7 +29,7 @@ fun Route.movieRouting(
     movieRepository: MovieRepository,
     tagRepository: TagRepository,
 ) {
-    authenticate("jwt-optional") {
+    authJwtOptional {
         route("/movies") {
             route("/{id}") {
                 get {
@@ -46,7 +49,7 @@ fun Route.movieRouting(
                     }
 
                     val movieTags = principal?.let {
-                        tagRepository.findAllByUserIdAndMovieId(it.userId.toInt(), movie.id)
+                        tagRepository.findAllByUserIdAndMovieId(it.id, movie.id)
                     }?.map { it.tag }
 
                     call.respondHtml {
@@ -62,15 +65,15 @@ fun Route.movieRouting(
                                 setOf("watchlist", "watched").forEach { tag ->
                                     if (movieTags?.contains(tag) == true) {
                                         button {
-                                            attributes["hx-delete"] = "/html/movies/${movie.id}/tags/$tag"
-                                            attributes["hx-swap"] = "outerHTML"
+                                            hxDelete("/html/movies/${movie.id}/tags/$tag")
+                                            hxSwap("outerHTML")
                                             +"Remove from "
                                             +tag
                                         }
                                     } else {
                                         button {
-                                            attributes["hx-post"] = "/html/movies/${movie.id}/tags/$tag"
-                                            attributes["hx-swap"] = "outerHTML"
+                                            hxPost("/html/movies/${movie.id}/tags/$tag")
+                                            hxSwap("outerHTML")
                                             +"Add to "
                                             +tag
                                         }

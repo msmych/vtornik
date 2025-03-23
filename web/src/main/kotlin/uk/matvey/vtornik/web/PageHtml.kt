@@ -1,7 +1,6 @@
 package uk.matvey.vtornik.web
 
 import kotlinx.html.HTML
-import kotlinx.html.HTMLTag
 import kotlinx.html.MAIN
 import kotlinx.html.ScriptCrossorigin
 import kotlinx.html.a
@@ -18,10 +17,13 @@ import kotlinx.html.script
 import kotlinx.html.searchInput
 import kotlinx.html.submitInput
 import kotlinx.html.title
-import kotlinx.html.visit
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import uk.matvey.slon.html.HTMX_INDICATOR
+import uk.matvey.slon.html.SEARCH.Companion.search
+import uk.matvey.slon.html.hxBoost
+import uk.matvey.slon.html.hxGet
+import uk.matvey.slon.html.hxTarget
+import uk.matvey.slon.html.hxVals
 import uk.matvey.vtornik.web.config.WebConfig
 
 fun HTML.page(
@@ -66,24 +68,17 @@ fun HTML.page(
                 }
             }
         }
-        HTMLTag(
-            tagName = "search",
-            consumer = consumer,
-            initialAttributes = emptyMap(),
-            namespace = null,
-            inlineTag = false,
-            emptyTag = false
-        ).visit {
-            this@body.form {
-                attributes["hx-get"] = "/html/movies/search"
-                attributes["hx-target"] = "#search-results"
+        search {
+            form {
+                hxGet("/html/movies/search")
+                hxTarget("#search-results")
                 searchInput {
                     name = "q"
                     placeholder = "The Brutalist"
                 }
                 submitInput {
                     value = "Search"
-                    div(classes = "htmx-indicator") {
+                    div(classes = HTMX_INDICATOR) {
                         +"Searching..."
                     }
                 }
@@ -93,10 +88,10 @@ fun HTML.page(
             setOf("watchlist", "watched").forEach {
                 a {
                     href = "/html/movies/search"
-                    attributes["hx-boost"] = "true"
-                    attributes["hx-vals"] = Json.encodeToString(buildJsonObject {
+                    hxBoost()
+                    hxVals {
                         put("tag", it)
-                    })
+                    }
                     +it
                 }
             }

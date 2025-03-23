@@ -21,6 +21,7 @@ dependencies {
     testImplementation("org.testcontainers:postgresql:1.20.0")
     runtimeOnly("org.postgresql:postgresql:42.7.4")
 
+    implementation(project(":slon"))
     implementation(project(":domain"))
     implementation(project(":tmdb-client"))
 
