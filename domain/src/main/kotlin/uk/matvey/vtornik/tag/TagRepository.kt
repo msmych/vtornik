@@ -28,11 +28,18 @@ class TagRepository(
     }
 
     suspend fun findAllByUserIdAndMovieId(userId: Int, movieId: Long): List<Tag> {
-        val result = db.sendPreparedStatement(
+        return db.sendPreparedStatement(
             "select * from tags where user_id = ? and movie_id = ?",
             listOf(userId, movieId)
-        ).await()
-        return result.rows.map { toTag(it) }
+        ).await().rows.map { toTag(it) }
+    }
+
+    suspend fun findAllByUserAndTag(userId: Int, tag: String): List<Tag> {
+        return db.sendPreparedStatement(
+            "select * from tags where user_id = ? and tag = ?",
+            listOf(userId, tag)
+        )
+            .await().rows.map { toTag(it) }
     }
 
     fun toTag(data: RowData): Tag {

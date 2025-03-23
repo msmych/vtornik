@@ -18,13 +18,18 @@ data class Movie(
         val tmdb: Tmdb? = null,
     ) {
 
+        fun tmdb() = requireNotNull(tmdb) {
+            "TMDb details were missing"
+        }
+
         @Serializable
         data class Tmdb(
             val id: Long,
+            val title: String,
             val overview: String,
             val releaseDate: String? = null,
         ) {
-            fun releaseDate() = releaseDate?.let { LocalDate.parse(it) }
+            fun releaseDateOrNull() = releaseDate?.let { LocalDate.parse(it) }
         }
     }
 }

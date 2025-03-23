@@ -14,13 +14,14 @@ import uk.matvey.slon.PostgresTestSetup
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.vtornik.web.config.WebConfig
 import java.time.Instant
+import kotlin.random.Random
 import kotlin.time.Duration.Companion.days
 import kotlin.time.toJavaDuration
 
 open class WebTestSetup : PostgresTestSetup() {
 
-    fun HttpMessageBuilder.appendJwtCookie() {
-        val jwt = generateJwt()
+    fun HttpMessageBuilder.appendJwtCookie(userId: Int = Random.nextInt()) {
+        val jwt = generateJwt(userId)
         cookie(
             name = "jwt",
             value = jwt,
@@ -31,10 +32,10 @@ open class WebTestSetup : PostgresTestSetup() {
         )
     }
 
-    fun generateJwt(): String = JWT.create()
+    fun generateJwt(subjectId: Int): String = JWT.create()
         .withIssuer("vtornik")
         .withAudience("vtornik")
-        .withSubject("1")
+        .withSubject(subjectId.toString())
         .withClaim("username", "username1")
         .withClaim("name", "Name")
         .withExpiresAt(Instant.now().plus(7.days.toJavaDuration()))

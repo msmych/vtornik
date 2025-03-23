@@ -19,6 +19,9 @@ import kotlinx.html.searchInput
 import kotlinx.html.submitInput
 import kotlinx.html.title
 import kotlinx.html.visit
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import uk.matvey.vtornik.web.config.WebConfig
 
 fun HTML.page(
@@ -72,7 +75,7 @@ fun HTML.page(
             emptyTag = false
         ).visit {
             this@body.form {
-                attributes["hx-get"] = "/html/search"
+                attributes["hx-get"] = "/html/movies/search"
                 attributes["hx-target"] = "#search-results"
                 searchInput {
                     name = "q"
@@ -83,6 +86,18 @@ fun HTML.page(
                     div(classes = "htmx-indicator") {
                         +"Searching..."
                     }
+                }
+            }
+        }
+        principal?.let {
+            setOf("watchlist", "watched").forEach {
+                a {
+                    href = "/html/movies/search"
+                    attributes["hx-boost"] = "true"
+                    attributes["hx-vals"] = Json.encodeToString(buildJsonObject {
+                        put("tag", it)
+                    })
+                    +it
                 }
             }
         }

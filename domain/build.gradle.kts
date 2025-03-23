@@ -1,4 +1,5 @@
 plugins {
+    `java-test-fixtures`
     kotlin("plugin.serialization") version "2.1.10"
 }
 
@@ -13,4 +14,6 @@ dependencies {
     testImplementation("org.testcontainers:postgresql:1.20.0")
 
     testImplementation(testFixtures(project(":slon")))
+
+    testFixturesImplementation(project(":slon"))
 }

@@ -7,46 +7,67 @@ import io.ktor.server.testing.testApplication
 import io.mockk.coEvery
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import uk.matvey.tmdb.TmdbClient
+import uk.matvey.slon.random.randomWord
+import uk.matvey.tmdb.aSearchMovieResponse
+import uk.matvey.tmdb.aSearchMovieResponseResultItem
+import uk.matvey.vtornik.movie.MovieTestData.aTmdbDetails
 import uk.matvey.vtornik.web.WebTestSetup
+import kotlin.random.Random
 
 class SearchTest : WebTestSetup() {
 
     @Test
-    fun `should return movies search result`() = testApplication {
+    fun `should search movies by query`() = testApplication {
         // given
         application {
             testServerModule()
         }
-        val movie1 = TmdbClient.SearchMovieResponse.ResultItem(
-            id = 1,
-            title = "Movie 1",
-            releaseDate = "2025-03-19"
-        )
-        val movie2 = TmdbClient.SearchMovieResponse.ResultItem(
-            id = 2,
-            title = "Movie 2",
-            releaseDate = "",
-        )
+        val movie1 = aSearchMovieResponseResultItem()
+        val movie2 = aSearchMovieResponseResultItem()
         coEvery {
             services.tmdbClient.searchMovies("movie")
-        } returns TmdbClient.SearchMovieResponse(
-            page = 1,
-            results = listOf(
-                movie1,
-                movie2,
-            ),
-            totalPages = 1,
-            totalResults = 2,
-        )
+        } returns aSearchMovieResponse(listOf(movie1, movie2))
 
         // when
-        val rs = client.get("/html/search?q=movie")
+        val rs = client.get("/html/movies/search?q=movie")
 
         // then
         assertThat(rs.status).isEqualTo(OK)
         assertThat(rs.bodyAsText())
             .contains(movie1.title)
             .contains(movie2.title)
+    }
+
+    @Test
+    fun `should search movie by tag`() = testApplication {
+        // given
+        application {
+            testServerModule()
+        }
+        val userId = Random.nextInt()
+        val tag1 = randomWord()
+        val tag2 = randomWord()
+        val tmdbDetails1 = aTmdbDetails()
+        val movieId1 = services.movieRepository.add(tmdbDetails1)
+        val tmdbDetails2 = aTmdbDetails()
+        val movieId2 = services.movieRepository.add(tmdbDetails2)
+        val tmdbDetails3 = aTmdbDetails()
+        val movieId3 = services.movieRepository.add(tmdbDetails3)
+        val tmdbDetails4 = aTmdbDetails()
+        val movieId4 = services.movieRepository.add(tmdbDetails4)
+        services.tagRepository.add(userId, movieId1, tag1)
+        services.tagRepository.add(userId, movieId2, tag1)
+        services.tagRepository.add(userId, movieId3, tag2)
+
+        // when
+        val rs = client.get("/html/movies/search?tag=$tag1") {
+            appendJwtCookie(userId)
+        }
+
+        // then
+        assertThat(rs.status).isEqualTo(OK)
+        assertThat(rs.bodyAsText())
+            .contains(tmdbDetails1.title)
+            .contains(tmdbDetails2.title)
     }
 }

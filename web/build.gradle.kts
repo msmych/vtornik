@@ -26,4 +26,6 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-test-host:3.1.0")
     testImplementation(testFixtures(project(":slon")))
+    testImplementation(testFixtures(project(":domain")))
+    testImplementation(testFixtures(project(":tmdb-client")))
 }

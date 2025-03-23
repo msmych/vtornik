@@ -12,21 +12,30 @@ class MovieRepository(
 ) {
 
     suspend fun findById(id: Long): Movie? {
-        val result = db.sendPreparedStatement(
+        return db.sendPreparedStatement(
             "select * from movies where id = ?",
             listOf(id)
-        ).await()
-        return result.rows.singleOrNull()?.let { toMovie(it) }
+        ).await().rows.singleOrNull()?.let { toMovie(it) }
     }
 
-    suspend fun add(title: String, details: Movie.Details): Long {
+    suspend fun findAllByIds(ids: List<Long>): List<Movie> {
+        return db.sendPreparedStatement("select * from movies where id = any(?)", listOf(ids))
+            .await().rows.map { toMovie(it) }
+    }
+
+    suspend fun add(details: Movie.Details.Tmdb): Long {
         return db.sendPreparedStatement(
             """
                 |insert into movies (id, title, year, details, created_at, updated_at)
                 | values (?, ?, ?, ?, now(), now())
                 | returning id
                 |""".trimMargin(),
-            listOf(details.tmdb!!.id, title, details.tmdb.releaseDate()?.year, Json.encodeToString(details))
+            listOf(
+                details.id,
+                details.title,
+                details.releaseDateOrNull()?.year,
+                Json.encodeToString(Movie.Details(tmdb = details)),
+            )
         ).await().rows.single().getLong("id")!!
     }
 
@@ -35,7 +44,7 @@ class MovieRepository(
         return Movie(
             id = data.getLong("id")!!,
             title = data.getString("title")!!,
-            year = details.tmdb?.releaseDate()?.year,
+            year = details.tmdb?.releaseDateOrNull()?.year,
             details = details,
             createdAt = data.getDate("created_at")!!.toInstant(UTC),
             updatedAt = data.getDate("updated_at")!!.toInstant(UTC),

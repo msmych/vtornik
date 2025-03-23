@@ -16,6 +16,7 @@ import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.UserPrincipal
+import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.page
 
@@ -29,18 +30,16 @@ fun Route.movieRouting(
         route("/movies") {
             route("/{id}") {
                 get {
-                    val principal = call.principal<UserPrincipal>()
+                    val principal = call.userPrincipalOrNull()
                     val id = call.parameters.getOrFail("id").toLong()
                     val movie = movieRepository.findById(id) ?: run {
                         val movieDetails = tmdbClient.getMovieDetails(id)
                         movieRepository.add(
-                            movieDetails.title,
-                            Movie.Details(
-                                tmdb = Movie.Details.Tmdb(
-                                    id = id,
-                                    overview = movieDetails.overview,
-                                    releaseDate = movieDetails.releaseDate()?.toString(),
-                                )
+                            Movie.Details.Tmdb(
+                                id = id,
+                                title = movieDetails.title,
+                                overview = movieDetails.overview,
+                                releaseDate = movieDetails.releaseDate()?.toString(),
                             )
                         )
                         movieRepository.findById(id)!!
