@@ -16,7 +16,7 @@ class MovieTest : WebTestSetup() {
     @BeforeEach
     fun setup() {
         coEvery {
-            tmdbClient.getMovieDetails(1234)
+            services.tmdbClient.getMovieDetails(1234)
         } returns TmdbClient.MovieDetailsResponse(
             id = 1234,
             title = "Title",

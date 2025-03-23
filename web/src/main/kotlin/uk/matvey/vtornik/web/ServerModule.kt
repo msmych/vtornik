@@ -11,12 +11,12 @@ import io.ktor.server.routing.routing
 import io.ktor.util.date.GMTDate
 import uk.matvey.vtornik.web.auth.OptionalJwtAuthProvider
 import uk.matvey.vtornik.web.auth.RequiredJwtAuthProvider
-import uk.matvey.vtornik.web.config.VtornikConfig
+import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.movie.movieRouting
 import uk.matvey.vtornik.web.movie.tagRouting
 import uk.matvey.vtornik.web.search.searchRouting
 
-fun Application.serverModule(config: VtornikConfig, services: Services) {
+fun Application.serverModule(config: WebConfig, services: Services) {
     val appSecret = System.getenv("APP_SECRET")
     val optionalJwtAuthProvider = OptionalJwtAuthProvider(config)
     val requiredJwtAuthProvider = RequiredJwtAuthProvider(config)
@@ -29,9 +29,19 @@ fun Application.serverModule(config: VtornikConfig, services: Services) {
             call.respondText("OK")
         }
         val githubClientId = System.getenv("GITHUB_CLIENT_ID")
-        indexRouting(githubClientId)
+        indexRouting(config)
         githubClientId?.let {
             githubRouting(it, appSecret, services.userRepository)
+        }
+        if (config.profile == WebConfig.Profile.MOCK) {
+            route("/mock") {
+                get("/login") {
+                    with(services.auth) {
+                        call.appendJwtCookie(1, "tester")
+                        call.respondRedirect("/")
+                    }
+                }
+            }
         }
         get("/logout") {
             call.response.cookies.append(name = "jwt", value = "", expires = GMTDate.START)

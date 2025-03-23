@@ -19,10 +19,11 @@ import kotlinx.html.searchInput
 import kotlinx.html.submitInput
 import kotlinx.html.title
 import kotlinx.html.visit
+import uk.matvey.vtornik.web.config.WebConfig
 
 fun HTML.page(
+    config: WebConfig,
     principal: UserPrincipal?,
-    githubClientId: String?,
     block: MAIN.() -> Unit,
 ) {
     head {
@@ -49,10 +50,14 @@ fun HTML.page(
                         +"Logout"
                     }
                 }
-            } else if (githubClientId != null) {
+            } else {
                 p {
                     a {
-                        href = "https://github.com/login/oauth/authorize?client_id=$githubClientId"
+                        href = if (config.profile == WebConfig.Profile.MOCK) {
+                            "/mock/login"
+                        } else {
+                            "https://github.com/login/oauth/authorize?client_id=${config.githubClientId}"
+                        }
                         +"Login with GitHub"
                     }
                 }

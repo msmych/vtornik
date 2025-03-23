@@ -29,7 +29,7 @@ class SearchTest : WebTestSetup() {
             releaseDate = "",
         )
         coEvery {
-            tmdbClient.searchMovies("movie")
+            services.tmdbClient.searchMovies("movie")
         } returns TmdbClient.SearchMovieResponse(
             page = 1,
             results = listOf(

@@ -4,10 +4,10 @@ import com.auth0.jwt.JWT
 import io.ktor.server.auth.AuthenticationContext
 import io.ktor.server.auth.AuthenticationProvider
 import uk.matvey.vtornik.web.UserPrincipal
-import uk.matvey.vtornik.web.config.VtornikConfig
+import uk.matvey.vtornik.web.config.WebConfig
 
 class OptionalJwtAuthProvider(
-    private val config: VtornikConfig,
+    private val config: WebConfig,
 ) : AuthenticationProvider(Config) {
 
     object Config : AuthenticationProvider.Config("jwt-optional")
@@ -25,7 +25,6 @@ class OptionalJwtAuthProvider(
                 UserPrincipal(
                     userId = decoded.subject.toInt(),
                     username = decoded.getClaim("username").asString(),
-                    name = decoded.getClaim("name").asString()
                 )
             )
         }

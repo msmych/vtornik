@@ -6,9 +6,9 @@ import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
-import uk.matvey.vtornik.web.config.VtornikConfig
+import uk.matvey.vtornik.web.config.WebConfig
 
-fun server(config: VtornikConfig, services: Services): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
+fun server(config: WebConfig, services: Services): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
     val server = embeddedServer(
         factory = Netty,
         environment = applicationEnvironment { },

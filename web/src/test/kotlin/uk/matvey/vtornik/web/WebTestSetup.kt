@@ -12,7 +12,7 @@ import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.BeforeAll
 import uk.matvey.slon.PostgresTestSetup
 import uk.matvey.tmdb.TmdbClient
-import uk.matvey.vtornik.web.config.VtornikConfig
+import uk.matvey.vtornik.web.config.WebConfig
 import java.time.Instant
 import kotlin.time.Duration.Companion.days
 import kotlin.time.toJavaDuration
@@ -42,7 +42,7 @@ open class WebTestSetup : PostgresTestSetup() {
 
     companion object {
 
-        lateinit var config: VtornikConfig
+        lateinit var config: WebConfig
 
         @BeforeAll
         @JvmStatic
@@ -51,7 +51,8 @@ open class WebTestSetup : PostgresTestSetup() {
                 .dataSource(postgres.jdbcUrl, postgres.username, postgres.password)
                 .load()
             flyway.migrate()
-            config = VtornikConfig(
+            config = WebConfig(
+                profile = WebConfig.Profile.MOCK,
                 appSecret = "app-secret",
                 dbUrl = postgres.jdbcUrl,
                 dbUsername = postgres.username,
@@ -61,8 +62,10 @@ open class WebTestSetup : PostgresTestSetup() {
         }
     }
 
-    val tmdbClient = mockk<TmdbClient>()
-    val services = Services(tmdbClient, config)
+    val services = Services(
+        config = config,
+        tmdbClient = mockk<TmdbClient>(),
+    )
 
     fun Application.testServerModule() {
         serverModule(

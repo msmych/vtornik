@@ -16,11 +16,11 @@ import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.UserPrincipal
-import uk.matvey.vtornik.web.config.VtornikConfig
+import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.page
 
 fun Route.movieRouting(
-    config: VtornikConfig,
+    config: WebConfig,
     tmdbClient: TmdbClient,
     movieRepository: MovieRepository,
     tagRepository: TagRepository,
@@ -52,7 +52,7 @@ fun Route.movieRouting(
 
                     call.respondHtml {
                         val principal = call.principal<UserPrincipal>()
-                        page(principal, config.githubClientId) {
+                        page(config, principal) {
                             h1 {
                                 +movie.title
                             }
