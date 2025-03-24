@@ -1,17 +1,16 @@
 package uk.matvey.vtornik.movie
 
 import com.github.jasync.sql.db.RowData
-import com.github.jasync.sql.db.pool.ConnectionPool
-import com.github.jasync.sql.db.postgresql.PostgreSQLConnection
-import kotlinx.coroutines.future.await
+import com.github.jasync.sql.db.SuspendingConnection
 import kotlinx.serialization.json.Json
+import uk.matvey.slon.sql.execute
 import uk.matvey.slon.sql.getDateOrFail
 import uk.matvey.slon.sql.getLongOrFail
 import uk.matvey.slon.sql.getStringOrFail
 import java.time.ZoneOffset.UTC
 
 class MovieRepository(
-    private val db: ConnectionPool<PostgreSQLConnection>,
+    private val db: SuspendingConnection,
 ) {
 
     suspend fun getById(id: Long): Movie {
@@ -21,19 +20,19 @@ class MovieRepository(
     }
 
     suspend fun findById(id: Long): Movie? {
-        return db.sendPreparedStatement(
+        return db.execute(
             "select * from movies where id = ?",
             listOf(id)
-        ).await().rows.singleOrNull()?.let { toMovie(it) }
+        ).rows.singleOrNull()?.let { toMovie(it) }
     }
 
     suspend fun findAllByIds(ids: List<Long>): List<Movie> {
-        return db.sendPreparedStatement("select * from movies where id = any(?)", listOf(ids))
-            .await().rows.map { toMovie(it) }
+        return db.execute("select * from movies where id = any(?)", listOf(ids))
+            .rows.map { toMovie(it) }
     }
 
     suspend fun add(details: Movie.Details.Tmdb): Long {
-        return db.sendPreparedStatement(
+        return db.execute(
             """
                 |insert into movies (id, title, year, details, created_at, updated_at)
                 | values (?, ?, ?, ?, now(), now())
@@ -45,7 +44,7 @@ class MovieRepository(
                 details.releaseDateOrNull()?.year,
                 Json.encodeToString(Movie.Details(tmdb = details)),
             )
-        ).await().rows.single().getLongOrFail("id")
+        ).rows.single().getLongOrFail("id")
     }
 
     private fun toMovie(data: RowData): Movie {

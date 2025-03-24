@@ -67,37 +67,39 @@ fun HTML.page(
                     }
                 }
             }
-        }
-        search {
-            form {
-                hxGet("/html/movies/search")
-                hxTarget("#search-results")
-                searchInput {
-                    name = "q"
-                    placeholder = "The Brutalist"
-                }
-                submitInput {
-                    value = "Search"
-                    div(classes = HTMX_INDICATOR) {
-                        +"Searching..."
+            search {
+                form {
+                    hxGet("/html/movies/search")
+                    hxTarget("#search-results")
+                    attributes["hx-indicator"] = "header > div.$HTMX_INDICATOR"
+                    searchInput {
+                        name = "q"
+                        placeholder = "The Brutalist"
+                    }
+                    submitInput {
+                        value = "Search"
                     }
                 }
             }
-        }
-        principal?.let {
-            setOf("watchlist", "watched").forEach {
-                a {
-                    href = "/html/movies/search"
-                    hxBoost()
-                    hxVals {
-                        put("tag", it)
+            principal?.let {
+                setOf("watchlist", "watched").forEach {
+                    a {
+                        href = "/html/movies/search"
+                        hxBoost()
+                        hxVals {
+                            put("tag", it)
+                        }
+                        +it
                     }
-                    +it
+                    +" "
                 }
             }
-        }
-        div {
-            id = "search-results"
+            div(classes = HTMX_INDICATOR) {
+                +"Searching..."
+            }
+            div {
+                id = "search-results"
+            }
         }
         main {
             block()

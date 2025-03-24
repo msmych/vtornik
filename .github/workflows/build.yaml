@@ -1,4 +1,4 @@
-name: Build check
+name: Build Docker image
 
 on:
   push:
@@ -21,4 +21,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build
-        run: ./gradlew check
+        run: |
+          ./gradlew check web:shadowJar
+          docker build -t vtornik-web .
+          docker tag vtornik-web:latest msmych/vtornik-web:latest

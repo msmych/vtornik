@@ -32,4 +32,9 @@ data class Movie(
             fun releaseDateOrNull() = releaseDate?.let { LocalDate.parse(it) }
         }
     }
+
+    enum class Role {
+        DIRECTOR,
+        ACTOR,
+    }
 }

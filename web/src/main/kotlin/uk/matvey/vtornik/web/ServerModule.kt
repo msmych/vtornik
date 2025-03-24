@@ -55,6 +55,8 @@ fun Application.serverModule(config: WebConfig, services: Services) {
                 config,
                 services.tmdbClient,
                 services.movieRepository,
+                services.personRepository,
+                services.moviePersonRepository,
                 services.tagRepository,
             )
             tagRouting(services.tagRepository)

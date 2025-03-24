@@ -1,5 +1,7 @@
 plugins {
+    application
     kotlin("plugin.serialization") version "2.1.10"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 dependencies {
@@ -30,4 +32,8 @@ dependencies {
     testImplementation(testFixtures(project(":slon")))
     testImplementation(testFixtures(project(":domain")))
     testImplementation(testFixtures(project(":tmdb-client")))
+}
+
+application {
+    mainClass = "uk.matvey.vtornik.web.AppKt"
 }

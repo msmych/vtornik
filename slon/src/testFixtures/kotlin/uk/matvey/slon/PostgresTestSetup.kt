@@ -1,7 +1,7 @@
 package uk.matvey.slon
 
-import com.github.jasync.sql.db.pool.ConnectionPool
-import com.github.jasync.sql.db.postgresql.PostgreSQLConnection
+import com.github.jasync.sql.db.SuspendingConnection
+import com.github.jasync.sql.db.asSuspending
 import com.github.jasync.sql.db.postgresql.PostgreSQLConnectionBuilder.createConnectionPool
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -11,7 +11,7 @@ open class PostgresTestSetup {
 
     companion object {
         val postgres = PostgreSQLContainer("postgres")
-        lateinit var db: ConnectionPool<PostgreSQLConnection>
+        lateinit var db: SuspendingConnection
 
         @BeforeAll
         @JvmStatic
@@ -20,7 +20,7 @@ open class PostgresTestSetup {
             db = createConnectionPool(postgres.jdbcUrl) {
                 username = postgres.username
                 password = postgres.password
-            }
+            }.asSuspending
         }
 
         @AfterAll

@@ -16,20 +16,28 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.jsonObject
+import uk.matvey.tmdb.TmdbClient.MovieCredits.CastItem
+import uk.matvey.tmdb.TmdbClient.MovieCredits.CrewItem
 import java.time.LocalDate
 
 class TmdbClient(engine: HttpClientEngine) {
+
+    companion object {
+        private val JSON = Json {
+            ignoreUnknownKeys = true
+        }
+    }
 
     private val httpClient = HttpClient(engine) {
         defaultRequest {
             bearerAuth(System.getenv("TMDB_API_KEY"))
         }
         install(ContentNegotiation) {
-            json(
-                Json {
-                    ignoreUnknownKeys = true
-                }
-            )
+            json(JSON)
         }
         install(Logging) {
             logger = Logger.DEFAULT
@@ -44,11 +52,51 @@ class TmdbClient(engine: HttpClientEngine) {
         val title: String,
         @SerialName("release_date") val releaseDate: String,
     ) {
+        var extras = JsonObject(emptyMap())
+
         fun releaseDate() = releaseDate.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
+
+        fun extraCredits() = extras.getValue("credits").jsonObject.let { it: JsonObject ->
+            val castItems = JSON.decodeFromJsonElement<List<CastItem>>(it.getValue("cast"))
+            val crewItems = JSON.decodeFromJsonElement<List<CrewItem>>(it.getValue("crew"))
+            castItems to crewItems
+        }
     }
 
-    suspend fun getMovieDetails(movieId: Long): MovieDetailsResponse {
-        return httpClient.get("https://api.themoviedb.org/3/movie/$movieId").body()
+    suspend fun getMovieDetails(
+        movieId: Long,
+        appendToResponse: List<String> = emptyList()
+    ): MovieDetailsResponse {
+        val result: JsonObject = httpClient.get("https://api.themoviedb.org/3/movie/$movieId") {
+            appendToResponse.takeIf { it.isNotEmpty() }
+                ?.let { parameter("append_to_response", it.joinToString(",")) }
+        }.body()
+        val response = JSON.decodeFromJsonElement<MovieDetailsResponse>(result)
+        response.extras = buildJsonObject {
+            appendToResponse.forEach { extra ->
+                put(extra, result.getValue(extra))
+            }
+        }
+        return response
+    }
+
+    @Serializable
+    data class MovieCredits(
+        val cast: List<CastItem>,
+        val crew: List<CrewItem>,
+    ) {
+
+        @Serializable
+        data class CastItem(
+            val id: Long,
+        )
+
+        @Serializable
+        data class CrewItem(
+            val id: Long,
+            val name: String,
+            val job: String,
+        )
     }
 
     @Serializable

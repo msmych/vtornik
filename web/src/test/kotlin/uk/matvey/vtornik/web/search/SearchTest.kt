@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import uk.matvey.slon.random.randomWord
 import uk.matvey.tmdb.aSearchMovieResponse
 import uk.matvey.tmdb.aSearchMovieResponseResultItem
-import uk.matvey.vtornik.movie.MovieTestData.aTmdbDetails
 import uk.matvey.vtornik.web.WebTestSetup
 import kotlin.random.Random
 
@@ -47,13 +46,13 @@ class SearchTest : WebTestSetup() {
         val userId = Random.nextInt()
         val tag1 = randomWord()
         val tag2 = randomWord()
-        val tmdbDetails1 = aTmdbDetails()
+        val tmdbDetails1 = aMovieTmdbDetails()
         val movieId1 = services.movieRepository.add(tmdbDetails1)
-        val tmdbDetails2 = aTmdbDetails()
+        val tmdbDetails2 = aMovieTmdbDetails()
         val movieId2 = services.movieRepository.add(tmdbDetails2)
-        val tmdbDetails3 = aTmdbDetails()
+        val tmdbDetails3 = aMovieTmdbDetails()
         val movieId3 = services.movieRepository.add(tmdbDetails3)
-        val tmdbDetails4 = aTmdbDetails()
+        val tmdbDetails4 = aMovieTmdbDetails()
         val movieId4 = services.movieRepository.add(tmdbDetails4)
         services.tagRepository.add(userId, movieId1, tag1)
         services.tagRepository.add(userId, movieId2, tag1)
