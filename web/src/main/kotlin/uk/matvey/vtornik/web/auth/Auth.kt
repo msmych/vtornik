@@ -1,9 +1,11 @@
 package uk.matvey.vtornik.web.auth
 
 import com.auth0.jwt.JWT
+import com.auth0.jwt.exceptions.JWTVerificationException
 import io.ktor.http.CookieEncoding.URI_ENCODING
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.auth.AuthenticationContext
+import io.ktor.server.auth.AuthenticationFailedCause
 import io.ktor.server.auth.AuthenticationProvider
 import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.Route
@@ -32,19 +34,24 @@ class Auth(
     val requiredJwtAuthProvider = object : AuthenticationProvider(object : Config(JWT_REQUIRED) {}) {
 
         override suspend fun onAuthenticate(context: AuthenticationContext) {
-            val jwt = requireNotNull(context.call.request.cookies["jwt"])
+            val jwt = requireNotNull(context.call.request.cookies[JWT_COOKIE])
             processJwt(jwt, context)
         }
     }
 
     private fun processJwt(jwt: String, context: AuthenticationContext) {
         val decoded = JWT.decode(jwt)
-        JWT.require(config.jwtAlgorithm())
+        val verification = JWT.require(config.jwtAlgorithm())
             .withIssuer(JWT_ISSUER)
             .withAudience(JWT_AUDIENCE)
             .acceptLeeway(100)
             .build()
-            .verify(decoded)
+        try {
+            verification
+                .verify(decoded)
+        } catch (_: JWTVerificationException) {
+            return context.error("Invalid JWT", AuthenticationFailedCause.InvalidCredentials)
+        }
         context.principal(UserPrincipal.fromDecodedJwt(decoded))
     }
 
@@ -52,8 +59,8 @@ class Auth(
         subjectId: Long,
         username: String,
     ) = JWT.create()
-        .withIssuer("vtornik")
-        .withAudience("vtornik")
+        .withIssuer(JWT_ISSUER)
+        .withAudience(JWT_AUDIENCE)
         .withSubject(subjectId.toString())
         .withClaim("username", username)
         .withExpiresAt(Instant.now().plus(7.days.toJavaDuration()))
@@ -64,7 +71,7 @@ class Auth(
         username: String,
     ) {
         response.cookies.append(
-            name = "jwt",
+            name = JWT_COOKIE,
             value = createJwt(subjectId, username),
             encoding = URI_ENCODING,
             expires = GMTDate().plus(7.days),

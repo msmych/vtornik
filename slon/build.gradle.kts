@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation("com.github.jasync-sql:jasync-postgresql:2.2.4")
-    implementation("io.ktor:ktor-server-html-builder:3.1.0")
+    implementation("io.ktor:ktor-server-html-builder:3.1.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
     testFixturesImplementation("org.testcontainers:postgresql:1.20.0")

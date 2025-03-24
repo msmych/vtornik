@@ -2,7 +2,7 @@ package uk.matvey.tmdb
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.DEFAULT
@@ -18,9 +18,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
 
-class TmdbClient {
+class TmdbClient(engine: HttpClientEngine) {
 
-    private val httpClient = HttpClient(engineFactory = CIO) {
+    private val httpClient = HttpClient(engine) {
         defaultRequest {
             bearerAuth(System.getenv("TMDB_API_KEY"))
         }

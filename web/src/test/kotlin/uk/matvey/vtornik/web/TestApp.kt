@@ -1,10 +1,19 @@
 package uk.matvey.vtornik.web
 
-import io.mockk.coEvery
-import io.mockk.mockk
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
+import io.ktor.server.util.getOrFail
+import kotlinx.serialization.json.Json
 import org.flywaydb.core.Flyway
+import uk.matvey.slon.random.randomSentence
 import uk.matvey.tmdb.TmdbClient
+import uk.matvey.tmdb.aMovieDetailsResponse
+import uk.matvey.tmdb.aSearchMovieResponse
+import uk.matvey.tmdb.aSearchMovieResponseResultItem
 import uk.matvey.vtornik.web.config.WebConfig
+import kotlin.random.Random
 
 fun main() {
     val config = WebConfig(
@@ -15,22 +24,30 @@ fun main() {
         dbPassword = System.getenv("DB_PASSWORD"),
         githubClientId = "githubClientId"
     )
-    val tmdbClient = mockk<TmdbClient>()
-    coEvery { tmdbClient.searchMovies("dune") } returns TmdbClient.SearchMovieResponse(
-        page = 1,
-        results = listOf(
-            TmdbClient.SearchMovieResponse.ResultItem(1, "Dune", "2020-09-09"),
-            TmdbClient.SearchMovieResponse.ResultItem(2, "Dune 2", "2024-09-09"),
-        ),
-        totalPages = 1,
-        totalResults = 2,
-    )
-    coEvery { tmdbClient.getMovieDetails(1) } returns TmdbClient.MovieDetailsResponse(
-        id = 1,
-        overview = "Dune overview",
-        title = "Dune",
-        releaseDate = "2020-09-09",
-    )
+    val tmdbEngine = MockEngine { request ->
+        if (request.url.toString().contains("https://api.themoviedb.org/3/search/movie?query=")) {
+            respond(
+                content = Json.encodeToString(
+                    aSearchMovieResponse(
+                        (0..<Random.nextInt(16))
+                            .map { aSearchMovieResponseResultItem(title = request.url.parameters.getOrFail("query") + " " + randomSentence()) })
+                ),
+                status = HttpStatusCode.OK,
+                headers = headersOf("Content-Type", "application/json"),
+            )
+        } else if (request.url.toString().contains("https://api.themoviedb.org/3/movie/")) {
+            respond(
+                content = Json.encodeToString(
+                    aMovieDetailsResponse(id = request.url.segments.last().toLong())
+                ),
+                status = HttpStatusCode.OK,
+                headers = headersOf("Content-Type", "application/json"),
+            )
+        } else {
+            respond(content = "", status = HttpStatusCode.NotFound)
+        }
+    }
+    val tmdbClient = TmdbClient(tmdbEngine)
     val services = Services(config, tmdbClient)
     val flyway = Flyway.configure()
         .dataSource(config.dbUrl, config.dbUsername, config.dbPassword)
