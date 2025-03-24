@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import uk.matvey.slon.random.randomWord
 import uk.matvey.tmdb.aSearchMovieResponse
 import uk.matvey.tmdb.aSearchMovieResponseResultItem
+import uk.matvey.vtornik.movie.aMovieTmdbDetails
 import uk.matvey.vtornik.web.WebTestSetup
 import kotlin.random.Random
 

@@ -5,6 +5,9 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.server.testing.testApplication
 import io.mockk.coEvery
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.putJsonObject
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,13 +19,20 @@ class MovieTest : WebTestSetup() {
     @BeforeEach
     fun setup() {
         coEvery {
-            services.tmdbClient.getMovieDetails(1234)
+            services.tmdbClient.getMovieDetails(1234, listOf("credits"))
         } returns TmdbClient.MovieDetailsResponse(
             id = 1234,
             title = "Title",
             overview = "Overview",
             releaseDate = "2025-03-19",
-        )
+        ).apply {
+            extras = buildJsonObject {
+                putJsonObject("credits") {
+                    put("cast", JsonArray(listOf()))
+                    put("crew", JsonArray(listOf()))
+                }
+            }
+        }
     }
 
     @Test
