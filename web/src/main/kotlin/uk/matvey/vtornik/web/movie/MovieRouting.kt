@@ -12,11 +12,7 @@ import kotlinx.html.p
 import uk.matvey.slon.html.hxDelete
 import uk.matvey.slon.html.hxPost
 import uk.matvey.slon.html.hxSwap
-import uk.matvey.tmdb.TmdbClient
 import uk.matvey.vtornik.movie.Movie
-import uk.matvey.vtornik.movie.MovieRepository
-import uk.matvey.vtornik.person.MoviePersonRepository
-import uk.matvey.vtornik.person.Person
 import uk.matvey.vtornik.person.PersonRepository
 import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipalOrNull
@@ -26,10 +22,8 @@ import uk.matvey.vtornik.web.page
 
 fun Route.movieRouting(
     config: WebConfig,
-    tmdbClient: TmdbClient,
-    movieRepository: MovieRepository,
+    movieService: MovieService,
     personRepository: PersonRepository,
-    moviePersonRepository: MoviePersonRepository,
     tagRepository: TagRepository,
 ) {
     authJwtOptional {
@@ -38,31 +32,7 @@ fun Route.movieRouting(
                 get {
                     val principal = call.userPrincipalOrNull()
                     val id = call.parameters.getOrFail("id").toLong()
-                    val movie = movieRepository.findById(id) ?: run {
-                        val movieDetails = tmdbClient.getMovieDetails(
-                            movieId = id,
-                            appendToResponse = listOf("credits")
-                        )
-                        movieRepository.add(
-                            Movie.Details.Tmdb(
-                                id = id,
-                                title = movieDetails.title,
-                                overview = movieDetails.overview,
-                                releaseDate = movieDetails.releaseDate()?.toString(),
-                            )
-                        )
-                        val (_, crew) = movieDetails.extraCredits()
-                        crew.filter { it.job == "Director" }.forEach {
-                            val personId = personRepository.add(
-                                Person.Details.Tmdb(
-                                    id = it.id,
-                                    name = it.name,
-                                ),
-                            )
-                            moviePersonRepository.addMoviePerson(id, personId, Movie.Role.DIRECTOR)
-                        }
-                        movieRepository.getById(id)
-                    }
+                    val movie = movieService.ensureMovie(id)
 
                     val directors = personRepository.findAllPeopleByMovieId(movie.id, Movie.Role.DIRECTOR)
 
@@ -82,10 +52,10 @@ fun Route.movieRouting(
                                     +it.toString()
                                 }
                             }
-                            directors.takeIf { it.isNotEmpty() }?.let {
+                            directors.takeIf { it.isNotEmpty() }?.let { dirs ->
                                 h3 {
                                     +"Directed by "
-                                    +it.joinToString { it.name }
+                                    +dirs.joinToString { it.name }
                                 }
                             }
                             principal?.let {

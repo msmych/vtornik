@@ -10,6 +10,7 @@ import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.user.UserRepository
 import uk.matvey.vtornik.web.auth.Auth
 import uk.matvey.vtornik.web.config.WebConfig
+import uk.matvey.vtornik.web.movie.MovieService
 
 class Services(
     val config: WebConfig,
@@ -30,4 +31,10 @@ class Services(
     val moviePersonRepository = MoviePersonRepository(db)
 
     val auth = Auth(config)
+    val movieService = MovieService(
+        movieRepository,
+        moviePersonRepository,
+        personRepository,
+        tmdbClient,
+    )
 }
