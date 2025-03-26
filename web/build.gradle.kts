@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
+
 plugins {
     application
     kotlin("plugin.serialization") version "2.1.10"
@@ -36,4 +38,8 @@ dependencies {
 
 application {
     mainClass = "uk.matvey.vtornik.web.AppKt"
+}
+
+tasks.shadowJar {
+    transform(ServiceFileTransformer::class.java)
 }
