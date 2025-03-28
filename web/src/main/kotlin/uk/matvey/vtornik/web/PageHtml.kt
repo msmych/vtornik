@@ -11,6 +11,7 @@ import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.header
 import kotlinx.html.id
+import kotlinx.html.link
 import kotlinx.html.main
 import kotlinx.html.p
 import kotlinx.html.script
@@ -33,6 +34,10 @@ fun HTML.page(
 ) {
     head {
         title("Vtornik")
+        link {
+            rel = "stylesheet"
+            href = "/assets/styles.css"
+        }
         script {
             src = "https://unpkg.com/htmx.org@2.0.4"
             integrity = "sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
@@ -68,7 +73,7 @@ fun HTML.page(
                 }
             }
             search {
-                form {
+                form(classes = "row gap-8") {
                     hxGet("/html/movies/search")
                     hxTarget("#search-results")
                     attributes["hx-indicator"] = "header > div.$HTMX_INDICATOR"

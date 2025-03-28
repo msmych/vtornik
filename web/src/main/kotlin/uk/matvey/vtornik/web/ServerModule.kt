@@ -3,6 +3,7 @@ package uk.matvey.vtornik.web
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.response.respondRedirect
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
@@ -22,6 +23,7 @@ fun Application.serverModule(config: WebConfig, services: Services) {
         register(services.auth.requiredJwtAuthProvider)
     }
     routing {
+        staticResources("/assets", "/assets")
         get("/health") {
             call.respondText("OK")
         }

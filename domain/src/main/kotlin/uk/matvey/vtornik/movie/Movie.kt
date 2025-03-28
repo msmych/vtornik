@@ -28,8 +28,13 @@ data class Movie(
             val title: String,
             val overview: String,
             val releaseDate: String? = null,
+            val posterPath: String? = null,
+            val backdropPath: String? = null,
+            val originalTitle: String? = null,
         ) {
             fun releaseDateOrNull() = releaseDate?.let { LocalDate.parse(it) }
+
+            fun posterUrl() = posterPath?.let { "https://image.tmdb.org/t/p/w440_and_h660_face$it" }
         }
     }
 

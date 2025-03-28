@@ -1,0 +1,40 @@
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.gap-8 {
+    gap: 8px;
+}
+
+.gap-16 {
+    gap: 16px;
+}
+
+img {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-result-item {
+    cursor: pointer;
+}
+
+.search-result-item:hover {
+    background-color: #f0f0f0;
+}
+
+.search-result-item > img.poster {
+    width: 44px;
+    height: 66px;
+}
+
+.movie-page > img.poster {
+    max-width: 440px;
+    max-height: 660px;
+}

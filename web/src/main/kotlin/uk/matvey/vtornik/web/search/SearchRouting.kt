@@ -6,9 +6,15 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.util.getOrFail
 import kotlinx.html.a
+import kotlinx.html.b
 import kotlinx.html.body
+import kotlinx.html.div
+import kotlinx.html.i
+import kotlinx.html.img
 import kotlinx.html.p
 import uk.matvey.slon.html.hxBoost
+import uk.matvey.slon.html.hxGet
+import uk.matvey.slon.html.hxTarget
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.tag.TagRepository
@@ -30,13 +36,26 @@ fun Route.searchRouting(
                     val movies = tmdbClient.searchMovies(q)
                     call.respondHtml {
                         body {
-                            movies.results.forEach {
-                                p {
-                                    a {
-                                        href = "/html/movies/${it.id}"
-                                        hxBoost()
-                                        +it.title
-                                        it.releaseDate()?.let { releaseDate -> +" (${releaseDate.year})" }
+                            div("col gap-8") {
+                                movies.results.forEach { movie ->
+                                    div("row gap-8 search-result-item") {
+                                        hxGet("/html/movies/${movie.id}")
+                                        hxTarget("body")
+                                        attributes["hx-push-url"] = "true"
+                                        img(classes = "poster", alt = movie.title) {
+                                            src = movie.posterUrl() ?: ""
+                                        }
+                                        div("col gap-8") {
+                                            b {
+                                                +movie.title
+                                                movie.releaseDate()?.let { releaseDate -> +" (${releaseDate.year})" }
+                                            }
+                                            movie.originalTitle()?.let {
+                                                i {
+                                                    +it
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }

@@ -26,6 +26,9 @@ class MovieService(
                     title = movieDetails.title,
                     overview = movieDetails.overview,
                     releaseDate = movieDetails.releaseDate()?.toString(),
+                    posterPath = movieDetails.posterPath,
+                    backdropPath = movieDetails.backdropPath,
+                    originalTitle = movieDetails.originalTitle,
                 )
             )
             val (_, crew) = movieDetails.extraCredits()

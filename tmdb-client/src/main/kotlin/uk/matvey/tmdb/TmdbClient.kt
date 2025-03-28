@@ -51,6 +51,9 @@ class TmdbClient(engine: HttpClientEngine) {
         val overview: String,
         val title: String,
         @SerialName("release_date") val releaseDate: String,
+        @SerialName("poster_path") val posterPath: String?,
+        @SerialName("backdrop_path") val backdropPath: String?,
+        @SerialName("original_title") val originalTitle: String?,
     ) {
         var extras = JsonObject(emptyMap())
 
@@ -112,8 +115,15 @@ class TmdbClient(engine: HttpClientEngine) {
             val id: Int,
             val title: String,
             @SerialName("release_date") val releaseDate: String,
+            @SerialName("poster_path") val posterPath: String?,
+            @SerialName("backdrop_path") val backdropPath: String?,
+            @SerialName("original_title") val originalTitle: String?,
         ) {
             fun releaseDate() = releaseDate.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
+
+            fun posterUrl() = posterPath?.let { "https://image.tmdb.org/t/p/w440_and_h660_face$it" }
+
+            fun originalTitle() = originalTitle.takeUnless { it == title }
         }
     }
 

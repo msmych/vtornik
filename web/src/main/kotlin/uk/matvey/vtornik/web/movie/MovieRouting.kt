@@ -6,8 +6,10 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.util.getOrFail
 import kotlinx.html.button
+import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.h3
+import kotlinx.html.img
 import kotlinx.html.p
 import uk.matvey.slon.html.hxDelete
 import uk.matvey.slon.html.hxPost
@@ -43,42 +45,52 @@ fun Route.movieRouting(
                     call.respondHtml {
                         val principal = call.userPrincipalOrNull()
                         page(config, principal) {
-                            h1 {
-                                +movie.title
-                            }
-                            movie.year?.let {
-                                h3 {
-                                    +"Released in "
-                                    +it.toString()
+                            div("row gap-8 movie-page") {
+                                img(classes = "poster", alt = movie.title) {
+                                    src = movie.details.tmdb?.posterUrl() ?: ""
+                                    alt = movie.title
                                 }
-                            }
-                            directors.takeIf { it.isNotEmpty() }?.let { dirs ->
-                                h3 {
-                                    +"Directed by "
-                                    +dirs.joinToString { it.name }
-                                }
-                            }
-                            principal?.let {
-                                setOf("watchlist", "watched").forEach { tag ->
-                                    if (movieTags?.contains(tag) == true) {
-                                        button {
-                                            hxDelete("/html/movies/${movie.id}/tags/$tag")
-                                            hxSwap("outerHTML")
-                                            +"Remove from "
-                                            +tag
-                                        }
-                                    } else {
-                                        button {
-                                            hxPost("/html/movies/${movie.id}/tags/$tag")
-                                            hxSwap("outerHTML")
-                                            +"Add to "
-                                            +tag
+                                div {
+                                    h1 {
+                                        +movie.title
+                                    }
+                                    movie.year?.let {
+                                        h3 {
+                                            +"Released in "
+                                            +it.toString()
                                         }
                                     }
+                                    directors.takeIf { it.isNotEmpty() }?.let { dirs ->
+                                        h3 {
+                                            +"Directed by "
+                                            +dirs.joinToString { it.name }
+                                        }
+                                    }
+                                    principal?.let {
+                                        div("row gap-8") {
+                                            setOf("watchlist", "watched").forEach { tag ->
+                                                if (movieTags?.contains(tag) == true) {
+                                                    button {
+                                                        hxDelete("/html/movies/${movie.id}/tags/$tag")
+                                                        hxSwap("outerHTML")
+                                                        +"Remove from "
+                                                        +tag
+                                                    }
+                                                } else {
+                                                    button {
+                                                        hxPost("/html/movies/${movie.id}/tags/$tag")
+                                                        hxSwap("outerHTML")
+                                                        +"Add to "
+                                                        +tag
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    p {
+                                        +movie.details.tmdb().overview
+                                    }
                                 }
-                            }
-                            p {
-                                +movie.details.tmdb().overview
                             }
                         }
                     }

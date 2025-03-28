@@ -15,4 +15,7 @@ fun aMovieTmdbDetails(
     title = title,
     overview = overview,
     releaseDate = releaseDate,
+    posterPath = null,
+    backdropPath = null,
+    originalTitle = null,
 )
