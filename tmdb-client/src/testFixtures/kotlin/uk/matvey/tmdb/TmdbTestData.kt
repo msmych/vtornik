@@ -21,6 +21,9 @@ fun aSearchMovieResponseResultItem(
     id = id,
     title = title,
     releaseDate = releaseDate,
+    posterPath = null,
+    backdropPath = null,
+    originalTitle = null,
 )
 
 fun aMovieDetailsResponse(
@@ -32,5 +35,8 @@ fun aMovieDetailsResponse(
     id = id,
     overview = overview,
     title = title,
-    releaseDate = releaseDate
+    releaseDate = releaseDate,
+    posterPath = null,
+    backdropPath = null,
+    originalTitle = null,
 )

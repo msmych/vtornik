@@ -12,11 +12,20 @@ import kotlinx.html.div
 import kotlinx.html.i
 import kotlinx.html.img
 import kotlinx.html.p
+import kotlinx.serialization.json.put
+import uk.matvey.slon.html.HTMX_INDICATOR
 import uk.matvey.slon.html.hxBoost
 import uk.matvey.slon.html.hxGet
+import uk.matvey.slon.html.hxIndicator
+import uk.matvey.slon.html.hxPushUrl
+import uk.matvey.slon.html.hxSwap
 import uk.matvey.slon.html.hxTarget
+import uk.matvey.slon.html.hxTrigger
+import uk.matvey.slon.html.hxVals
 import uk.matvey.tmdb.TmdbClient
+import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
+import uk.matvey.vtornik.person.PersonRepository
 import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipal
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
@@ -28,12 +37,17 @@ fun Route.searchRouting(
     tmdbClient: TmdbClient,
     tagRepository: TagRepository,
     movieRepository: MovieRepository,
+    personRepository: PersonRepository,
 ) {
     authJwtOptional {
         route("/movies/search") {
             get {
                 call.parameters["q"]?.let { q ->
                     val movies = tmdbClient.searchMovies(q)
+                    val directors = personRepository.findAllPeopleByMoviesIds(
+                        movies.results.map { it.id.toLong() },
+                        Movie.Role.DIRECTOR
+                    )
                     call.respondHtml {
                         body {
                             div("col gap-8") {
@@ -41,7 +55,8 @@ fun Route.searchRouting(
                                     div("row gap-8 search-result-item") {
                                         hxGet("/html/movies/${movie.id}")
                                         hxTarget("body")
-                                        attributes["hx-push-url"] = "true"
+                                        hxPushUrl()
+                                        hxIndicator("this > div.$HTMX_INDICATOR")
                                         img(classes = "poster", alt = movie.title) {
                                             src = movie.posterUrl() ?: ""
                                         }
@@ -55,6 +70,27 @@ fun Route.searchRouting(
                                                     +it
                                                 }
                                             }
+                                            if (directors.containsKey(movie.id.toLong())) {
+                                                +"Directed by "
+                                                +directors.getValue(movie.id.toLong())
+                                                    .joinToString { person -> person.name }
+                                            } else {
+                                                div {
+                                                    hxGet("/html/movies/${movie.id}/people")
+                                                    hxTrigger("load")
+                                                    hxTarget("this")
+                                                    hxSwap("outerHTML")
+                                                    hxVals {
+                                                        put("role", "Director")
+                                                    }
+                                                    div(HTMX_INDICATOR) {
+                                                        +"Directed by..."
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        div(HTMX_INDICATOR) {
+                                            +"Loading..."
                                         }
                                     }
                                 }

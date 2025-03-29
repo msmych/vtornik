@@ -54,11 +54,12 @@ open class WebTestSetup : PostgresTestSetup() {
             flyway.migrate()
             config = WebConfig(
                 profile = WebConfig.Profile.MOCK,
-                appSecret = "app-secret",
+                appSecret = "appSecret",
                 dbUrl = postgres.jdbcUrl,
                 dbUsername = postgres.username,
                 dbPassword = postgres.password,
                 githubClientId = null,
+                tmdbApiKey = "tmdbApiKey",
             )
         }
     }

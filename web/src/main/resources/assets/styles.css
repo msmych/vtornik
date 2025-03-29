@@ -8,11 +8,21 @@
     flex-direction: column;
 }
 
+.split {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 .gap-8 {
     gap: 8px;
 }
 
 .gap-16 {
+    gap: 16px;
+}
+
+.gap-32 {
     gap: 16px;
 }
 
@@ -35,6 +45,15 @@ img {
 }
 
 .movie-page > img.poster {
+    min-width: 220px;
     max-width: 440px;
+    min-height: 330px;
     max-height: 660px;
+}
+
+#search-results {
+    position: absolute;
+    max-width: 660px;
+    background-color: white;
+    z-index: 32;
 }

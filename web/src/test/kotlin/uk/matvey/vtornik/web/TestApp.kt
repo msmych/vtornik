@@ -22,7 +22,8 @@ fun main() {
         dbUrl = System.getenv("DB_URL"),
         dbUsername = System.getenv("DB_USERNAME"),
         dbPassword = System.getenv("DB_PASSWORD"),
-        githubClientId = "githubClientId"
+        githubClientId = "githubClientId",
+        tmdbApiKey = "tmdbApiKey",
     )
     val tmdbEngine = MockEngine { request ->
         if (request.url.toString().contains("https://api.themoviedb.org/3/search/movie?query=")) {
@@ -47,7 +48,7 @@ fun main() {
             respond(content = "", status = HttpStatusCode.NotFound)
         }
     }
-    val tmdbClient = TmdbClient(tmdbEngine)
+    val tmdbClient = TmdbClient(tmdbEngine, config.tmdbApiKey)
     val services = Services(config, tmdbClient)
     val flyway = Flyway.configure()
         .dataSource(config.dbUrl, config.dbUsername, config.dbPassword)

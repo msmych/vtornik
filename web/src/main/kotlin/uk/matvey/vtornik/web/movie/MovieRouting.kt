@@ -14,6 +14,7 @@ import kotlinx.html.p
 import uk.matvey.slon.html.hxDelete
 import uk.matvey.slon.html.hxPost
 import uk.matvey.slon.html.hxSwap
+import uk.matvey.tmdb.TmdbClient
 import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.person.PersonRepository
 import uk.matvey.vtornik.tag.TagRepository
@@ -21,12 +22,14 @@ import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.page
+import uk.matvey.vtornik.web.person.personRouting
 
 fun Route.movieRouting(
     config: WebConfig,
     movieService: MovieService,
     personRepository: PersonRepository,
     tagRepository: TagRepository,
+    tmdbClient: TmdbClient,
 ) {
     authJwtOptional {
         route("/movies") {
@@ -95,6 +98,7 @@ fun Route.movieRouting(
                         }
                     }
                 }
+                personRouting(tmdbClient)
             }
         }
     }

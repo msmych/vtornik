@@ -25,6 +25,9 @@ class MovieTest : WebTestSetup() {
             title = "Title",
             overview = "Overview",
             releaseDate = "2025-03-19",
+            posterPath = null,
+            backdropPath = null,
+            originalTitle = null,
         ).apply {
             extras = buildJsonObject {
                 putJsonObject("credits") {

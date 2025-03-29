@@ -1,19 +1,11 @@
 package uk.matvey.vtornik.web
 
-import com.auth0.jwt.JWT
-import io.ktor.client.request.cookie
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.server.testing.testApplication
-import io.ktor.util.date.GMTDate
-import io.ktor.util.date.plus
-import io.netty.handler.codec.http.cookie.CookieHeaderNames.SAMESITE
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.time.Instant
-import kotlin.time.Duration.Companion.days
-import kotlin.time.toJavaDuration
 
 class IndexTest : WebTestSetup() {
 
@@ -32,7 +24,7 @@ class IndexTest : WebTestSetup() {
         assertThat(rs.bodyAsText())
             .contains("<html>")
             .contains("<head>")
-            .contains("<body>")
+            .contains("<body")
     }
 
     @Test

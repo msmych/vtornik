@@ -29,6 +29,10 @@ fun HTMLTag.hxDelete(path: String) {
     attributes["hx-delete"] = path
 }
 
+fun HTMLTag.hxTrigger(trigger: String) {
+    attributes["hx-trigger"] = trigger
+}
+
 fun HTMLTag.hxTarget(target: String) {
     attributes["hx-target"] = target
 }
@@ -41,6 +45,14 @@ fun HTMLTag.hxVals(block: JsonObjectBuilder.() -> Unit) {
     attributes["hx-vals"] = Json.encodeToString(buildJsonObject {
         block()
     })
+}
+
+fun HTMLTag.hxPushUrl() {
+    attributes["hx-push-url"] = "true"
+}
+
+fun HTMLTag.hxIndicator(value: String) {
+    attributes["hx-indicator"] = value
 }
 
 const val HTMX_INDICATOR = "htmx-indicator"

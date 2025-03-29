@@ -5,7 +5,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException
 import io.ktor.http.CookieEncoding.URI_ENCODING
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.auth.AuthenticationContext
-import io.ktor.server.auth.AuthenticationFailedCause
+import io.ktor.server.auth.AuthenticationFailedCause.InvalidCredentials
 import io.ktor.server.auth.AuthenticationProvider
 import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.Route
@@ -50,7 +50,7 @@ class Auth(
             verification
                 .verify(decoded)
         } catch (_: JWTVerificationException) {
-            return context.error("Invalid JWT", AuthenticationFailedCause.InvalidCredentials)
+            return context.error("Invalid JWT", InvalidCredentials)
         }
         context.principal(UserPrincipal.fromDecodedJwt(decoded))
     }
@@ -62,7 +62,7 @@ class Auth(
         .withIssuer(JWT_ISSUER)
         .withAudience(JWT_AUDIENCE)
         .withSubject(subjectId.toString())
-        .withClaim("username", username)
+        .withClaim(USERNAME_CLAIM, username)
         .withExpiresAt(Instant.now().plus(7.days.toJavaDuration()))
         .sign(config.jwtAlgorithm())
 
@@ -88,6 +88,7 @@ class Auth(
         private const val JWT_REQUIRED = "jwt-required"
         private const val JWT_ISSUER = "vtornik"
         private const val JWT_AUDIENCE = "vtornik"
+        private const val USERNAME_CLAIM = "username"
 
         fun Route.authJwtOptional(block: Route.() -> Unit) = authenticate(JWT_OPTIONAL) { block() }
 

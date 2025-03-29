@@ -36,6 +36,23 @@ class PersonRepository(
         ).rows.map { toPerson(it) }
     }
 
+    suspend fun findAllPeopleByMoviesIds(
+        moviesIds: List<Long>,
+        role: Movie.Role,
+    ): Map<Long, List<Person>> {
+        return db.execute(
+            """
+            |select mp.movie_id, p.*
+            | from people p
+            | join movies_people mp on p.id = mp.person_id
+            | where mp.movie_id = any(?) and mp.role = ?
+            |""".trimMargin(),
+            listOf(moviesIds, role.name)
+        ).rows.map { it.getLongOrFail("movie_id") to toPerson(it) }
+            .groupBy { (k, _) -> k }
+            .mapValues { (_, v) -> v.map { it.second } }
+    }
+
     suspend fun add(details: Person.Details.Tmdb): Long {
         return db.execute(
             """

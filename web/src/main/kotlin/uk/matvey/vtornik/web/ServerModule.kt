@@ -52,12 +52,14 @@ fun Application.serverModule(config: WebConfig, services: Services) {
                 services.tmdbClient,
                 services.tagRepository,
                 services.movieRepository,
+                services.personRepository,
             )
             movieRouting(
                 config,
                 services.movieService,
                 services.personRepository,
                 services.tagRepository,
+                services.tmdbClient,
             )
             tagRouting(services.tagRepository)
         }

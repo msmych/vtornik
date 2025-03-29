@@ -24,7 +24,7 @@ import uk.matvey.tmdb.TmdbClient.MovieCredits.CastItem
 import uk.matvey.tmdb.TmdbClient.MovieCredits.CrewItem
 import java.time.LocalDate
 
-class TmdbClient(engine: HttpClientEngine) {
+class TmdbClient(engine: HttpClientEngine, apiKey: String) {
 
     companion object {
         private val JSON = Json {
@@ -34,7 +34,7 @@ class TmdbClient(engine: HttpClientEngine) {
 
     private val httpClient = HttpClient(engine) {
         defaultRequest {
-            bearerAuth(System.getenv("TMDB_API_KEY"))
+            bearerAuth(apiKey)
         }
         install(ContentNegotiation) {
             json(JSON)
@@ -85,6 +85,7 @@ class TmdbClient(engine: HttpClientEngine) {
 
     @Serializable
     data class MovieCredits(
+        val id: Int,
         val cast: List<CastItem>,
         val crew: List<CrewItem>,
     ) {
@@ -100,6 +101,10 @@ class TmdbClient(engine: HttpClientEngine) {
             val name: String,
             val job: String,
         )
+    }
+
+    suspend fun getMovieCredits(movieId: Long): MovieCredits {
+        return httpClient.get("https://api.themoviedb.org/3/movie/$movieId/credits").body()
     }
 
     @Serializable

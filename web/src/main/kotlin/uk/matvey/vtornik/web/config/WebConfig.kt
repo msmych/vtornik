@@ -9,6 +9,7 @@ class WebConfig(
     val dbUsername: String,
     val dbPassword: String,
     val githubClientId: String?,
+    val tmdbApiKey: String,
 ) {
 
     enum class Profile {
@@ -28,6 +29,7 @@ class WebConfig(
                 dbUsername = System.getenv("DB_USERNAME"),
                 dbPassword = System.getenv("DB_PASSWORD"),
                 githubClientId = System.getenv("GITHUB_CLIENT_ID"),
+                tmdbApiKey = System.getenv("TMDB_API_KEY")
             )
         }
     }
