@@ -5,6 +5,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.util.getOrFail
+import kotlinx.html.a
 import kotlinx.html.button
 import kotlinx.html.div
 import kotlinx.html.h1
@@ -66,7 +67,13 @@ fun Route.movieRouting(
                                     directors.takeIf { it.isNotEmpty() }?.let { dirs ->
                                         h3 {
                                             +"Directed by "
-                                            +dirs.joinToString { it.name }
+                                            dirs.forEach {
+                                                a {
+                                                    href = "/html/movies/search?director=${it.id}"
+                                                    +it.name
+                                                }
+                                                +" "
+                                            }
                                         }
                                     }
                                     principal?.let {

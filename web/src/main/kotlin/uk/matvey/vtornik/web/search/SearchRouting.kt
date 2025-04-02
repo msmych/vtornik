@@ -28,6 +28,7 @@ import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.person.PersonRepository
 import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipal
+import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.page
@@ -92,6 +93,22 @@ fun Route.searchRouting(
                                         div(HTMX_INDICATOR) {
                                             +"Loading..."
                                         }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } ?: call.parameters["director"]?.let { director ->
+                    val principal = call.userPrincipalOrNull()
+                    val credits = tmdbClient.getPersonMovieCredits(director.toInt())
+                    call.respondHtml {
+                        page(config, principal) {
+                            credits.crew.filter { it.job == "Director" }.forEach {
+                                p {
+                                    a {
+                                        href = "/html/movies/${it.id}"
+                                        hxBoost()
+                                        +it.title
                                     }
                                 }
                             }

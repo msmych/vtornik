@@ -20,8 +20,8 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
-import uk.matvey.tmdb.TmdbClient.MovieCredits.CastItem
-import uk.matvey.tmdb.TmdbClient.MovieCredits.CrewItem
+import uk.matvey.tmdb.TmdbClient.MovieCreditsResponse.CastItem
+import uk.matvey.tmdb.TmdbClient.MovieCreditsResponse.CrewItem
 import java.time.LocalDate
 
 class TmdbClient(engine: HttpClientEngine, apiKey: String) {
@@ -84,7 +84,7 @@ class TmdbClient(engine: HttpClientEngine, apiKey: String) {
     }
 
     @Serializable
-    data class MovieCredits(
+    data class MovieCreditsResponse(
         val id: Int,
         val cast: List<CastItem>,
         val crew: List<CrewItem>,
@@ -103,8 +103,33 @@ class TmdbClient(engine: HttpClientEngine, apiKey: String) {
         )
     }
 
-    suspend fun getMovieCredits(movieId: Long): MovieCredits {
+    suspend fun getMovieCredits(movieId: Long): MovieCreditsResponse {
         return httpClient.get("https://api.themoviedb.org/3/movie/$movieId/credits").body()
+    }
+
+    @Serializable
+    data class PersonMovieCreditsResponse(
+        val id: Int,
+        val cast: List<CastItem>,
+        val crew: List<CrewItem>,
+    ) {
+
+        @Serializable
+        data class CastItem(
+            val id: Int,
+        )
+
+        @Serializable
+        data class CrewItem(
+            val id: Int,
+            val job: String,
+            val title: String,
+            @SerialName("release_date") val releaseDate: String,
+        )
+    }
+
+    suspend fun getPersonMovieCredits(personId: Int): PersonMovieCreditsResponse {
+        return httpClient.get("https://api.themoviedb.org/3/person/$personId/movie_credits").body()
     }
 
     @Serializable
