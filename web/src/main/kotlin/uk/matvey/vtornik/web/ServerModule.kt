@@ -13,8 +13,6 @@ import io.ktor.util.date.GMTDate
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.config.WebConfig.Profile
 import uk.matvey.vtornik.web.movie.movieRouting
-import uk.matvey.vtornik.web.movie.tagRouting
-import uk.matvey.vtornik.web.search.searchRouting
 
 fun Application.serverModule(config: WebConfig, services: Services) {
     val appSecret = System.getenv("APP_SECRET")
@@ -47,21 +45,14 @@ fun Application.serverModule(config: WebConfig, services: Services) {
             call.respondRedirect("/")
         }
         route("/html") {
-            searchRouting(
-                config,
-                services.tmdbClient,
-                services.tagRepository,
-                services.movieRepository,
-                services.personRepository,
-            )
             movieRouting(
-                config,
-                services.movieService,
-                services.personRepository,
-                services.tagRepository,
-                services.tmdbClient,
+                config = config,
+                movieService = services.movieService,
+                movieRepository = services.movieRepository,
+                personRepository = services.personRepository,
+                tagRepository = services.tagRepository,
+                tmdbClient = services.tmdbClient,
             )
-            tagRouting(services.tagRepository)
         }
     }
 }

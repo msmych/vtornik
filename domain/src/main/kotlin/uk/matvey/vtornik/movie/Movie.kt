@@ -32,6 +32,8 @@ data class Movie(
             val backdropPath: String? = null,
             val originalTitle: String? = null,
         ) {
+            fun originalTitle() = originalTitle.takeUnless { it == title }
+
             fun releaseDateOrNull() = releaseDate?.let { LocalDate.parse(it) }
 
             fun posterUrl() = posterPath?.let {

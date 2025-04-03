@@ -109,7 +109,7 @@ class TmdbClient(engine: HttpClientEngine, apiKey: String) {
 
     @Serializable
     data class PersonMovieCreditsResponse(
-        val id: Int,
+        val id: Long,
         val cast: List<CastItem>,
         val crew: List<CrewItem>,
     ) {
@@ -121,14 +121,22 @@ class TmdbClient(engine: HttpClientEngine, apiKey: String) {
 
         @Serializable
         data class CrewItem(
-            val id: Int,
+            val id: Long,
             val job: String,
             val title: String,
+            @SerialName("original_title") val originalTitle: String?,
             @SerialName("release_date") val releaseDate: String,
-        )
+            @SerialName("poster_path") val posterPath: String?,
+        ) {
+            fun originalTitle() = originalTitle.takeUnless { it == title }
+
+            fun posterUrl() = posterPath?.let { "https://image.tmdb.org/t/p/w440_and_h660_face$it" }
+
+            fun releaseDate() = releaseDate.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
+        }
     }
 
-    suspend fun getPersonMovieCredits(personId: Int): PersonMovieCreditsResponse {
+    suspend fun getPersonMovieCredits(personId: Long): PersonMovieCreditsResponse {
         return httpClient.get("https://api.themoviedb.org/3/person/$personId/movie_credits").body()
     }
 
@@ -142,7 +150,7 @@ class TmdbClient(engine: HttpClientEngine, apiKey: String) {
 
         @Serializable
         data class ResultItem(
-            val id: Int,
+            val id: Long,
             val title: String,
             @SerialName("release_date") val releaseDate: String,
             @SerialName("poster_path") val posterPath: String?,

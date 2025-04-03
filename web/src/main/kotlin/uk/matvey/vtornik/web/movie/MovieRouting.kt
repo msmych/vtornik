@@ -12,32 +12,47 @@ import kotlinx.html.h1
 import kotlinx.html.h3
 import kotlinx.html.img
 import kotlinx.html.p
+import uk.matvey.slon.html.hxBoost
 import uk.matvey.slon.html.hxDelete
 import uk.matvey.slon.html.hxPost
 import uk.matvey.slon.html.hxSwap
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.vtornik.movie.Movie
+import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.person.PersonRepository
 import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.config.WebConfig
+import uk.matvey.vtornik.web.movie.search.movieSearchRouting
+import uk.matvey.vtornik.web.movie.tag.movieTagRouting
 import uk.matvey.vtornik.web.page
 import uk.matvey.vtornik.web.person.personRouting
 
 fun Route.movieRouting(
     config: WebConfig,
     movieService: MovieService,
+    movieRepository: MovieRepository,
     personRepository: PersonRepository,
     tagRepository: TagRepository,
     tmdbClient: TmdbClient,
 ) {
     authJwtOptional {
         route("/movies") {
-            route("/{id}") {
+            movieSearchRouting(
+                config = config,
+                tmdbClient = tmdbClient,
+                tagRepository = tagRepository,
+                movieRepository = movieRepository,
+                personRepository = personRepository
+            )
+            route("/{movieId}") {
+                movieTagRouting(
+                    tagRepository = tagRepository,
+                )
                 get {
                     val principal = call.userPrincipalOrNull()
-                    val id = call.parameters.getOrFail("id").toLong()
+                    val id = call.parameters.getOrFail("movieId").toLong()
                     val movie = movieService.ensureMovie(id)
 
                     val directors = personRepository.findAllPeopleByMovieId(movie.id, Movie.Role.DIRECTOR)
@@ -69,6 +84,7 @@ fun Route.movieRouting(
                                             +"Directed by "
                                             dirs.forEach {
                                                 a {
+                                                    hxBoost()
                                                     href = "/html/movies/search?director=${it.id}"
                                                     +it.name
                                                 }

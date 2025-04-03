@@ -14,7 +14,7 @@ fun aSearchMovieResponse(results: List<TmdbClient.SearchMovieResponse.ResultItem
 )
 
 fun aSearchMovieResponseResultItem(
-    id: Int = Random.nextInt(),
+    id: Long = Random.nextLong(),
     title: String = randomWord(),
     releaseDate: String = LocalDate.now().toString(),
 ) = TmdbClient.SearchMovieResponse.ResultItem(
