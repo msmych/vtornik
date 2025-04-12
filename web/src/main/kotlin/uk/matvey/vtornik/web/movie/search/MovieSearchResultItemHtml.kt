@@ -56,6 +56,7 @@ fun HtmlBlockTag.movieSearchResultItemHtml(
                     hxTrigger("load")
                     hxTarget("this")
                     hxSwap("outerHTML")
+                    hxPushUrl(false)
                     hxVals {
                         put("role", "Director")
                     }

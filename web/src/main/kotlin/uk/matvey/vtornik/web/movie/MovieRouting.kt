@@ -24,10 +24,10 @@ import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.config.WebConfig
+import uk.matvey.vtornik.web.movie.person.personRouting
 import uk.matvey.vtornik.web.movie.search.movieSearchRouting
 import uk.matvey.vtornik.web.movie.tag.movieTagRouting
 import uk.matvey.vtornik.web.page
-import uk.matvey.vtornik.web.person.personRouting
 
 fun Route.movieRouting(
     config: WebConfig,

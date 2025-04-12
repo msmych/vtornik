@@ -1,4 +1,4 @@
-package uk.matvey.vtornik.web.person
+package uk.matvey.vtornik.web.movie.person
 
 import io.ktor.server.html.respondHtml
 import io.ktor.server.routing.Route
@@ -11,7 +11,7 @@ import uk.matvey.tmdb.TmdbClient
 fun Route.personRouting(tmdbClient: TmdbClient) {
     route("/people") {
         get {
-            val movieId = call.pathParameters.getOrFail("id").toLong()
+            val movieId = call.pathParameters.getOrFail("movieId").toLong()
             val role = call.parameters.getOrFail("role")
             val people = tmdbClient.getMovieCredits(movieId)
                 .crew

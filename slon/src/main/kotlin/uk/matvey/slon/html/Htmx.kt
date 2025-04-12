@@ -47,8 +47,8 @@ fun HTMLTag.hxVals(block: JsonObjectBuilder.() -> Unit) {
     })
 }
 
-fun HTMLTag.hxPushUrl() {
-    attributes["hx-push-url"] = "true"
+fun HTMLTag.hxPushUrl(value: Boolean = true) {
+    attributes["hx-push-url"] = value.toString()
 }
 
 fun HTMLTag.hxIndicator(value: String) {

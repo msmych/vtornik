@@ -80,7 +80,7 @@ fun HTML.page(
                     form(classes = "row gap-8") {
                         hxGet("/html/movies/search")
                         hxTarget("#search-results")
-                        hxIndicator("header > div.$HTMX_INDICATOR")
+                        hxIndicator("#search-indicator")
                         searchInput {
                             name = "q"
                             placeholder = "The Brutalist"
@@ -89,6 +89,7 @@ fun HTML.page(
                             value = "Search"
                         }
                         div(classes = HTMX_INDICATOR) {
+                            id = "search-indicator"
                             +"Searching..."
                         }
                     }
