@@ -16,11 +16,16 @@ fun Route.personRouting(tmdbClient: TmdbClient) {
             val people = tmdbClient.getMovieCredits(movieId)
                 .crew
                 .filter { it.job == role }
+            val peopleText = people
+                .take(3)
                 .joinToString { it.name }
             call.respondHtml {
                 body {
                     +"Directed by "
-                    +people
+                    +peopleText
+                    if (people.size > 3) {
+                        +" and ${people.size - 3} more"
+                    }
                 }
             }
         }

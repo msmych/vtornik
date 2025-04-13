@@ -57,7 +57,10 @@ fun HTML.page(
                 div("row gap-8") {
                     if (principal != null) {
                         div {
-                            +"Logged in as ${principal.username}. "
+                            +"Logged in as "
+                            b {
+                                +principal.username
+                            }
                         }
                         a {
                             href = "/logout"
@@ -84,6 +87,7 @@ fun HTML.page(
                         searchInput {
                             name = "q"
                             placeholder = "The Brutalist"
+                            required = true
                         }
                         submitInput {
                             value = "Search"

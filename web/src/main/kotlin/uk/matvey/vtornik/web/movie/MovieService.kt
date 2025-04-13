@@ -33,7 +33,7 @@ class MovieService(
             )
             val (_, crew) = movieDetails.extraCredits()
             crew.filter { it.job == "Director" }.forEach {
-                val personId = personRepository.add(
+                val personId = personRepository.ensurePerson(
                     Person.Details.Tmdb(
                         id = it.id,
                         name = it.name,

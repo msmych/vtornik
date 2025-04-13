@@ -14,11 +14,17 @@ class PersonRepository(
     private val db: SuspendingConnection,
 ) {
 
-    suspend fun getById(id: Long): Person {
+    suspend fun findById(id: Long): Person? {
         return db.execute(
             "select * from people where id = ?",
             listOf(id)
-        ).rows.single().let { toPerson(it) }
+        ).rows.singleOrNull()?.let { toPerson(it) }
+    }
+
+    suspend fun getById(id: Long): Person {
+        return requireNotNull(findById(id)) {
+            "Person with id $id was not found"
+        }
     }
 
     suspend fun findAllPeopleByMovieId(
@@ -53,8 +59,8 @@ class PersonRepository(
             .mapValues { (_, v) -> v.map { it.second } }
     }
 
-    suspend fun add(details: Person.Details.Tmdb): Long {
-        return db.execute(
+    suspend fun ensurePerson(details: Person.Details.Tmdb): Long {
+        return findById(details.id)?.id ?: db.execute(
             """
             |insert into people (id, name, details, created_at, updated_at)
             | values (?, ?, ?, now(), now())

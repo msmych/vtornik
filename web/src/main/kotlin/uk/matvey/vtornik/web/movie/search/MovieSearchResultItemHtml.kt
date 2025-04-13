@@ -49,7 +49,10 @@ fun HtmlBlockTag.movieSearchResultItemHtml(
             }
             if (directors != null) {
                 +"Directed by "
-                +directors.joinToString { person -> person.name }
+                +directors.take(3).joinToString { person -> person.name }
+                if (directors.size > 3) {
+                    +" and ${directors.size - 3} more"
+                }
             } else {
                 div {
                     hxGet("/html/movies/${movie.id}/people")
