@@ -31,6 +31,11 @@ img {
     text-overflow: ellipsis;
 }
 
+input[type="search"] {
+    height: 32px;
+    min-width: 256px;
+}
+
 .search-result-item {
     cursor: pointer;
 }
@@ -53,7 +58,9 @@ img {
 
 #search-results {
     position: absolute;
-    max-width: 660px;
-    background-color: white;
+    max-height: 420px;
+    width: 480px;
     z-index: 32;
+    overflow-y: scroll;
+    background-color: white;
 }

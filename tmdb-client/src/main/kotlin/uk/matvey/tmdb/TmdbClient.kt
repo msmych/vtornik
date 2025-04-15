@@ -85,7 +85,7 @@ class TmdbClient(engine: HttpClientEngine, apiKey: String) {
 
     @Serializable
     data class MovieCreditsResponse(
-        val id: Int,
+        val id: Long,
         val cast: List<CastItem>,
         val crew: List<CrewItem>,
     ) {

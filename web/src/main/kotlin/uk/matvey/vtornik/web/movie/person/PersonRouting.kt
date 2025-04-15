@@ -21,10 +21,12 @@ fun Route.personRouting(tmdbClient: TmdbClient) {
                 .joinToString { it.name }
             call.respondHtml {
                 body {
-                    +"Directed by "
-                    +peopleText
-                    if (people.size > 3) {
-                        +" and ${people.size - 3} more"
+                    if (peopleText.isNotEmpty()) {
+                        +"Directed by "
+                        +peopleText
+                        if (people.size > 3) {
+                            +" and ${people.size - 3} more"
+                        }
                     }
                 }
             }

@@ -40,3 +40,27 @@ fun aMovieDetailsResponse(
     backdropPath = null,
     originalTitle = null,
 )
+
+fun aMovieCreditsResponse(
+    id: Long = Random.nextLong(),
+    cast: List<TmdbClient.MovieCreditsResponse.CastItem> = (0..Random.nextInt(1, 12)).map {
+        TmdbClient.MovieCreditsResponse.CastItem(
+            id = Random.nextLong(),
+        )
+    },
+    crew: List<TmdbClient.MovieCreditsResponse.CrewItem> = (0..Random.nextInt(1, 12)).map {
+        TmdbClient.MovieCreditsResponse.CrewItem(
+            id = Random.nextLong(),
+            name = randomSentence(2),
+            job = randomWord(),
+        )
+    } + TmdbClient.MovieCreditsResponse.CrewItem(
+        id = Random.nextLong(),
+        name = randomSentence(2),
+        job = "Director"
+    ),
+) = TmdbClient.MovieCreditsResponse(
+    id =  id,
+    cast = cast,
+    crew = crew,
+)
