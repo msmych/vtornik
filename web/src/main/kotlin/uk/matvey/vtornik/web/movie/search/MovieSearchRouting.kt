@@ -64,18 +64,20 @@ fun Route.movieSearchRouting(
                     call.respondHtml {
                         page(config, principal) {
                             div("col gap-8") {
-                                credits.crew.filter { it.job == "Director" }.forEach { item ->
-                                    movieSearchResultItemHtml(
-                                        MovieSearchResultItem(
-                                            id = item.id,
-                                            title = item.title,
-                                            originalTitle = item.originalTitle(),
-                                            posterUrl = item.posterUrl(),
-                                            releaseDate = item.releaseDate(),
-                                        ),
-                                        directors = directors[item.id],
-                                    )
-                                }
+                                credits.crew.filter { it.job == "Director" }
+                                    .sortedByDescending { it.releaseDate() }
+                                    .forEach { item ->
+                                        movieSearchResultItemHtml(
+                                            MovieSearchResultItem(
+                                                id = item.id,
+                                                title = item.title,
+                                                originalTitle = item.originalTitle(),
+                                                posterUrl = item.posterUrl(),
+                                                releaseDate = item.releaseDate(),
+                                            ),
+                                            directors = directors[item.id],
+                                        )
+                                    }
                             }
                         }
                     }

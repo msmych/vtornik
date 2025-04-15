@@ -56,7 +56,7 @@ fun HtmlBlockTag.movieSearchResultItemHtml(
             } else {
                 div {
                     hxGet("/html/movies/${movie.id}/people")
-                    hxTrigger("load")
+                    hxTrigger("intersect once")
                     hxTarget("this")
                     hxSwap("outerHTML")
                     hxPushUrl(false)
