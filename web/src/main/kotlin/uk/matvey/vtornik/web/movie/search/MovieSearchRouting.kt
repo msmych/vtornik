@@ -6,7 +6,9 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.util.getOrFail
 import kotlinx.html.body
+import kotlinx.html.button
 import kotlinx.html.div
+import kotlinx.html.onClick
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
@@ -38,6 +40,10 @@ fun Route.movieSearchRouting(
                     call.respondHtml {
                         body {
                             div("col gap-8") {
+                                button {
+                                    onClick = "closePane('search-results')"
+                                    +"Close"
+                                }
                                 movies.results.forEach { movie ->
                                     movieSearchResultItemHtml(
                                         MovieSearchResultItem(

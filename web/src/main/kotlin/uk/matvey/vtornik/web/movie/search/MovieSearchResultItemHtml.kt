@@ -8,7 +8,6 @@ import kotlinx.html.img
 import kotlinx.serialization.json.put
 import uk.matvey.slon.html.HTMX_INDICATOR
 import uk.matvey.slon.html.hxGet
-import uk.matvey.slon.html.hxIndicator
 import uk.matvey.slon.html.hxPushUrl
 import uk.matvey.slon.html.hxSwap
 import uk.matvey.slon.html.hxTarget
@@ -33,7 +32,6 @@ fun HtmlBlockTag.movieSearchResultItemHtml(
         hxGet("/html/movies/${movie.id}")
         hxTarget("body")
         hxPushUrl()
-        hxIndicator("this > div.$HTMX_INDICATOR")
         img(classes = "poster", alt = movie.title) {
             src = movie.posterUrl ?: ""
         }

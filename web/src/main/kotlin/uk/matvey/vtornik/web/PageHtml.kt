@@ -44,6 +44,9 @@ fun HTML.page(
             integrity = "sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
             crossorigin = ScriptCrossorigin.anonymous
         }
+        script {
+            src = "/assets/script.js"
+        }
     }
     body("col gap-32") {
         header("col gap-16") {
