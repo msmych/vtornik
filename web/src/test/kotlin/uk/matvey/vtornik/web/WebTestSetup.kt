@@ -6,12 +6,14 @@ import io.ktor.http.HttpMessageBuilder
 import io.ktor.server.application.Application
 import io.ktor.util.date.GMTDate
 import io.ktor.util.date.plus
+import io.mockk.coEvery
 import io.mockk.mockk
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SAMESITE
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.BeforeAll
 import uk.matvey.slon.PostgresTestSetup
 import uk.matvey.tmdb.TmdbClient
+import uk.matvey.tmdb.TmdbConfiguration
 import uk.matvey.vtornik.web.config.WebConfig
 import java.time.Instant
 import kotlin.random.Random
@@ -45,6 +47,8 @@ open class WebTestSetup : PostgresTestSetup() {
 
         lateinit var config: WebConfig
 
+        val tmdbClient = mockk<TmdbClient>()
+
         @BeforeAll
         @JvmStatic
         fun setupWeb() {
@@ -61,12 +65,27 @@ open class WebTestSetup : PostgresTestSetup() {
                 githubClientId = null,
                 tmdbApiKey = "tmdbApiKey",
             )
+
+            coEvery {
+                tmdbClient.getConfiguration()
+            } returns TmdbConfiguration(
+                images = TmdbConfiguration.Images(
+                    baseUrl = "https://image.tmdb.org/t/p/",
+                    secureBaseUrl = "https://image.tmdb.org/t/p/",
+                    backdropSizes = listOf("w300", "w780", "w1280", "original"),
+                    logoSizes = listOf("w45", "w92", "w154", "w185", "w300", "original"),
+                    posterSizes = listOf("w92", "w154", "w185", "w342", "w500", "original"),
+                    profileSizes = listOf("w45", "h632", "original"),
+                    stillSizes = listOf("w300", "original"),
+                ),
+                changeKeys = listOf(),
+            )
         }
     }
 
     val services = Services(
         config = config,
-        tmdbClient = mockk<TmdbClient>(),
+        tmdbClient = tmdbClient,
     )
 
     fun Application.testServerModule() {
