@@ -13,6 +13,7 @@ fun main() {
     val config = WebConfig.fromEnv()
     val tmdbClient = TmdbClient(CIO.create { }, config.tmdbApiKey)
     val services = Services(config, tmdbClient)
+    log.info { "Loaded TMDb images config ${services.tmdbImages}" }
     val flyway = Flyway.configure()
         .dataSource(config.dbUrl, config.dbUsername, config.dbPassword)
         .cleanDisabled(false)

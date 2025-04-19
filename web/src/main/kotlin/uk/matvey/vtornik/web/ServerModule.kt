@@ -52,6 +52,7 @@ fun Application.serverModule(config: WebConfig, services: Services) {
                 personRepository = services.personRepository,
                 tagRepository = services.tagRepository,
                 tmdbClient = services.tmdbClient,
+                tmdbImages = services.tmdbImages,
             )
         }
     }

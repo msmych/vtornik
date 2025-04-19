@@ -10,6 +10,7 @@ import kotlinx.html.button
 import kotlinx.html.div
 import kotlinx.html.onClick
 import uk.matvey.tmdb.TmdbClient
+import uk.matvey.tmdb.TmdbImages
 import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.person.PersonRepository
@@ -23,6 +24,7 @@ import uk.matvey.vtornik.web.page
 fun Route.movieSearchRouting(
     config: WebConfig,
     tmdbClient: TmdbClient,
+    tmdbImages: TmdbImages,
     tagRepository: TagRepository,
     movieRepository: MovieRepository,
     personRepository: PersonRepository,
@@ -50,7 +52,9 @@ fun Route.movieSearchRouting(
                                             id = movie.id,
                                             title = movie.title,
                                             originalTitle = movie.originalTitle(),
-                                            posterUrl = movie.posterUrl(),
+                                            posterUrl = movie.posterPath?.let {
+                                                tmdbImages.posterUrl(it, "w92")
+                                            },
                                             releaseDate = movie.releaseDate(),
                                         ),
                                         directors[movie.id],
@@ -78,7 +82,9 @@ fun Route.movieSearchRouting(
                                                 id = item.id,
                                                 title = item.title,
                                                 originalTitle = item.originalTitle(),
-                                                posterUrl = item.posterUrl(),
+                                                posterUrl = item.posterPath?.let {
+                                                    tmdbImages.posterUrl(it, "w92")
+                                                },
                                                 releaseDate = item.releaseDate(),
                                             ),
                                             directors = directors[item.id],
@@ -105,7 +111,9 @@ fun Route.movieSearchRouting(
                                             id = movie.id,
                                             title = movie.title,
                                             originalTitle = movie.details.tmdb?.originalTitle(),
-                                            posterUrl = movie.details.tmdb?.posterUrl(),
+                                            posterUrl = movie.details.tmdb?.posterPath?.let {
+                                                tmdbImages.posterUrl(it, "w92")
+                                            },
                                             releaseDate = movie.details.tmdb?.releaseDateOrNull(),
                                         ),
                                         directors = directors[movie.id],

@@ -17,6 +17,7 @@ import uk.matvey.slon.html.hxDelete
 import uk.matvey.slon.html.hxPost
 import uk.matvey.slon.html.hxSwap
 import uk.matvey.tmdb.TmdbClient
+import uk.matvey.tmdb.TmdbImages
 import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.person.PersonRepository
@@ -36,6 +37,7 @@ fun Route.movieRouting(
     personRepository: PersonRepository,
     tagRepository: TagRepository,
     tmdbClient: TmdbClient,
+    tmdbImages: TmdbImages,
 ) {
     authJwtOptional {
         route("/movies") {
@@ -44,7 +46,8 @@ fun Route.movieRouting(
                 tmdbClient = tmdbClient,
                 tagRepository = tagRepository,
                 movieRepository = movieRepository,
-                personRepository = personRepository
+                personRepository = personRepository,
+                tmdbImages = tmdbImages,
             )
             route("/{movieId}") {
                 movieTagRouting(
@@ -66,7 +69,9 @@ fun Route.movieRouting(
                         page(config, principal) {
                             div("row gap-8 movie-page") {
                                 img(classes = "poster", alt = movie.title) {
-                                    src = movie.details.tmdb?.posterUrl() ?: ""
+                                    src = movie.details.tmdb?.posterPath?.let {
+                                        tmdbImages.posterUrl(it, "w500")
+                                    } ?: ""
                                     alt = movie.title
                                 }
                                 div {

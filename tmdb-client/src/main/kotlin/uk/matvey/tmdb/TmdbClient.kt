@@ -24,7 +24,10 @@ import uk.matvey.tmdb.TmdbClient.MovieCreditsResponse.CastItem
 import uk.matvey.tmdb.TmdbClient.MovieCreditsResponse.CrewItem
 import java.time.LocalDate
 
-class TmdbClient(engine: HttpClientEngine, apiKey: String) {
+class TmdbClient(
+    engine: HttpClientEngine,
+    apiKey: String,
+) {
 
     companion object {
         private val JSON = Json {
@@ -43,6 +46,10 @@ class TmdbClient(engine: HttpClientEngine, apiKey: String) {
             logger = Logger.DEFAULT
             level = LogLevel.INFO
         }
+    }
+
+    suspend fun getConfiguration(): TmdbConfiguration {
+        return httpClient.get("https://api.themoviedb.org/3/configuration").body()
     }
 
     @Serializable
@@ -130,8 +137,6 @@ class TmdbClient(engine: HttpClientEngine, apiKey: String) {
         ) {
             fun originalTitle() = originalTitle.takeUnless { it == title }
 
-            fun posterUrl() = posterPath?.let { "https://image.tmdb.org/t/p/w440_and_h660_face$it" }
-
             fun releaseDate() = releaseDate.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
         }
     }
@@ -158,8 +163,6 @@ class TmdbClient(engine: HttpClientEngine, apiKey: String) {
             @SerialName("original_title") val originalTitle: String?,
         ) {
             fun releaseDate() = releaseDate.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
-
-            fun posterUrl() = posterPath?.let { "https://image.tmdb.org/t/p/w440_and_h660_face$it" }
 
             fun originalTitle() = originalTitle.takeUnless { it == title }
         }

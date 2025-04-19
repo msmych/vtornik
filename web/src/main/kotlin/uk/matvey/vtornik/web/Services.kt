@@ -2,7 +2,9 @@ package uk.matvey.vtornik.web
 
 import com.github.jasync.sql.db.asSuspending
 import com.github.jasync.sql.db.postgresql.PostgreSQLConnectionBuilder.createConnectionPool
+import kotlinx.coroutines.runBlocking
 import uk.matvey.tmdb.TmdbClient
+import uk.matvey.tmdb.TmdbImages
 import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.person.MoviePersonRepository
 import uk.matvey.vtornik.person.PersonRepository
@@ -29,6 +31,12 @@ class Services(
     val tagRepository = TagRepository(db)
     val personRepository = PersonRepository(db)
     val moviePersonRepository = MoviePersonRepository(db)
+
+    val tmdbImages = TmdbImages(
+        runBlocking {
+            tmdbClient.getConfiguration().images
+        }
+    )
 
     val auth = Auth(config)
     val movieService = MovieService(
