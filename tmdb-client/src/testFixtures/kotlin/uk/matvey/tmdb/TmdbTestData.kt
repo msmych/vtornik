@@ -30,11 +30,13 @@ fun aMovieDetailsResponse(
     id: Long = Random.nextLong(),
     overview: String = randomParagraph(),
     title: String = randomSentence(),
+    runtime: Int = Random.nextInt(70, 300),
     releaseDate: String = LocalDate.now().toString(),
 ) = TmdbClient.MovieDetailsResponse(
     id = id,
     overview = overview,
     title = title,
+    runtime = runtime,
     releaseDate = releaseDate,
     posterPath = null,
     backdropPath = null,

@@ -9,6 +9,7 @@ import kotlinx.html.a
 import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.h3
+import kotlinx.html.i
 import kotlinx.html.img
 import kotlinx.html.p
 import uk.matvey.slon.html.hxBoost
@@ -76,6 +77,13 @@ fun Route.movieRouting(
                                     h1 {
                                         +movie.title
                                     }
+                                    movie.details.tmdb?.originalTitle()?.let {
+                                        h3 {
+                                            i {
+                                                +it
+                                            }
+                                        }
+                                    }
                                     movie.year?.let {
                                         h3 {
                                             +"Released in "
@@ -94,6 +102,11 @@ fun Route.movieRouting(
                                                 +" "
                                             }
                                         }
+                                    }
+                                    h3 {
+                                        +"Run time: "
+                                        +movie.runtime.toString()
+                                        +" minutes"
                                     }
                                     principal?.let {
                                         div("row gap-8") {

@@ -23,7 +23,7 @@ fun Route.movieTagRouting(tagRepository: TagRepository) {
                     tagRepository.add(principal.id, movieId, tag)
                     call.respondHtml {
                         body {
-                            tagToggle(movieId, STANDARD_TAGS.first { it.tag == tag}, true)
+                            tagToggle(movieId, STANDARD_TAGS.first { it.tag == tag }, true)
                         }
                     }
                 }
@@ -34,7 +34,7 @@ fun Route.movieTagRouting(tagRepository: TagRepository) {
                     tagRepository.delete(principal.id, movieId, tag)
                     call.respondHtml {
                         body {
-                            tagToggle(movieId, STANDARD_TAGS.first { it.tag == tag}, false)
+                            tagToggle(movieId, STANDARD_TAGS.first { it.tag == tag }, false)
                         }
                     }
                 }

@@ -25,6 +25,7 @@ class MovieService(
                     id = tmdbMovieId,
                     title = movieDetails.title,
                     overview = movieDetails.overview,
+                    runtime = movieDetails.runtime,
                     releaseDate = movieDetails.releaseDate()?.toString(),
                     posterPath = movieDetails.posterPath,
                     backdropPath = movieDetails.backdropPath,

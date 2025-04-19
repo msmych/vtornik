@@ -5,6 +5,7 @@ import com.github.jasync.sql.db.SuspendingConnection
 import kotlinx.serialization.json.Json
 import uk.matvey.slon.sql.execute
 import uk.matvey.slon.sql.getDateOrFail
+import uk.matvey.slon.sql.getIntOrFail
 import uk.matvey.slon.sql.getLongOrFail
 import uk.matvey.slon.sql.getStringOrFail
 import java.time.ZoneOffset.UTC
@@ -34,13 +35,14 @@ class MovieRepository(
     suspend fun add(details: Movie.Details.Tmdb): Long {
         return db.execute(
             """
-                |insert into movies (id, title, year, details, created_at, updated_at)
-                | values (?, ?, ?, ?, now(), now())
+                |insert into movies (id, title, runtime, year, details, created_at, updated_at)
+                | values (?, ?, ?, ?, ?, now(), now())
                 | returning id
                 |""".trimMargin(),
             listOf(
                 details.id,
                 details.title,
+                details.runtime,
                 details.releaseDateOrNull()?.year,
                 Json.encodeToString(Movie.Details(tmdb = details)),
             )
@@ -52,6 +54,7 @@ class MovieRepository(
         return Movie(
             id = data.getLongOrFail("id"),
             title = data.getStringOrFail("title"),
+            runtime = data.getIntOrFail("runtime"),
             year = details.tmdb?.releaseDateOrNull()?.year,
             details = details,
             createdAt = data.getDateOrFail("created_at").toInstant(UTC),

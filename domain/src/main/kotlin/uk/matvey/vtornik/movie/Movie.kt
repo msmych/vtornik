@@ -7,6 +7,7 @@ import java.time.LocalDate
 data class Movie(
     val id: Long,
     val title: String,
+    val runtime: Int,
     val year: Int?,
     val details: Details,
     val createdAt: Instant,
@@ -26,6 +27,7 @@ data class Movie(
         data class Tmdb(
             val id: Long,
             val title: String,
+            val runtime: Int,
             val overview: String,
             val releaseDate: String? = null,
             val posterPath: String? = null,

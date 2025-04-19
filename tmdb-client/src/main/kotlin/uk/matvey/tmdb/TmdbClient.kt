@@ -57,6 +57,7 @@ class TmdbClient(
         val id: Long,
         val overview: String,
         val title: String,
+        val runtime: Int,
         @SerialName("release_date") val releaseDate: String,
         @SerialName("poster_path") val posterPath: String?,
         @SerialName("backdrop_path") val backdropPath: String?,
