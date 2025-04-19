@@ -12,7 +12,6 @@ import io.ktor.server.routing.Route
 import io.ktor.util.date.GMTDate
 import io.ktor.util.date.plus
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SAMESITE
-import uk.matvey.vtornik.web.UserPrincipal
 import uk.matvey.vtornik.web.config.WebConfig
 import java.time.Instant
 import kotlin.time.Duration.Companion.days

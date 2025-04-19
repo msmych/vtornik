@@ -26,7 +26,9 @@ import uk.matvey.slon.html.hxGet
 import uk.matvey.slon.html.hxIndicator
 import uk.matvey.slon.html.hxTarget
 import uk.matvey.slon.html.hxVals
+import uk.matvey.vtornik.web.auth.UserPrincipal
 import uk.matvey.vtornik.web.config.WebConfig
+import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
 
 fun HTML.page(
     config: WebConfig,
@@ -103,16 +105,15 @@ fun HTML.page(
                 }
                 div("row gap-8") {
                     principal?.let {
-                        setOf("watchlist", "watched").forEach {
+                        STANDARD_TAGS.forEach { tag ->
                             a {
                                 href = "/html/movies/search"
                                 hxBoost()
                                 hxVals {
-                                    put("tag", it)
+                                    put("tag", tag.tag)
                                 }
-                                +it
+                                +tag.label
                             }
-                            +" "
                         }
                     }
                 }

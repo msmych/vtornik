@@ -1,4 +1,4 @@
-package uk.matvey.vtornik.web
+package uk.matvey.vtornik.web.auth
 
 import com.auth0.jwt.interfaces.DecodedJWT
 import io.ktor.server.application.ApplicationCall

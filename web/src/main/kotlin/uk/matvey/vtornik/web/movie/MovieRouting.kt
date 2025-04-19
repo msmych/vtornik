@@ -6,28 +6,26 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.util.getOrFail
 import kotlinx.html.a
-import kotlinx.html.button
 import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.h3
 import kotlinx.html.img
 import kotlinx.html.p
 import uk.matvey.slon.html.hxBoost
-import uk.matvey.slon.html.hxDelete
-import uk.matvey.slon.html.hxPost
-import uk.matvey.slon.html.hxSwap
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.tmdb.TmdbImages
 import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.person.PersonRepository
 import uk.matvey.vtornik.tag.TagRepository
-import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
+import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.movie.person.personRouting
 import uk.matvey.vtornik.web.movie.search.movieSearchRouting
+import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
 import uk.matvey.vtornik.web.movie.tag.movieTagRouting
+import uk.matvey.vtornik.web.movie.tag.tagToggle
 import uk.matvey.vtornik.web.page
 
 fun Route.movieRouting(
@@ -99,22 +97,8 @@ fun Route.movieRouting(
                                     }
                                     principal?.let {
                                         div("row gap-8") {
-                                            setOf("watchlist", "watched").forEach { tag ->
-                                                if (movieTags?.contains(tag) == true) {
-                                                    button {
-                                                        hxDelete("/html/movies/${movie.id}/tags/$tag")
-                                                        hxSwap("outerHTML")
-                                                        +"Remove from "
-                                                        +tag
-                                                    }
-                                                } else {
-                                                    button {
-                                                        hxPost("/html/movies/${movie.id}/tags/$tag")
-                                                        hxSwap("outerHTML")
-                                                        +"Add to "
-                                                        +tag
-                                                    }
-                                                }
+                                            STANDARD_TAGS.forEach { tag ->
+                                                tagToggle(movie.id, tag, movieTags?.contains(tag.tag) == true)
                                             }
                                         }
                                     }

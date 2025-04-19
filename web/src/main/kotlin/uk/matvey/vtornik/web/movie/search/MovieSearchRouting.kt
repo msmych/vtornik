@@ -15,9 +15,9 @@ import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.person.PersonRepository
 import uk.matvey.vtornik.tag.TagRepository
-import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipal
-import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
+import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipal
+import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.page
 

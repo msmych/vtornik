@@ -7,13 +7,10 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.util.getOrFail
 import kotlinx.html.body
-import kotlinx.html.button
-import uk.matvey.slon.html.hxDelete
-import uk.matvey.slon.html.hxPost
-import uk.matvey.slon.html.hxSwap
 import uk.matvey.vtornik.tag.TagRepository
-import uk.matvey.vtornik.web.UserPrincipal.Companion.userPrincipal
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtRequired
+import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipal
+import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
 
 fun Route.movieTagRouting(tagRepository: TagRepository) {
     authJwtRequired {
@@ -26,12 +23,7 @@ fun Route.movieTagRouting(tagRepository: TagRepository) {
                     tagRepository.add(principal.id, movieId, tag)
                     call.respondHtml {
                         body {
-                            button {
-                                hxDelete("/html/movies/$movieId/tags/$tag")
-                                hxSwap("outerHTML")
-                                +"Remove from "
-                                +tag
-                            }
+                            tagToggle(movieId, STANDARD_TAGS.first { it.tag == tag}, true)
                         }
                     }
                 }
@@ -42,12 +34,7 @@ fun Route.movieTagRouting(tagRepository: TagRepository) {
                     tagRepository.delete(principal.id, movieId, tag)
                     call.respondHtml {
                         body {
-                            button {
-                                hxPost("/html/movies/$movieId/tags/$tag")
-                                hxSwap("outerHTML")
-                                +"Add to "
-                                +tag
-                            }
+                            tagToggle(movieId, STANDARD_TAGS.first { it.tag == tag}, false)
                         }
                     }
                 }
