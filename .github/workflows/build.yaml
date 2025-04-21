@@ -40,5 +40,25 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          script: echo "Echo from Vtornik host"
+          script: |
+            echo "Echo from Vtornik host"
+            mkdir ~/vtornik
+            cd ~/vtornik
+            docker-compose.yaml <<EOF
+            version: '3.7'
 
+            services:
+              web:
+                image: msmych/vtornik:latest
+                ports:
+                  - "8080:8080"
+                environment:
+                  PROFILE: DEV
+                  APP_SECRET: ${DEV_APP_SECRET}
+                  DB_URL: ${DEV_DB_URL}
+                  DB_USERNAME: ${DEV_DB_USERNAME}
+                  DB_PASSWORD: ${DEV_DB_PASSWOjRD}
+                  GITHUB_CLIENT_ID: ${DEV_GITHUB_CLIENT_ID}
+                  TMDB_API_KEY: ${DEV_TMDB_API_KEY}
+            EOF
+            cat docker-compose.yaml
