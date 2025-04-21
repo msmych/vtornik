@@ -60,6 +60,7 @@ jobs:
                   GITHUB_CLIENT_SECRET: ${DEV_GITHUB_CLIENT_SECRET}
                   TMDB_API_KEY: ${DEV_TMDB_API_KEY}
             EOL
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
             DEV_APP_SECRET="${{ secrets.DEV_APP_SECRET }}" \
               DB_URL="${{ secrets.DEV_DB_URL }}" \
               DB_USERNAME="${{ secrets.DEV_DB_USERNAME }}" \
@@ -67,5 +68,4 @@ jobs:
               GITHUB_CLIENT_ID="${{ secrets.DEV_GITHUB_CLIENT_ID }}" \
               GITHUB_CLIENT_SECRET="${{ secrets.DEV_GITHUB_CLIENT_SECRET }}" \
               TMDB_API_KEY="${{ secrets.DEV_TMDB_API_KEY }}" \
-            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
             docker compose up -d 
