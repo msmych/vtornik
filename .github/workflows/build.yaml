@@ -44,7 +44,7 @@ jobs:
             echo "Echo from Vtornik host"
             mkdir ~/vtornik
             cd ~/vtornik
-            docker-compose.yaml <<EOF
+            cat > docker-compose.yaml << EOL
             version: '3.7'
 
             services:
@@ -60,5 +60,5 @@ jobs:
                   DB_PASSWORD: ${DEV_DB_PASSWOjRD}
                   GITHUB_CLIENT_ID: ${DEV_GITHUB_CLIENT_ID}
                   TMDB_API_KEY: ${DEV_TMDB_API_KEY}
-            EOF
+            EOL
             cat docker-compose.yaml
