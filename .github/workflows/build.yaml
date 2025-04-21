@@ -45,11 +45,9 @@ jobs:
             mkdir ~/vtornik || true
             cd ~/vtornik
             cat > docker-compose.yaml << EOL
-            version: '3.7'
-
             services:
               web:
-                image: msmych/vtornik:latest
+                image: msmych/vtornik-web:latest
                 ports:
                   - "8080:8080"
                 environment:
