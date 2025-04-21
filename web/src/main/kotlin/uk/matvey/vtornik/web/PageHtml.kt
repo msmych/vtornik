@@ -16,7 +16,6 @@ import kotlinx.html.main
 import kotlinx.html.script
 import kotlinx.html.searchInput
 import kotlinx.html.section
-import kotlinx.html.submitInput
 import kotlinx.html.title
 import kotlinx.serialization.json.put
 import uk.matvey.slon.html.HTMX_INDICATOR
@@ -25,6 +24,7 @@ import uk.matvey.slon.html.hxBoost
 import uk.matvey.slon.html.hxGet
 import uk.matvey.slon.html.hxIndicator
 import uk.matvey.slon.html.hxTarget
+import uk.matvey.slon.html.hxTrigger
 import uk.matvey.slon.html.hxVals
 import uk.matvey.vtornik.web.auth.UserPrincipal
 import uk.matvey.vtornik.web.config.WebConfig
@@ -87,15 +87,13 @@ fun HTML.page(
                 search {
                     form(classes = "row gap-8") {
                         hxGet("/html/movies/search")
+                        hxTrigger("submit, input changed delay:500ms")
                         hxTarget("#search-results")
                         hxIndicator("#search-indicator")
                         searchInput {
                             name = "q"
-                            placeholder = "The Brutalist"
+                            placeholder = "Perfect Days"
                             required = true
-                        }
-                        submitInput {
-                            value = "Search"
                         }
                         div(classes = HTMX_INDICATOR) {
                             id = "search-indicator"

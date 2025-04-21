@@ -116,6 +116,18 @@ class TmdbClient(
     }
 
     @Serializable
+    data class PersonDetailsResponse(
+        val id: Long,
+        val name: String,
+        val birthday: String,
+        val deathday: String?,
+    )
+
+    suspend fun getPersonDetails(personId: Long): PersonDetailsResponse {
+        return httpClient.get("https://api.themoviedb.org/3/person/$personId").body()
+    }
+
+    @Serializable
     data class PersonMovieCreditsResponse(
         val id: Long,
         val cast: List<CastItem>,

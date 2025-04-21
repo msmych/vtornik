@@ -8,6 +8,7 @@ import io.ktor.server.util.getOrFail
 import kotlinx.html.body
 import kotlinx.html.button
 import kotlinx.html.div
+import kotlinx.html.h3
 import kotlinx.html.onClick
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.tmdb.TmdbImages
@@ -19,6 +20,7 @@ import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipal
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.config.WebConfig
+import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
 import uk.matvey.vtornik.web.page
 
 fun Route.movieSearchRouting(
@@ -65,14 +67,18 @@ fun Route.movieSearchRouting(
                     }
                 } else if (call.parameters.contains("director")) {
                     val principal = call.userPrincipalOrNull()
-                    val director = call.parameters.getOrFail("director").toLong()
-                    val credits = tmdbClient.getPersonMovieCredits(director)
+                    val directorId = call.parameters.getOrFail("director").toLong()
+                    val directorDetails = tmdbClient.getPersonDetails(directorId)
+                    val credits = tmdbClient.getPersonMovieCredits(directorId)
                     val directors = personRepository.findAllPeopleByMoviesIds(
                         credits.crew.filter { it.job == "Director" }.map { it.id },
                         Movie.Role.DIRECTOR
                     )
                     call.respondHtml {
                         page(config, principal) {
+                            h3 {
+                                +"Movies directed by ${directorDetails.name}"
+                            }
                             div("col gap-8") {
                                 credits.crew.filter { it.job == "Director" }
                                     .sortedByDescending { it.releaseDate() }
@@ -104,6 +110,9 @@ fun Route.movieSearchRouting(
                     )
                     call.respondHtml {
                         page(config, principal) {
+                            h3 {
+                                +(STANDARD_TAGS.find { it.tag == tag }?.label ?: tag)
+                            }
                             div("col gap-8") {
                                 movies.forEach { movie ->
                                     movieSearchResultItemHtml(
