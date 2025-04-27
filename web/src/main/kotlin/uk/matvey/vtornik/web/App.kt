@@ -12,6 +12,7 @@ private val log = KotlinLogging.logger("uk.matvey.vtornik.web.App")
 fun main() {
     val config = WebConfig.fromEnv()
     val tmdbClient = TmdbClient(CIO.create { }, config.tmdbApiKey)
+    log.info { "DB URL len: ${config.dbUrl.length}" }
     val services = Services(config, tmdbClient)
     val flyway = Flyway.configure()
         .dataSource(config.dbUrl, config.dbUsername, config.dbPassword)
