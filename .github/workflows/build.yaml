@@ -52,13 +52,13 @@ jobs:
                   - "8080:8080"
                 environment:
                   PROFILE: DEV
-                  APP_SECRET: '${DEV_APP_SECRET}'
-                  DB_URL: '${DEV_DB_URL}'
-                  DB_USERNAME: '${DEV_DB_USERNAME}'
-                  DB_PASSWORD: '${DEV_DB_PASSWOjRD}'
-                  GITHUB_CLIENT_ID: '${DEV_GITHUB_CLIENT_ID}'
-                  GITHUB_CLIENT_SECRET: '${DEV_GITHUB_CLIENT_SECRET}'
-                  TMDB_API_KEY: '${DEV_TMDB_API_KEY}'
+                  APP_SECRET: $${DEV_APP_SECRET}
+                  DB_URL: $${DEV_DB_URL}
+                  DB_USERNAME: $${DEV_DB_USERNAME}
+                  DB_PASSWORD: $${DEV_DB_PASSWOjRD}
+                  GITHUB_CLIENT_ID: $${DEV_GITHUB_CLIENT_ID}
+                  GITHUB_CLIENT_SECRET: $${DEV_GITHUB_CLIENT_SECRET}
+                  TMDB_API_KEY: $${DEV_TMDB_API_KEY}
             EOL
             cat docker-compose.yaml
             echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
