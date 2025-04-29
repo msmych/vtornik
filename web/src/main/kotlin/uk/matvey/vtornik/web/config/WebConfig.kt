@@ -19,6 +19,11 @@ class WebConfig(
 
     fun jwtAlgorithm(): Algorithm = Algorithm.HMAC256(appSecret)
 
+    fun dbSchema() = when (profile) {
+        Profile.DEV -> "dev_vtornik"
+        Profile.MOCK -> "public"
+    }
+
     companion object {
 
         fun fromEnv(): WebConfig {
