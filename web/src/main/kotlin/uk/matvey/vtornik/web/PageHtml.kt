@@ -13,6 +13,7 @@ import kotlinx.html.header
 import kotlinx.html.id
 import kotlinx.html.link
 import kotlinx.html.main
+import kotlinx.html.meta
 import kotlinx.html.script
 import kotlinx.html.searchInput
 import kotlinx.html.section
@@ -37,6 +38,10 @@ fun HTML.page(
 ) {
     head {
         title("Vtornik")
+        meta {
+            name = "viewport"
+            content = "width=device-width, initial-scale=1.0"
+        }
         link {
             rel = "stylesheet"
             href = "/assets/styles.css"

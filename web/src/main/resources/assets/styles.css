@@ -4,6 +4,10 @@ body {
     color: white;
 }
 
+a {
+    color: lightpink;
+}
+
 .row {
     display: flex;
     flex-direction: row;
@@ -51,6 +55,7 @@ input[type="search"] {
 }
 
 .search-result-item > img.poster {
+    min-width: 46px;
     width: 46px;
     height: 69px;
 }
