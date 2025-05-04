@@ -90,4 +90,4 @@ jobs:
               DEV_GITHUB_CLIENT_ID="${{ secrets.DEV_GITHUB_CLIENT_ID }}" \
               DEV_GITHUB_CLIENT_SECRET="${{ secrets.DEV_GITHUB_CLIENT_SECRET }}" \
               DEV_TMDB_API_KEY="${{ secrets.DEV_TMDB_API_KEY }}" \
-              docker compose up -d 
+              docker compose up --pull -d 
