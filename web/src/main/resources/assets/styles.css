@@ -60,11 +60,22 @@ input[type="search"] {
     height: 69px;
 }
 
+.movie-page {
+    flex-wrap: wrap;
+}
+
 .movie-page > img.poster {
-    min-width: 220px;
-    max-width: 440px;
-    min-height: 330px;
-    max-height: 660px;
+    min-width: 240px;
+    width: 240px;
+    height: 360px;
+}
+
+.movie-details {
+    min-width: 360px;
+}
+
+.movie-details > p {
+    max-width: 480px;
 }
 
 #search-results {

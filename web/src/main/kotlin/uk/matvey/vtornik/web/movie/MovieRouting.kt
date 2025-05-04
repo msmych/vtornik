@@ -73,7 +73,7 @@ fun Route.movieRouting(
                                     } ?: "https://jjmkhlzlxgdlgnbxprgz.supabase.co/storage/v1/object/public/vtornik//no-poster.jpg"
                                     alt = movie.title
                                 }
-                                div {
+                                div("movie-details") {
                                     h1 {
                                         +movie.title
                                     }
