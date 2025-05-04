@@ -68,7 +68,7 @@ jobs:
               web:
                 image: msmych/vtornik-web:latest
                 ports:
-                  - "8080:8080"
+                  - "8443:8443"
                 volumes:
                   - /etc/letsencrypt/live/matvey.uk:/certs
                 environment:
