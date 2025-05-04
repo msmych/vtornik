@@ -41,6 +41,27 @@ fun HTML.page(
             rel = "stylesheet"
             href = "/assets/styles.css"
         }
+        link {
+            rel = "apple-touch-icon"
+            sizes = "180x180"
+            href = "${config.assetsUrl}/favicon/apple-touch-icon.png"
+        }
+        link {
+            rel = "icon"
+            type = "image/png"
+            sizes = "32x32"
+            href = "${config.assetsUrl}/favicon/favicon-32x32.png"
+        }
+        link {
+            rel = "icon"
+            type = "image/png"
+            sizes = "16x16"
+            href = "${config.assetsUrl}/favicon/favicon-16x16.png"
+        }
+        link {
+            rel = "manifest"
+            href = "${config.assetsUrl}/favicon/site.webmanifest"
+        }
         script {
             src = "https://unpkg.com/htmx.org@2.0.4"
             integrity = "sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"

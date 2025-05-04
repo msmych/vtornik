@@ -23,6 +23,7 @@ fun main() {
         dbUrl = System.getenv("DB_URL"),
         dbUsername = System.getenv("DB_USERNAME"),
         dbPassword = System.getenv("DB_PASSWORD"),
+        assetsUrl = System.getenv("ASSETS_URL"),
         githubClientId = "githubClientId",
         tmdbApiKey = "tmdbApiKey",
     )

@@ -9,6 +9,7 @@ class WebConfig(
     val dbUrl: String,
     val dbUsername: String,
     val dbPassword: String,
+    val assetsUrl: String,
     val githubClientId: String?,
     val tmdbApiKey: String,
 ) {
@@ -39,6 +40,7 @@ class WebConfig(
                 dbUrl = System.getenv("DB_URL"),
                 dbUsername = System.getenv("DB_USERNAME"),
                 dbPassword = System.getenv("DB_PASSWORD"),
+                assetsUrl = System.getenv("ASSETS_URL"),
                 githubClientId = System.getenv("GITHUB_CLIENT_ID"),
                 tmdbApiKey = System.getenv("TMDB_API_KEY")
             )
