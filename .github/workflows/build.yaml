@@ -46,7 +46,7 @@ jobs:
               -in /etc/letsencrypt/live/matvey.uk/fullchain.pem \
               -inkey /etc/letsencrypt/live/matvey.uk/privkey.pem \
               -out /etc/letsencrypt/live/matvey.uk/keystore.p12 \
-              -name matvey-p12 \
+              -name vtornik-p12 \
               -CAfile /etc/letsencrypt/live/matvey.uk/chain.pem \
               -caname "matvey-letsencrypt" \
               -passout "pass:${{ secrets.JKS_PASS }}"
@@ -58,7 +58,7 @@ jobs:
               -srckeystore /etc/letsencrypt/live/matvey.uk/keystore.p12 \
               -srcstoretype PKCS12 \
               -srcstorepass "${{ secrets.JKS_PASS }}" \
-              -alias matvey-p12 \
+              -alias vtornik-p12 \
               -noprompt
             sudo chmod 644 /etc/letsencrypt/live/matvey.uk/keystore.jks
             mkdir ~/vtornik || true
