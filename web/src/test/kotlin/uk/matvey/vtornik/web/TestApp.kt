@@ -19,6 +19,7 @@ fun main() {
     val config = WebConfig(
         profile = WebConfig.Profile.MOCK,
         appSecret = "appSecret",
+        jksPass = null,
         dbUrl = System.getenv("DB_URL"),
         dbUsername = System.getenv("DB_USERNAME"),
         dbPassword = System.getenv("DB_PASSWORD"),

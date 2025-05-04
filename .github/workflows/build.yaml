@@ -41,7 +41,25 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            echo "Echo from Vtornik host"
+            sudo openssl pkcs12 -export \
+              -in /etc/letsencrypt/live/matvey.uk/fullchain.pem \
+              -inkey /etc/letsencrypt/live/matvey.uk/privkey.pem \
+              -out /etc/letsencrypt/live/matvey.uk/keystore.p12 \
+              -name matvey-p12 \
+              -CAfile /etc/letsencrypt/live/matvey.uk/chain.pem \
+              -caname "matvey-letsencrypt" \
+              -passout "pass:${{ secrets.JKS_PASS }}"
+            sudo chmod 644 /etc/letsencrypt/live/matvey.uk/keystore.p12
+            sudo keytool -importkeystore \
+              -deststorepass "${{ secrets.JKS_PASS }}" \
+              -destkeypass "${{ secrets.JKS_PASS }}" \
+              -destkeystore /etc/letsencrypt/live/matvey.uk/keystore.jks \
+              -srckeystore /etc/letsencrypt/live/matvey.uk/keystore.p12 \
+              -srcstoretype PKCS12 \
+              -srcstorepass "${{ secrets.JKS_PASS }}" \
+              -alias matvey-p12 \
+              -noprompt
+            sudo chmod 644 /etc/letsencrypt/live/matvey.uk/keystore.jks
             mkdir ~/vtornik || true
             cd ~/vtornik
             cat > docker-compose.yaml << EOL
@@ -50,8 +68,10 @@ jobs:
                 image: msmych/vtornik-web:latest
                 ports:
                   - "8080:8080"
+                volumes:
+                  - /etc/letsencrypt/live/matvey.uk:/certs
                 environment:
-                  PROFILE: DEV
+                  PROFILE: PROD
                   APP_SECRET: \${DEV_APP_SECRET}
                   DB_URL: \${DEV_DB_URL}
                   DB_USERNAME: \${DEV_DB_USERNAME}

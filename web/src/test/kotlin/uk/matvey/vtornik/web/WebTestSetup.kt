@@ -59,6 +59,7 @@ open class WebTestSetup : PostgresTestSetup() {
             config = WebConfig(
                 profile = WebConfig.Profile.MOCK,
                 appSecret = "appSecret",
+                jksPass = null,
                 dbUrl = postgres.jdbcUrl,
                 dbUsername = postgres.username,
                 dbPassword = postgres.password,
