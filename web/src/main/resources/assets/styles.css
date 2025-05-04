@@ -78,11 +78,11 @@ input[type="search"] {
     max-width: 480px;
 }
 
-#search-results {
-    position: absolute;
-    max-height: 420px;
-    width: 480px;
-    z-index: 32;
-    overflow-y: scroll;
-    background-color: black;
-}
+/*#search-results {*/
+/*    position: absolute;*/
+/*    max-height: 420px;*/
+/*    width: 480px;*/
+/*    z-index: 32;*/
+/*    overflow-y: scroll;*/
+/*    background-color: black;*/
+/*}*/

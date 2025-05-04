@@ -65,7 +65,7 @@ class MovieTest : WebTestSetup() {
         // then
         assertThat(rs.status).isEqualTo(OK)
         assertThat(rs.bodyAsText())
-            .contains("Watch list")
+            .contains("Watchlist")
             .contains("Watched")
     }
 }

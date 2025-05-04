@@ -9,7 +9,7 @@ class TagView(
 
         val WATCHLIST_TAG = TagView(
             tag = "watchlist",
-            label = "Watch list",
+            label = "Watchlist",
         )
 
         val WATCHED_TAG = TagView(

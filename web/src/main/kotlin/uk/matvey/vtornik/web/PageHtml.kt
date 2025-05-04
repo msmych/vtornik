@@ -23,7 +23,7 @@ import uk.matvey.slon.html.HTMX_INDICATOR
 import uk.matvey.slon.html.SEARCH.Companion.search
 import uk.matvey.slon.html.hxBoost
 import uk.matvey.slon.html.hxGet
-import uk.matvey.slon.html.hxIndicator
+import uk.matvey.slon.html.hxPushUrl
 import uk.matvey.slon.html.hxTarget
 import uk.matvey.slon.html.hxTrigger
 import uk.matvey.slon.html.hxVals
@@ -114,8 +114,8 @@ fun HTML.page(
                     form(classes = "row gap-8") {
                         hxGet("/html/movies/search")
                         hxTrigger("submit, input changed delay:500ms")
-                        hxTarget("#search-results")
-                        hxIndicator("#search-indicator")
+                        hxTarget("body")
+                        hxPushUrl()
                         searchInput {
                             name = "q"
                             placeholder = "Perfect Days"
@@ -140,11 +140,6 @@ fun HTML.page(
                             }
                         }
                     }
-                }
-            }
-            div {
-                div {
-                    id = "search-results"
                 }
             }
         }

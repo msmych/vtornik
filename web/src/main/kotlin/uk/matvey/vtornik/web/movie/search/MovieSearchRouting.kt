@@ -5,11 +5,8 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.util.getOrFail
-import kotlinx.html.body
-import kotlinx.html.button
 import kotlinx.html.div
 import kotlinx.html.h3
-import kotlinx.html.onClick
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.tmdb.TmdbImages
 import uk.matvey.vtornik.movie.Movie
@@ -41,13 +38,13 @@ fun Route.movieSearchRouting(
                         movies.results.map { it.id },
                         Movie.Role.DIRECTOR
                     )
+                    val principal = call.userPrincipalOrNull()
                     call.respondHtml {
-                        body {
+                        page(config, principal) {
+                            h3 {
+                                +"Search results for \"$q\""
+                            }
                             div("col gap-8") {
-                                button {
-                                    onClick = "closePane('search-results')"
-                                    +"Close"
-                                }
                                 movies.results.forEach { movie ->
                                     movieSearchResultItemHtml(
                                         MovieSearchResultItem(
