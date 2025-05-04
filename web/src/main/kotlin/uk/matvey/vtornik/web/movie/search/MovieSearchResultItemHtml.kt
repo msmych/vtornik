@@ -33,7 +33,7 @@ fun HtmlBlockTag.movieSearchResultItemHtml(
         hxTarget("body")
         hxPushUrl()
         img(classes = "poster", alt = movie.title) {
-            src = movie.posterUrl ?: "https://jjmkhlzlxgdlgnbxprgz.supabase.co/storage/v1/object/public/vtornik//no-poster.png"
+            src = movie.posterUrl ?: "https://jjmkhlzlxgdlgnbxprgz.supabase.co/storage/v1/object/public/vtornik//no-poster.jpg"
         }
         div("col gap-8") {
             b {
