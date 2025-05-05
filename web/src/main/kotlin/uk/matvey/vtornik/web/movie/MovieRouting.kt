@@ -65,7 +65,7 @@ fun Route.movieRouting(
 
                     call.respondHtml {
                         val principal = call.userPrincipalOrNull()
-                        page(config, principal) {
+                        page(config, principal, movie.title) {
                             div("row gap-8 movie-page") {
                                 img(classes = "poster", alt = movie.title) {
                                     src = movie.details.tmdb?.posterPath?.let {

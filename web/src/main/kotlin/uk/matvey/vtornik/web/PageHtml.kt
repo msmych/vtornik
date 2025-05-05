@@ -23,7 +23,6 @@ import uk.matvey.slon.html.HTMX_INDICATOR
 import uk.matvey.slon.html.SEARCH.Companion.search
 import uk.matvey.slon.html.hxBoost
 import uk.matvey.slon.html.hxGet
-import uk.matvey.slon.html.hxPushUrl
 import uk.matvey.slon.html.hxTarget
 import uk.matvey.slon.html.hxTrigger
 import uk.matvey.slon.html.hxVals
@@ -34,10 +33,11 @@ import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
 fun HTML.page(
     config: WebConfig,
     principal: UserPrincipal?,
+    title: String = "Vtornik",
     block: MAIN.() -> Unit,
 ) {
     head {
-        title("Vtornik")
+        title(title)
         meta {
             name = "viewport"
             content = "width=device-width, initial-scale=1.0"
@@ -109,13 +109,12 @@ fun HTML.page(
                     }
                 }
             }
-            section("row gap-8") {
+            section("col gap-8") {
                 search {
                     form(classes = "row gap-8") {
                         hxGet("/html/movies/search")
                         hxTrigger("submit, input changed delay:500ms")
-                        hxTarget("body")
-                        hxPushUrl()
+                        hxTarget("#search-results")
                         searchInput {
                             name = "q"
                             placeholder = "Perfect Days"
@@ -140,6 +139,11 @@ fun HTML.page(
                             }
                         }
                     }
+                }
+            }
+            div {
+                div {
+                    id = "search-results"
                 }
             }
         }

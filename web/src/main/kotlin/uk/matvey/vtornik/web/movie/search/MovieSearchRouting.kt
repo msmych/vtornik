@@ -5,6 +5,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.util.getOrFail
+import kotlinx.html.body
 import kotlinx.html.div
 import kotlinx.html.h3
 import uk.matvey.tmdb.TmdbClient
@@ -38,12 +39,8 @@ fun Route.movieSearchRouting(
                         movies.results.map { it.id },
                         Movie.Role.DIRECTOR
                     )
-                    val principal = call.userPrincipalOrNull()
                     call.respondHtml {
-                        page(config, principal) {
-                            h3 {
-                                +"Search results for \"$q\""
-                            }
+                        body {
                             div("col gap-8") {
                                 movies.results.forEach { movie ->
                                     movieSearchResultItemHtml(
@@ -72,7 +69,7 @@ fun Route.movieSearchRouting(
                         Movie.Role.DIRECTOR
                     )
                     call.respondHtml {
-                        page(config, principal) {
+                        page(config, principal, directorDetails.name) {
                             h3 {
                                 +"Movies directed by ${directorDetails.name}"
                             }
@@ -106,9 +103,10 @@ fun Route.movieSearchRouting(
                         Movie.Role.DIRECTOR
                     )
                     call.respondHtml {
-                        page(config, principal) {
+                        val tagLabel = STANDARD_TAGS.find { it.tag == tag }?.label ?: tag
+                        page(config, principal, tagLabel) {
                             h3 {
-                                +(STANDARD_TAGS.find { it.tag == tag }?.label ?: tag)
+                                +tagLabel
                             }
                             div("col gap-8") {
                                 movies.forEach { movie ->

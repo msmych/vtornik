@@ -1,6 +1,9 @@
-function closePane(id) {
-    const el = document.getElementById(id)
-    while (el.firstChild) {
-        el.removeChild(el.firstChild)
+document.addEventListener('click', function (event) {
+    const searchResults = document.getElementById('search-results')
+
+    if (!searchResults.contains(event.target)) {
+        while (searchResults.firstChild) {
+            searchResults.removeChild(searchResults.firstChild)
+        }
     }
-}
+})
