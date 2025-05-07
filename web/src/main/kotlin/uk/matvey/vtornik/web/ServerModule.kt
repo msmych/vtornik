@@ -15,7 +15,6 @@ import uk.matvey.vtornik.web.config.WebConfig.Profile
 import uk.matvey.vtornik.web.movie.movieRouting
 
 fun Application.serverModule(config: WebConfig, services: Services) {
-    val appSecret = System.getenv("APP_SECRET")
     install(Authentication) {
         register(services.auth.optionalJwtAuthProvider)
         register(services.auth.requiredJwtAuthProvider)
@@ -25,10 +24,9 @@ fun Application.serverModule(config: WebConfig, services: Services) {
         get("/health") {
             call.respondText("OK")
         }
-        val githubClientId = System.getenv("GITHUB_CLIENT_ID")
         indexRouting(config)
-        githubClientId?.let {
-            githubRouting(it, appSecret, services.userRepository)
+        config.githubClientId?.let {
+            githubRouting(config, services.userRepository)
         }
         if (config.profile == Profile.MOCK) {
             route("/mock") {

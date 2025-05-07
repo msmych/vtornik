@@ -30,11 +30,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import uk.matvey.vtornik.user.UserRepository
+import uk.matvey.vtornik.web.config.WebConfig
+import uk.matvey.vtornik.web.config.WebConfig.Profile
 import java.time.Instant
 import kotlin.time.Duration.Companion.days
 import kotlin.time.toJavaDuration
 
-fun Routing.githubRouting(clientId: String, appSecret: String, userRepository: UserRepository) {
+fun Routing.githubRouting(config: WebConfig, userRepository: UserRepository) {
     val httpClient = HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
@@ -52,7 +54,7 @@ fun Routing.githubRouting(clientId: String, appSecret: String, userRepository: U
                 setBody(
                     FormDataContent(
                         parameters {
-                            append("client_id", clientId)
+                            append("client_id", config.githubClientId())
                             append("client_secret", clientSecret)
                             append("code", code)
                         }
@@ -70,17 +72,18 @@ fun Routing.githubRouting(clientId: String, appSecret: String, userRepository: U
                 .withClaim("username", userInfo.login)
                 .withClaim("name", userInfo.name)
                 .withExpiresAt(Instant.now().plus(7.days.toJavaDuration()))
-                .sign(Algorithm.HMAC256(appSecret))
+                .sign(Algorithm.HMAC256(config.appSecret))
             call.response.cookies.append(
                 name = "jwt",
                 value = jwt,
                 encoding = CookieEncoding.URI_ENCODING,
                 expires = GMTDate() + 7.days,
                 path = "/",
+                secure = config.profile == Profile.PROD,
                 httpOnly = true,
                 extensions = mapOf(SAMESITE to "Lax")
             )
-            call.respondRedirect("http://localhost:8080")
+            call.respondRedirect("/")
         }
     }
 }

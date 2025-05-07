@@ -30,6 +30,8 @@ class WebConfig(
         Profile.MOCK -> "public"
     }
 
+    fun githubClientId() = requireNotNull(githubClientId) { "GitHub client ID is not set" }
+
     companion object {
 
         fun fromEnv(): WebConfig {
