@@ -65,6 +65,7 @@ open class WebTestSetup : PostgresTestSetup() {
                 dbPassword = postgres.password,
                 assetsUrl = "assetsUrl",
                 githubClientId = null,
+                githubClientSecret = null,
                 tmdbApiKey = "tmdbApiKey",
             )
 

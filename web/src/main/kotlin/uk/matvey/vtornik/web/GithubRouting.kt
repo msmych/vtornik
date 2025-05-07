@@ -15,7 +15,7 @@ import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.http.CookieEncoding
+import io.ktor.http.CookieEncoding.URI_ENCODING
 import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.response.respondRedirect
@@ -30,6 +30,10 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import uk.matvey.vtornik.user.UserRepository
+import uk.matvey.vtornik.web.auth.Auth.Companion.JWT_AUDIENCE
+import uk.matvey.vtornik.web.auth.Auth.Companion.JWT_COOKIE
+import uk.matvey.vtornik.web.auth.Auth.Companion.JWT_ISSUER
+import uk.matvey.vtornik.web.auth.Auth.Companion.USERNAME_CLAIM
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.config.WebConfig.Profile
 import java.time.Instant
@@ -46,7 +50,6 @@ fun Routing.githubRouting(config: WebConfig, userRepository: UserRepository) {
             level = LogLevel.INFO
         }
     }
-    val clientSecret = System.getenv("GITHUB_CLIENT_SECRET")
     route("/github") {
         get("/callback") {
             val code = call.parameters.getOrFail("code")
@@ -55,7 +58,7 @@ fun Routing.githubRouting(config: WebConfig, userRepository: UserRepository) {
                     FormDataContent(
                         parameters {
                             append("client_id", config.githubClientId())
-                            append("client_secret", clientSecret)
+                            append("client_secret", config.githubClientSecret())
                             append("code", code)
                         }
                     )
@@ -66,24 +69,24 @@ fun Routing.githubRouting(config: WebConfig, userRepository: UserRepository) {
             }.body<GithubUserInfoResponse>()
             val id = userRepository.createUserIfNotExists(userInfo.id, userInfo.login, userInfo.name)
             val jwt = JWT.create()
-                .withIssuer("vtornik")
-                .withAudience("vtornik")
+                .withIssuer(JWT_ISSUER)
+                .withAudience(JWT_AUDIENCE)
                 .withSubject(id.toString())
-                .withClaim("username", userInfo.login)
+                .withClaim(USERNAME_CLAIM, userInfo.login)
                 .withClaim("name", userInfo.name)
                 .withExpiresAt(Instant.now().plus(7.days.toJavaDuration()))
                 .sign(Algorithm.HMAC256(config.appSecret))
             call.response.cookies.append(
-                name = "jwt",
+                name = JWT_COOKIE,
                 value = jwt,
-                encoding = CookieEncoding.URI_ENCODING,
+                encoding = URI_ENCODING,
                 expires = GMTDate() + 7.days,
                 path = "/",
                 secure = config.profile == Profile.PROD,
                 httpOnly = true,
                 extensions = mapOf(SAMESITE to "Lax")
             )
-            call.respondRedirect("/")
+            call.respondRedirect(config.baseUrl())
         }
     }
 }

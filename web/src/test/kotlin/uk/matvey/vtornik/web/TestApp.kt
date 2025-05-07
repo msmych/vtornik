@@ -25,6 +25,7 @@ fun main() {
         dbPassword = System.getenv("DB_PASSWORD"),
         assetsUrl = System.getenv("ASSETS_URL"),
         githubClientId = "githubClientId",
+        githubClientSecret = "githubClientSecret",
         tmdbApiKey = "tmdbApiKey",
     )
     val tmdbEngine = MockEngine { request ->

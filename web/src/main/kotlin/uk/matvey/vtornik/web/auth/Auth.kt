@@ -82,12 +82,12 @@ class Auth(
 
     companion object {
 
-        private const val JWT_COOKIE = "jwt"
+        const val JWT_COOKIE = "jwt"
         private const val JWT_OPTIONAL = "jwt-optional"
         private const val JWT_REQUIRED = "jwt-required"
-        private const val JWT_ISSUER = "vtornik"
-        private const val JWT_AUDIENCE = "vtornik"
-        private const val USERNAME_CLAIM = "username"
+        const val JWT_ISSUER = "vtornik"
+        const val JWT_AUDIENCE = "vtornik"
+        const val USERNAME_CLAIM = "username"
 
         fun Route.authJwtOptional(block: Route.() -> Unit) = authenticate(JWT_OPTIONAL) { block() }
 
