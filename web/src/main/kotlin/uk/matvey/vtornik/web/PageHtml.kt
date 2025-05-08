@@ -28,6 +28,7 @@ import uk.matvey.slon.html.hxTrigger
 import uk.matvey.slon.html.hxVals
 import uk.matvey.vtornik.web.auth.UserPrincipal
 import uk.matvey.vtornik.web.config.WebConfig
+import uk.matvey.vtornik.web.config.WebConfig.Profile
 import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
 
 fun HTML.page(
@@ -99,10 +100,13 @@ fun HTML.page(
                         }
                     } else {
                         a {
-                            href = if (config.profile == WebConfig.Profile.MOCK) {
+                            href = if (config.profile == Profile.MOCK) {
                                 "/mock/login"
                             } else {
-                                "https://github.com/login/oauth/authorize?client_id=${config.githubClientId}"
+                                """https://github.com/login/oauth/authorize
+                                    |?client_id=${config.githubClientId}
+                                    |&redirect_uri=${config.baseUrl()}/github/callback
+                                    |""".trimMargin()
                             }
                             +"Login with GitHub"
                         }

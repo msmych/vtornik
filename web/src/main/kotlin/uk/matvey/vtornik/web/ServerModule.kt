@@ -10,6 +10,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.util.date.GMTDate
+import uk.matvey.vtornik.web.auth.Auth.Companion.JWT_COOKIE
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.config.WebConfig.Profile
 import uk.matvey.vtornik.web.movie.movieRouting
@@ -26,7 +27,7 @@ fun Application.serverModule(config: WebConfig, services: Services) {
         }
         indexRouting(config)
         config.githubClientId?.let {
-            githubRouting(config, services.userRepository)
+            githubRouting(config, services.auth, services.userRepository)
         }
         if (config.profile == Profile.MOCK) {
             route("/mock") {
@@ -39,7 +40,7 @@ fun Application.serverModule(config: WebConfig, services: Services) {
             }
         }
         get("/logout") {
-            call.response.cookies.append(name = "jwt", value = "", expires = GMTDate.START)
+            call.response.cookies.append(name = JWT_COOKIE, value = "", expires = GMTDate.START)
             call.respondRedirect("/")
         }
         route("/html") {

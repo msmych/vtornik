@@ -1,7 +1,5 @@
 package uk.matvey.vtornik.web
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -30,17 +28,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import uk.matvey.vtornik.user.UserRepository
-import uk.matvey.vtornik.web.auth.Auth.Companion.JWT_AUDIENCE
+import uk.matvey.vtornik.web.auth.Auth
 import uk.matvey.vtornik.web.auth.Auth.Companion.JWT_COOKIE
-import uk.matvey.vtornik.web.auth.Auth.Companion.JWT_ISSUER
-import uk.matvey.vtornik.web.auth.Auth.Companion.USERNAME_CLAIM
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.config.WebConfig.Profile
-import java.time.Instant
 import kotlin.time.Duration.Companion.days
-import kotlin.time.toJavaDuration
 
-fun Routing.githubRouting(config: WebConfig, userRepository: UserRepository) {
+fun Routing.githubRouting(config: WebConfig, auth: Auth, userRepository: UserRepository) {
     val httpClient = HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
@@ -68,14 +62,7 @@ fun Routing.githubRouting(config: WebConfig, userRepository: UserRepository) {
                 bearerAuth(tokenData.accessToken)
             }.body<GithubUserInfoResponse>()
             val id = userRepository.createUserIfNotExists(userInfo.id, userInfo.login, userInfo.name)
-            val jwt = JWT.create()
-                .withIssuer(JWT_ISSUER)
-                .withAudience(JWT_AUDIENCE)
-                .withSubject(id.toString())
-                .withClaim(USERNAME_CLAIM, userInfo.login)
-                .withClaim("name", userInfo.name)
-                .withExpiresAt(Instant.now().plus(7.days.toJavaDuration()))
-                .sign(Algorithm.HMAC256(config.appSecret))
+            val jwt = auth.createJwt(id.toLong(), userInfo.login)
             call.response.cookies.append(
                 name = JWT_COOKIE,
                 value = jwt,
@@ -86,7 +73,7 @@ fun Routing.githubRouting(config: WebConfig, userRepository: UserRepository) {
                 httpOnly = true,
                 extensions = mapOf(SAMESITE to "Lax")
             )
-            call.respondRedirect(config.baseUrl())
+            call.respondRedirect("/")
         }
     }
 }
