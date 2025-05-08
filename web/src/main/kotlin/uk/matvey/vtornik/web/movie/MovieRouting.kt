@@ -70,7 +70,7 @@ fun Route.movieRouting(
                                 img(classes = "poster", alt = movie.title) {
                                     src = movie.details.tmdb?.posterPath?.let {
                                         tmdbImages.posterUrl(it, "w500")
-                                    } ?: "https://jjmkhlzlxgdlgnbxprgz.supabase.co/storage/v1/object/public/vtornik//no-poster.jpg"
+                                    } ?: "${config.assetsUrl}/no-poster.jpg"
                                     alt = movie.title
                                 }
                                 div("movie-details") {

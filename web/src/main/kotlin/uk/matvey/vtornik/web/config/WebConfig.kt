@@ -31,12 +31,6 @@ class WebConfig(
 
     fun jksPass() = requireNotNull(jksPass) { "JKS password is not set" }
 
-    fun dbSchema() = when (profile) {
-        Profile.PROD -> "dev_vtornik"
-        Profile.DEV -> "dev_vtornik"
-        Profile.MOCK -> "public"
-    }
-
     fun githubClientId() = requireNotNull(githubClientId) { "GitHub client ID is not set" }
 
     fun githubClientSecret() = requireNotNull(githubClientSecret) { "GitHub client secret is not set" }

@@ -1,4 +1,4 @@
-create table if not exists movies
+create table if not exists vtornik.movies
 (
     id         bigint primary key,
     title      varchar(255) not null,
@@ -9,7 +9,7 @@ create table if not exists movies
     updated_at timestamp    not null
 );
 
-create table if not exists people
+create table if not exists vtornik.people
 (
     id         bigint primary key,
     name       varchar(255) not null,
@@ -18,7 +18,7 @@ create table if not exists people
     updated_at timestamp    not null
 );
 
-create table if not exists movies_people
+create table if not exists vtornik.movies_people
 (
     person_id  bigint       not null,
     movie_id   bigint       not null,

@@ -44,7 +44,7 @@ fun Route.movieSearchRouting(
                             div("col gap-8") {
                                 movies.results.forEach { movie ->
                                     movieSearchResultItemHtml(
-                                        MovieSearchResultItem(
+                                        movie = MovieSearchResultItem(
                                             id = movie.id,
                                             title = movie.title,
                                             originalTitle = movie.originalTitle(),
@@ -53,7 +53,8 @@ fun Route.movieSearchRouting(
                                             },
                                             releaseDate = movie.releaseDate(),
                                         ),
-                                        directors[movie.id],
+                                        assetsUrl = config.assetsUrl,
+                                        directors = directors[movie.id],
                                     )
                                 }
                             }
@@ -87,6 +88,7 @@ fun Route.movieSearchRouting(
                                                 },
                                                 releaseDate = item.releaseDate(),
                                             ),
+                                            assetsUrl = config.assetsUrl,
                                             directors = directors[item.id],
                                         )
                                     }
@@ -120,6 +122,7 @@ fun Route.movieSearchRouting(
                                             },
                                             releaseDate = movie.details.tmdb?.releaseDateOrNull(),
                                         ),
+                                        assetsUrl = config.assetsUrl,
                                         directors = directors[movie.id],
                                     )
                                 }

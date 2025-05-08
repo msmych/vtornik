@@ -1,4 +1,4 @@
-create table if not exists tags
+create table if not exists vtornik.tags
 (
     user_id    int          not null,
     movie_id   bigint       not null,
@@ -7,4 +7,4 @@ create table if not exists tags
     primary key (user_id, movie_id, tag)
 );
 
-create index if not exists tags_user_id_movie_id_idx on tags (user_id, movie_id);
+create index if not exists tags_user_id_movie_id_idx on vtornik.tags (user_id, movie_id);

@@ -26,6 +26,7 @@ class MovieSearchResultItem(
 
 fun HtmlBlockTag.movieSearchResultItemHtml(
     movie: MovieSearchResultItem,
+    assetsUrl: String,
     directors: List<Person>?,
 ) {
     div("row gap-8 search-result-item") {
@@ -33,7 +34,7 @@ fun HtmlBlockTag.movieSearchResultItemHtml(
         hxTarget("body")
         hxPushUrl()
         img(classes = "poster", alt = movie.title) {
-            src = movie.posterUrl ?: "https://jjmkhlzlxgdlgnbxprgz.supabase.co/storage/v1/object/public/vtornik//no-poster.jpg"
+            src = movie.posterUrl ?: "$assetsUrl/no-poster.jpg"
         }
         div("col gap-8") {
             b {
