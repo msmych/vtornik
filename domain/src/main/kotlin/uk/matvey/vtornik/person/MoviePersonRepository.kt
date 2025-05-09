@@ -10,7 +10,7 @@ class MoviePersonRepository(
     suspend fun addMoviePerson(movieId: Long, personId: Long, role: Movie.Role) {
         db.execute(
             """
-                |insert into movies_people (movie_id, person_id, role, created_at)
+                |insert into vtornik.movies_people (movie_id, person_id, role, created_at)
                 | values (?, ?, ?, now())
                 |""".trimMargin(),
             listOf(movieId, personId, role)

@@ -18,14 +18,14 @@ class UserRepository(
 
     suspend fun getById(id: Int): User {
         return db.execute(
-            "select * from users where id = ?",
+            "select * from vtornik.users where id = ?",
             listOf(id)
         ).rows.single().let { toUser(it) }
     }
 
     suspend fun getByGithubId(githubId: Long): User {
         return db.execute(
-            "select * from users where details->'github'->>'id' = ?",
+            "select * from vtornik.users where details->'github'->>'id' = ?",
             listOf(githubId.toString())
         ).rows.single().let { toUser(it) }
     }
@@ -33,7 +33,7 @@ class UserRepository(
     suspend fun createUserIfNotExists(githubId: Long, githubLogin: String, githubName: String): Int {
         return db.execute(
             """
-                |insert into users (username, details, created_at, updated_at)
+                |insert into vtornik.users (username, details, created_at, updated_at)
                 | values (?, ?, now(), now())
                 | on conflict do nothing
                 | returning id

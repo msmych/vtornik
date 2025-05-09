@@ -22,20 +22,20 @@ class MovieRepository(
 
     suspend fun findById(id: Long): Movie? {
         return db.execute(
-            "select * from movies where id = ?",
+            "select * from vtornik.movies where id = ?",
             listOf(id)
         ).rows.singleOrNull()?.let { toMovie(it) }
     }
 
     suspend fun findAllByIds(ids: List<Long>): List<Movie> {
-        return db.execute("select * from movies where id = any(?)", listOf(ids))
+        return db.execute("select * from vtornik.movies where id = any(?)", listOf(ids))
             .rows.map { toMovie(it) }
     }
 
     suspend fun add(details: Movie.Details.Tmdb): Long {
         return db.execute(
             """
-                |insert into movies (id, title, runtime, year, details, created_at, updated_at)
+                |insert into vtornik.movies (id, title, runtime, year, details, created_at, updated_at)
                 | values (?, ?, ?, ?, ?, now(), now())
                 | returning id
                 |""".trimMargin(),

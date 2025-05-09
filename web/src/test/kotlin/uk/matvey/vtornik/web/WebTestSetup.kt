@@ -54,6 +54,8 @@ open class WebTestSetup : PostgresTestSetup() {
         fun setupWeb() {
             val flyway = Flyway.configure()
                 .dataSource(postgres.jdbcUrl, postgres.username, postgres.password)
+                .schemas("vtornik")
+                .createSchemas(true)
                 .load()
             flyway.migrate()
             config = WebConfig(

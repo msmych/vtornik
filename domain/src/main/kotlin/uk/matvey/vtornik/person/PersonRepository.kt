@@ -16,7 +16,7 @@ class PersonRepository(
 
     suspend fun findById(id: Long): Person? {
         return db.execute(
-            "select * from people where id = ?",
+            "select * from vtornik.people where id = ?",
             listOf(id)
         ).rows.singleOrNull()?.let { toPerson(it) }
     }
@@ -34,8 +34,8 @@ class PersonRepository(
         return db.execute(
             """
             |select p.*
-            | from people p
-            | join movies_people mp on p.id = mp.person_id
+            | from vtornik.people p
+            | join vtornik.movies_people mp on p.id = mp.person_id
             | where mp.movie_id = ? and mp.role = ?
             |""".trimMargin(),
             listOf(movieId, role.name)
@@ -49,8 +49,8 @@ class PersonRepository(
         return db.execute(
             """
             |select mp.movie_id, p.*
-            | from people p
-            | join movies_people mp on p.id = mp.person_id
+            | from vtornik.people p
+            | join vtornik.movies_people mp on p.id = mp.person_id
             | where mp.movie_id = any(?) and mp.role = ?
             |""".trimMargin(),
             listOf(moviesIds, role.name)
@@ -62,7 +62,7 @@ class PersonRepository(
     suspend fun ensurePerson(details: Person.Details.Tmdb): Long {
         return findById(details.id)?.id ?: db.execute(
             """
-            |insert into people (id, name, details, created_at, updated_at)
+            |insert into vtornik.people (id, name, details, created_at, updated_at)
             | values (?, ?, ?, now(), now())
             | on conflict do nothing
             | returning id
