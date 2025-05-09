@@ -6,14 +6,18 @@ import kotlinx.html.ScriptCrossorigin
 import kotlinx.html.a
 import kotlinx.html.b
 import kotlinx.html.body
+import kotlinx.html.button
+import kotlinx.html.dialog
 import kotlinx.html.div
 import kotlinx.html.form
+import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.header
 import kotlinx.html.id
 import kotlinx.html.link
 import kotlinx.html.main
 import kotlinx.html.meta
+import kotlinx.html.onClick
 import kotlinx.html.script
 import kotlinx.html.searchInput
 import kotlinx.html.section
@@ -80,11 +84,9 @@ fun HTML.page(
     body("col gap-32") {
         header("col gap-16") {
             section("split gap-8") {
-                a {
+                a(classes = "menu-tab") {
                     href = "/"
-                    b {
-                        +"Vtornik"
-                    }
+                    +"Vtornik"
                 }
                 div("row gap-8") {
                     if (principal != null) {
@@ -94,21 +96,33 @@ fun HTML.page(
                                 +principal.username
                             }
                         }
-                        a {
+                        a(classes = "menu-tab") {
                             href = "/logout"
                             +"Logout"
                         }
                     } else {
-                        a {
-                            href = if (config.profile == Profile.MOCK) {
-                                "/mock/login"
-                            } else {
-                                """https://github.com/login/oauth/authorize
+                        button(classes = "menu-tab") {
+                            id = "login-button"
+                            onClick = "openLoginDialog()"
+                            +"Login"
+                        }
+                        dialog {
+                            id = "login-dialog"
+                            attributes["closedby"] = "any"
+                            h1 {
+                                +"Login to Vtornik"
+                            }
+                            a {
+                                href = if (config.profile == Profile.MOCK) {
+                                    "/mock/login"
+                                } else {
+                                    """https://github.com/login/oauth/authorize
                                     |?client_id=${config.githubClientId}
                                     |&redirect_uri=${config.baseUrl()}/github/callback
                                     |""".trimMargin()
+                                }
+                                +"Login with GitHub"
                             }
-                            +"Login with GitHub"
                         }
                     }
                 }

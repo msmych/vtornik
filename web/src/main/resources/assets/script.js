@@ -7,3 +7,8 @@ document.addEventListener('click', function (event) {
         }
     }
 })
+
+function openLoginDialog() {
+    const loginDialog = document.getElementById("login-dialog");
+    loginDialog.showModal()
+}

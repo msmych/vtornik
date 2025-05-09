@@ -44,6 +44,19 @@ img {
 input[type="search"] {
     height: 36px;
     min-width: 320px;
+    font-size: 1em;
+}
+
+.menu-tab {
+    background: transparent;
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    color: white;
+}
+
+.menu-tab:hover {
+    cursor: pointer;
 }
 
 .search-result-item {
