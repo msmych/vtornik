@@ -8,6 +8,7 @@ import uk.matvey.slon.sql.getDateOrFail
 import uk.matvey.slon.sql.getIntOrFail
 import uk.matvey.slon.sql.getLongOrFail
 import uk.matvey.slon.sql.getStringOrFail
+import uk.matvey.vtornik.VtornikSql.MOVIES
 import java.time.ZoneOffset.UTC
 
 class MovieRepository(
@@ -22,20 +23,20 @@ class MovieRepository(
 
     suspend fun findById(id: Long): Movie? {
         return db.execute(
-            "select * from vtornik.movies where id = ?",
+            "select * from $MOVIES where id = ?",
             listOf(id)
         ).rows.singleOrNull()?.let { toMovie(it) }
     }
 
     suspend fun findAllByIds(ids: List<Long>): List<Movie> {
-        return db.execute("select * from vtornik.movies where id = any(?)", listOf(ids))
+        return db.execute("select * from $MOVIES where id = any(?)", listOf(ids))
             .rows.map { toMovie(it) }
     }
 
     suspend fun add(details: Movie.Details.Tmdb): Long {
         return db.execute(
             """
-                |insert into vtornik.movies (id, title, runtime, year, details, created_at, updated_at)
+                |insert into $MOVIES (id, title, runtime, year, details, created_at, updated_at)
                 | values (?, ?, ?, ?, ?, now(), now())
                 | returning id
                 |""".trimMargin(),

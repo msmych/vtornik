@@ -7,6 +7,8 @@ import uk.matvey.slon.sql.execute
 import uk.matvey.slon.sql.getDateOrFail
 import uk.matvey.slon.sql.getLongOrFail
 import uk.matvey.slon.sql.getStringOrFail
+import uk.matvey.vtornik.VtornikSql.MOVIES_PEOPLE
+import uk.matvey.vtornik.VtornikSql.PEOPLE
 import uk.matvey.vtornik.movie.Movie
 import java.time.ZoneOffset.UTC
 
@@ -16,7 +18,7 @@ class PersonRepository(
 
     suspend fun findById(id: Long): Person? {
         return db.execute(
-            "select * from vtornik.people where id = ?",
+            "select * from $PEOPLE where id = ?",
             listOf(id)
         ).rows.singleOrNull()?.let { toPerson(it) }
     }
@@ -34,8 +36,8 @@ class PersonRepository(
         return db.execute(
             """
             |select p.*
-            | from vtornik.people p
-            | join vtornik.movies_people mp on p.id = mp.person_id
+            | from $PEOPLE p
+            | join $MOVIES_PEOPLE mp on p.id = mp.person_id
             | where mp.movie_id = ? and mp.role = ?
             |""".trimMargin(),
             listOf(movieId, role.name)
@@ -49,8 +51,8 @@ class PersonRepository(
         return db.execute(
             """
             |select mp.movie_id, p.*
-            | from vtornik.people p
-            | join vtornik.movies_people mp on p.id = mp.person_id
+            | from $PEOPLE p
+            | join $MOVIES_PEOPLE mp on p.id = mp.person_id
             | where mp.movie_id = any(?) and mp.role = ?
             |""".trimMargin(),
             listOf(moviesIds, role.name)
@@ -62,7 +64,7 @@ class PersonRepository(
     suspend fun ensurePerson(details: Person.Details.Tmdb): Long {
         return findById(details.id)?.id ?: db.execute(
             """
-            |insert into vtornik.people (id, name, details, created_at, updated_at)
+            |insert into $PEOPLE (id, name, details, created_at, updated_at)
             | values (?, ?, ?, now(), now())
             | on conflict do nothing
             | returning id

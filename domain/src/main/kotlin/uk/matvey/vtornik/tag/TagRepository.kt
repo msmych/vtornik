@@ -7,6 +7,7 @@ import uk.matvey.slon.sql.getDateOrFail
 import uk.matvey.slon.sql.getIntOrFail
 import uk.matvey.slon.sql.getLongOrFail
 import uk.matvey.slon.sql.getStringOrFail
+import uk.matvey.vtornik.VtornikSql.TAGS
 import java.time.ZoneOffset.UTC
 
 class TagRepository(
@@ -16,7 +17,7 @@ class TagRepository(
     suspend fun add(userId: Int, movieId: Long, tag: String) {
         db.execute(
             """
-                |insert into vtornik.tags (user_id, movie_id, tag, created_at)
+                |insert into $TAGS (user_id, movie_id, tag, created_at)
                 | values (?, ?, ?, now())
                 |""".trimMargin(),
             listOf(userId, movieId, tag)
@@ -25,21 +26,21 @@ class TagRepository(
 
     suspend fun delete(userId: Int, movieId: Long, tag: String) {
         db.execute(
-            "delete from vtornik.tags where user_id = ? and movie_id = ? and tag = ?",
+            "delete from $TAGS where user_id = ? and movie_id = ? and tag = ?",
             listOf(userId, movieId, tag)
         )
     }
 
     suspend fun findAllByUserIdAndMovieId(userId: Int, movieId: Long): List<Tag> {
         return db.execute(
-            "select * from vtornik.tags where user_id = ? and movie_id = ?",
+            "select * from $TAGS where user_id = ? and movie_id = ?",
             listOf(userId, movieId)
         ).rows.map { toTag(it) }
     }
 
     suspend fun findAllByUserAndTag(userId: Int, tag: String): List<Tag> {
         return db.execute(
-            "select * from vtornik.tags where user_id = ? and tag = ?",
+            "select * from $TAGS where user_id = ? and tag = ?",
             listOf(userId, tag)
         )
             .rows.map { toTag(it) }
