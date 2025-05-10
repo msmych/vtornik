@@ -107,7 +107,7 @@ private fun Route.getMovieDetails(
         call.respondHtml {
             val principal = call.userPrincipalOrNull()
             page(config, principal, movie.title) {
-                div("row gap-8 wrap") {
+                div("row gap-8 movie-page wrap") {
                     img(classes = "poster", alt = movie.title) {
                         src = movie.details.tmdb?.posterPath?.let {
                             tmdbImages.posterUrl(it, "w500")

@@ -8,6 +8,12 @@ a {
     color: lightpink;
 }
 
+dialog {
+    background-color: black;
+    color: white;
+    border: lightgray 2px dotted;
+}
+
 .row {
     display: flex;
     flex-direction: row;
@@ -91,9 +97,10 @@ input[type="search"] {
     max-width: 480px;
 }
 
-#search-results {
+.pane {
     position: absolute;
-    max-height: 420px;
+    border: lightgray 2px dotted;
+    max-height: 82%;
     width: 480px;
     z-index: 32;
     overflow-y: scroll;

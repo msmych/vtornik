@@ -41,7 +41,7 @@ fun Route.movieSearchRouting(
                     )
                     call.respondHtml {
                         body {
-                            div("col gap-8") {
+                            div("col gap-8 pane") {
                                 movies.results.forEach { movie ->
                                     movieSearchResultItemHtml(
                                         movie = MovieSearchResultItem(
