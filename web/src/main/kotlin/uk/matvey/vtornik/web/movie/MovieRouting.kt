@@ -8,6 +8,8 @@ import io.ktor.server.util.getOrFail
 import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.div
+import kotlinx.html.figcaption
+import kotlinx.html.figure
 import kotlinx.html.h1
 import kotlinx.html.h3
 import kotlinx.html.i
@@ -71,13 +73,18 @@ private fun Route.getNowPlaying(config: WebConfig, tmdbClient: TmdbClient, tmdbI
                 h3 {
                     +"Now playing"
                 }
-                p(classes = "row gap-8") {
+                div(classes = "row gap-8 wrap") {
                     nowPlaying.results.forEach { movie ->
-                        img(classes = "poster", alt = movie.title) {
-                            src = movie.posterPath?.let {
-                                tmdbImages.posterUrl(it, "w500")
-                            } ?: "${config.assetsUrl}/no-poster.jpg"
-                            alt = movie.title
+                        figure {
+                            img(classes = "poster", alt = movie.title) {
+                                src = movie.posterPath?.let {
+                                    tmdbImages.posterUrl(it, "w500")
+                                } ?: "${config.assetsUrl}/no-poster.jpg"
+                                alt = movie.title
+                            }
+                            figcaption {
+                                +movie.title
+                            }
                         }
                     }
                 }

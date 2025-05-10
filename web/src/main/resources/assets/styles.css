@@ -46,6 +46,12 @@ dialog {
     gap: 16px;
 }
 
+figure > img {
+    max-height: 138px;
+    height: 138px;
+    max-width: 92px;
+}
+
 img {
     overflow: hidden;
     text-overflow: ellipsis;
