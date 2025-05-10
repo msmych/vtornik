@@ -24,6 +24,10 @@ a {
     justify-content: space-between;
 }
 
+.wrap {
+    flex-wrap: wrap;
+}
+
 .gap-8 {
     gap: 8px;
 }
@@ -71,10 +75,6 @@ input[type="search"] {
     min-width: 46px;
     width: 46px;
     height: 69px;
-}
-
-.movie-page {
-    flex-wrap: wrap;
 }
 
 .movie-page > img.poster {

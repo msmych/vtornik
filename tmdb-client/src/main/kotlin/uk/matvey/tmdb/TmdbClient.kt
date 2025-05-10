@@ -186,4 +186,8 @@ class TmdbClient(
             parameter("query", query)
         }.body()
     }
+
+    suspend fun nowPlayingMovies(): SearchMovieResponse {
+        return httpClient.get("https://api.themoviedb.org/3/movie/now_playing").body()
+    }
 }
