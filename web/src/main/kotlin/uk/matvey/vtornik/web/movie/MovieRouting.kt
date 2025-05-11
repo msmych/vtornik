@@ -6,7 +6,6 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.util.getOrFail
 import kotlinx.html.a
-import kotlinx.html.body
 import kotlinx.html.div
 import kotlinx.html.figcaption
 import kotlinx.html.figure
@@ -15,6 +14,7 @@ import kotlinx.html.h3
 import kotlinx.html.i
 import kotlinx.html.img
 import kotlinx.html.p
+import kotlinx.html.title
 import uk.matvey.slon.html.hxBoost
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.tmdb.TmdbImages
@@ -68,14 +68,16 @@ fun Route.movieRouting(
 private fun Route.getNowPlaying(config: WebConfig, tmdbClient: TmdbClient, tmdbImages: TmdbImages) {
     get {
         val nowPlaying = tmdbClient.nowPlayingMovies()
+        val principal = call.userPrincipalOrNull()
         call.respondHtml {
-            body {
+            page(config, principal, "Now playing") {
                 h3 {
                     +"Now playing"
                 }
                 div(classes = "row wrap") {
                     nowPlaying.results.forEach { movie ->
                         a {
+                            title = movie.title
                             href = "/html/movies/${movie.id}"
                             figure {
                                 img(classes = "poster", alt = movie.title) {

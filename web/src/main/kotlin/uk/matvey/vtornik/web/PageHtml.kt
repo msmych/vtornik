@@ -84,9 +84,15 @@ fun HTML.page(
     body("col gap-32") {
         header("col gap-16") {
             section("split gap-8") {
-                a(classes = "menu-tab") {
-                    href = "/"
-                    +"Vtornik"
+                div("row gap-8") {
+                    a(classes = "menu-tab") {
+                        href = "/"
+                        +"Vtornik"
+                    }
+                    a(classes = "menu-tab") {
+                        href = "/html/movies/now-playing"
+                        +"Now playing"
+                    }
                 }
                 div("row gap-8") {
                     if (principal != null) {
