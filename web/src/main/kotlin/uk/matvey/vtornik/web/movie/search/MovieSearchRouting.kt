@@ -34,7 +34,7 @@ fun Route.movieSearchRouting(
             get {
                 if (call.parameters.contains("q")) {
                     val q = call.parameters.getOrFail("q")
-                    val movies = tmdbClient.searchMovies(q)
+                    val movies = tmdbClient.searchMovies(q.lowercase())
                     val directors = personRepository.findAllPeopleByMoviesIds(
                         movies.results.map { it.id },
                         Movie.Role.DIRECTOR

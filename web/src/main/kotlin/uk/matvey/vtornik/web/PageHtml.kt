@@ -88,11 +88,13 @@ fun HTML.page(
                 div("row gap-8") {
                     a(classes = menuTabClasses(activeTab == "vtornik")) {
                         href = "/"
+                        this.title = "Vtornik homepage"
                         +"Vtornik"
                     }
                     a(classes = menuTabClasses(activeTab == "now-playing")) {
                         href = "/html/movies/now-playing"
-                        +"Now playing"
+                        this.title = "Now playing in cinema"
+                        +"Now"
                     }
                 }
                 div("row gap-8") {
@@ -105,11 +107,13 @@ fun HTML.page(
                         }
                         a(classes = "menu-tab") {
                             href = "/logout"
+                            this.title = "Logout from Vtornik"
                             +"Logout"
                         }
                     } else {
                         button(classes = "menu-tab") {
                             id = "login-button"
+                            this.title = "Login to Vtornik"
                             onClick = "openLoginDialog()"
                             +"Login"
                         }
