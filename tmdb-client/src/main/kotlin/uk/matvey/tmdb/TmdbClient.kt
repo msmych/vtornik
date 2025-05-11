@@ -119,7 +119,7 @@ class TmdbClient(
     data class PersonDetailsResponse(
         val id: Long,
         val name: String,
-        val birthday: String,
+        val birthday: String?,
         val deathday: String?,
     )
 

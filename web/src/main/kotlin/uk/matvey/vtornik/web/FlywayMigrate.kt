@@ -4,6 +4,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.internal.exception.FlywaySqlException
 import uk.matvey.vtornik.web.config.WebConfig
+import uk.matvey.vtornik.web.config.WebConfig.Profile
 
 
 private val log = KotlinLogging.logger("uk.matvey.vtornik.web.FlywayMigrate")
@@ -18,7 +19,9 @@ fun flywayMigrate(config: WebConfig) {
         .load()
     repeat(5) {
         try {
-            flyway.clean()
+            if (config.profile != Profile.PROD) {
+                flyway.clean()
+            }
             flyway.migrate()
             return@repeat
         } catch (e: FlywaySqlException) {
