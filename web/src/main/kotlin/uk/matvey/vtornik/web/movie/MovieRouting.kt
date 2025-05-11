@@ -73,17 +73,20 @@ private fun Route.getNowPlaying(config: WebConfig, tmdbClient: TmdbClient, tmdbI
                 h3 {
                     +"Now playing"
                 }
-                div(classes = "row gap-8 wrap") {
+                div(classes = "row wrap") {
                     nowPlaying.results.forEach { movie ->
-                        figure {
-                            img(classes = "poster", alt = movie.title) {
-                                src = movie.posterPath?.let {
-                                    tmdbImages.posterUrl(it, "w500")
-                                } ?: "${config.assetsUrl}/no-poster.jpg"
-                                alt = movie.title
-                            }
-                            figcaption {
-                                +movie.title
+                        a {
+                            href = "/html/movies/${movie.id}"
+                            figure {
+                                img(classes = "poster", alt = movie.title) {
+                                    src = movie.posterPath?.let {
+                                        tmdbImages.posterUrl(it, "w500")
+                                    } ?: "${config.assetsUrl}/no-poster.jpg"
+                                    alt = movie.title
+                                }
+                                figcaption {
+                                    +movie.title
+                                }
                             }
                         }
                     }

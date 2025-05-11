@@ -46,6 +46,10 @@ dialog {
     gap: 16px;
 }
 
+figure {
+    max-width: 92px;
+}
+
 figure > img {
     max-height: 138px;
     height: 138px;
