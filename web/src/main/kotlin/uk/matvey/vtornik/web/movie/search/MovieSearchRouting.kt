@@ -70,7 +70,7 @@ fun Route.movieSearchRouting(
                         Movie.Role.DIRECTOR
                     )
                     call.respondHtml {
-                        page(config, principal, directorDetails.name) {
+                        page(config, principal, directorDetails.name, "vtornik") {
                             h3 {
                                 +"Movies directed by ${directorDetails.name}"
                             }
@@ -106,7 +106,7 @@ fun Route.movieSearchRouting(
                     )
                     call.respondHtml {
                         val tagLabel = STANDARD_TAGS.find { it.tag == tag }?.label ?: tag
-                        page(config, principal, tagLabel) {
+                        page(config, principal, tagLabel, "vtornik") {
                             h3 {
                                 +tagLabel
                             }

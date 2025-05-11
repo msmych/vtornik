@@ -38,7 +38,8 @@ import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
 fun HTML.page(
     config: WebConfig,
     principal: UserPrincipal?,
-    title: String = "Vtornik",
+    title: String,
+    activeTab: String?,
     block: MAIN.() -> Unit,
 ) {
     head {
@@ -85,11 +86,11 @@ fun HTML.page(
         header("col gap-16") {
             section("split gap-8") {
                 div("row gap-8") {
-                    a(classes = "menu-tab") {
+                    a(classes = menuTabClasses(activeTab == "vtornik")) {
                         href = "/"
                         +"Vtornik"
                     }
-                    a(classes = "menu-tab") {
+                    a(classes = menuTabClasses(activeTab == "now-playing")) {
                         href = "/html/movies/now-playing"
                         +"Now playing"
                     }
@@ -175,4 +176,10 @@ fun HTML.page(
             block()
         }
     }
+}
+
+private fun menuTabClasses(active: Boolean) = if (active) {
+    "menu-tab active"
+} else {
+    "menu-tab"
 }

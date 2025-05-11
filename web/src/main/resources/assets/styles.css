@@ -67,16 +67,23 @@ input[type="search"] {
     font-size: 1em;
 }
 
+/* Menu tab */
+
 .menu-tab {
     background: transparent;
     font-size: 1em;
     font-weight: bold;
+    text-decoration: none;
     border: none;
     color: white;
 }
 
 .menu-tab:hover {
     cursor: pointer;
+}
+
+.menu-tab.active {
+    text-decoration: underline;
 }
 
 .search-result-item {

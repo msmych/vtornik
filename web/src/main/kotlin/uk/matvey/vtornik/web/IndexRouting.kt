@@ -14,7 +14,7 @@ fun Routing.indexRouting(config: WebConfig) {
         get {
             val principal = call.principal<UserPrincipal>()
             call.respondHtml {
-                page(config, principal) {
+                page(config, principal, "Vtornik", "vtornik") {
                     p {
                         +"Search movie by title, or view your collections"
                     }

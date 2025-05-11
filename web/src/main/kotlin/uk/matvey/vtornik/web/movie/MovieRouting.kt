@@ -70,7 +70,7 @@ private fun Route.getNowPlaying(config: WebConfig, tmdbClient: TmdbClient, tmdbI
         val nowPlaying = tmdbClient.nowPlayingMovies()
         val principal = call.userPrincipalOrNull()
         call.respondHtml {
-            page(config, principal, "Now playing") {
+            page(config, principal, "Now playing", "now-playing") {
                 h3 {
                     +"Now playing"
                 }
@@ -118,7 +118,7 @@ private fun Route.getMovieDetails(
 
         call.respondHtml {
             val principal = call.userPrincipalOrNull()
-            page(config, principal, movie.title) {
+            page(config, principal, movie.title, "vtornik") {
                 div("row gap-8 movie-page wrap") {
                     img(classes = "poster", alt = movie.title) {
                         src = movie.details.tmdb?.posterPath?.let {
