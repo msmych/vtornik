@@ -21,8 +21,10 @@ class MovieRepositoryTest : DomainTestSetup() {
         assertThat(movie).isNotNull
         assertThat(movie?.id).isEqualTo(id)
         assertThat(movie?.title).isEqualTo(tmdbDetails.title)
-        assertThat(movie?.year).isEqualTo(tmdbDetails.releaseDateOrNull()?.year)
+        assertThat(movie?.year).isNull()
+        assertThat(movie?.releaseDate).isEqualTo(tmdbDetails.releaseDateOrNull())
         assertThat(movie?.details?.tmdb).isEqualTo(tmdbDetails)
+        assertThat(movie?.mentions).isEmpty()
     }
 
     @Test

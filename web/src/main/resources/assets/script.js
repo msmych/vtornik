@@ -12,3 +12,8 @@ function openLoginDialog() {
     const loginDialog = document.getElementById("login-dialog");
     loginDialog.showModal()
 }
+
+function openMovieMentionsDialog() {
+    const loginDialog = document.getElementById("movie-mentions-dialog");
+    loginDialog.showModal()
+}

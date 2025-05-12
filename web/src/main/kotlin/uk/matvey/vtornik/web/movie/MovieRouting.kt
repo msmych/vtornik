@@ -6,13 +6,17 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.util.getOrFail
 import kotlinx.html.a
+import kotlinx.html.button
+import kotlinx.html.dialog
 import kotlinx.html.div
 import kotlinx.html.figcaption
 import kotlinx.html.figure
 import kotlinx.html.h1
 import kotlinx.html.h3
 import kotlinx.html.i
+import kotlinx.html.id
 import kotlinx.html.img
+import kotlinx.html.onClick
 import kotlinx.html.p
 import kotlinx.html.title
 import uk.matvey.slon.html.hxBoost
@@ -25,6 +29,8 @@ import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.config.WebConfig
+import uk.matvey.vtornik.web.movie.mention.addMovieMentionButton
+import uk.matvey.vtornik.web.movie.mention.movieMentionRouting
 import uk.matvey.vtornik.web.movie.person.personRouting
 import uk.matvey.vtornik.web.movie.search.movieSearchRouting
 import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
@@ -60,6 +66,7 @@ fun Route.movieRouting(
                 )
                 getMovieDetails(movieService, personRepository, tagRepository, config, tmdbImages)
                 personRouting(tmdbClient)
+                movieMentionRouting(movieRepository)
             }
         }
     }
@@ -170,6 +177,30 @@ private fun Route.getMovieDetails(
                         }
                         p {
                             +movie.details.tmdb().overview
+                        }
+                        p {
+                            button {
+                                onClick = "openMovieMentionsDialog()"
+                                +"Mentions"
+                            }
+                            dialog {
+                                this.id = "movie-mentions-dialog"
+                                h1 {
+                                    +"${movie.title} mentions"
+                                }
+                                div("col gap-8") {
+                                    movie.mentions.forEach { (k, v) ->
+                                        p {
+                                            a {
+                                                href = k
+                                                target = "_blank"
+                                                +v
+                                            }
+                                        }
+                                    }
+                                    addMovieMentionButton(movie.id)
+                                }
+                            }
                         }
                     }
                 }
