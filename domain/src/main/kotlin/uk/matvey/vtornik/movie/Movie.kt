@@ -8,10 +8,8 @@ data class Movie(
     val id: Long,
     val title: String,
     val runtime: Int,
-    @Deprecated("use releaseDate") val year: Int?,
     val releaseDate: LocalDate? = null,
     val details: Details,
-    val mentions: Map<String, String>,
     val createdAt: Instant,
     val updatedAt: Instant,
 ) {
@@ -52,6 +50,6 @@ data class Movie(
     }
 
     fun addMention(link: String, name: String): Movie {
-        return copy(mentions = mentions + (link to name))
+        return copy()
     }
 }

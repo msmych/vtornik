@@ -38,15 +38,14 @@ class MovieRepository(
     suspend fun add(details: Movie.Details.Tmdb): Long {
         return db.execute(
             """
-                |insert into $MOVIES (id, title, runtime, year, release_date, details, created_at, updated_at)
-                | values (?, ?, ?, ?, ?, ?, now(), now())
+                |insert into $MOVIES (id, title, runtime, release_date, details, created_at, updated_at)
+                | values (?, ?, ?, ?, ?, now(), now())
                 | returning id
                 |""".trimMargin(),
             listOf(
                 details.id,
                 details.title,
                 details.runtime,
-                null,
                 details.releaseDateOrNull(),
                 Json.encodeToString(Movie.Details(tmdb = details)),
             )
@@ -61,7 +60,6 @@ class MovieRepository(
             | where id = ? and updated_at = ?
             |""".trimMargin(),
             listOf(
-                Json.encodeToString(movie.mentions),
                 movie.id,
                 LocalDateTime.ofInstant(movie.updatedAt, UTC)
             )
@@ -75,10 +73,8 @@ class MovieRepository(
             id = data.getLongOrFail("id"),
             title = data.getStringOrFail("title"),
             runtime = data.getIntOrFail("runtime"),
-            year = data.getInt("year"),
             releaseDate = data.getAs<LocalDate>("release_date"),
             details = details,
-            mentions = Json.decodeFromString(data.getStringOrFail("mentions")),
             createdAt = data.getDateOrFail("created_at").toInstant(UTC),
             updatedAt = data.getDateOrFail("updated_at").toInstant(UTC),
         )

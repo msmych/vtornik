@@ -18,6 +18,7 @@ import kotlinx.html.id
 import kotlinx.html.img
 import kotlinx.html.onClick
 import kotlinx.html.p
+import kotlinx.html.textArea
 import kotlinx.html.title
 import uk.matvey.slon.html.hxBoost
 import uk.matvey.tmdb.TmdbClient
@@ -29,7 +30,6 @@ import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.config.WebConfig
-import uk.matvey.vtornik.web.movie.mention.addMovieMentionButton
 import uk.matvey.vtornik.web.movie.mention.movieMentionRouting
 import uk.matvey.vtornik.web.movie.person.personRouting
 import uk.matvey.vtornik.web.movie.search.movieSearchRouting
@@ -144,10 +144,10 @@ private fun Route.getMovieDetails(
                                 }
                             }
                         }
-                        movie.year?.let {
+                        movie.releaseDate?.let {
                             h3 {
                                 +"Released in "
-                                +it.toString()
+                                +it.year.toString()
                             }
                         }
                         directors.takeIf { it.isNotEmpty() }?.let { dirs ->
@@ -179,26 +179,19 @@ private fun Route.getMovieDetails(
                             +movie.details.tmdb().overview
                         }
                         p {
-                            button {
-                                onClick = "openMovieMentionsDialog()"
-                                +"Mentions"
-                            }
-                            dialog {
-                                this.id = "movie-mentions-dialog"
-                                h1 {
-                                    +"${movie.title} mentions"
+                            principal?.let {
+                                button {
+                                    onClick = "openMovieNotesDialog()"
+                                    +"Notes"
                                 }
-                                div("col gap-8") {
-                                    movie.mentions.forEach { (k, v) ->
-                                        p {
-                                            a {
-                                                href = k
-                                                target = "_blank"
-                                                +v
-                                            }
-                                        }
+                                dialog {
+                                    this.id = "movie-notes-dialog"
+                                    h1 {
+                                        +"${movie.title} notes"
                                     }
-                                    addMovieMentionButton(movie.id)
+                                    textArea {
+
+                                    }
                                 }
                             }
                         }

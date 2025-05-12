@@ -13,7 +13,7 @@ function openLoginDialog() {
     loginDialog.showModal()
 }
 
-function openMovieMentionsDialog() {
-    const loginDialog = document.getElementById("movie-mentions-dialog");
+function openMovieNotesDialog() {
+    const loginDialog = document.getElementById("movie-notes-dialog");
     loginDialog.showModal()
 }
