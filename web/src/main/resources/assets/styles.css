@@ -8,10 +8,20 @@ a {
     color: lightpink;
 }
 
+/* Dialog */
+
 dialog {
     background-color: black;
     color: white;
     border: lightgray 2px dotted;
+    border-radius: 8px;
+}
+
+button, input[type="submit"] {
+    color: white;
+    background-color: black;
+    border: lightgray 2px solid;
+    border-radius: 4px;
 }
 
 .row {

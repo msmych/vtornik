@@ -70,7 +70,7 @@ fun Route.movieRouting(
                 )
                 getMovieDetails(movieService, personRepository, tagRepository, config, tmdbImages)
                 personRouting(tmdbClient)
-                movieNoteRouting(movieRepository, noteRepository)
+                movieNoteRouting(noteRepository)
             }
         }
     }
