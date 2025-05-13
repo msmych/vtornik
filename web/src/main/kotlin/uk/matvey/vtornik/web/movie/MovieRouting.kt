@@ -18,19 +18,22 @@ import kotlinx.html.id
 import kotlinx.html.img
 import kotlinx.html.onClick
 import kotlinx.html.p
-import kotlinx.html.textArea
 import kotlinx.html.title
 import uk.matvey.slon.html.hxBoost
+import uk.matvey.slon.html.hxGet
+import uk.matvey.slon.html.hxSwap
+import uk.matvey.slon.html.hxTrigger
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.tmdb.TmdbImages
 import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
+import uk.matvey.vtornik.note.NoteRepository
 import uk.matvey.vtornik.person.PersonRepository
 import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.config.WebConfig
-import uk.matvey.vtornik.web.movie.mention.movieMentionRouting
+import uk.matvey.vtornik.web.movie.note.movieNoteRouting
 import uk.matvey.vtornik.web.movie.person.personRouting
 import uk.matvey.vtornik.web.movie.search.movieSearchRouting
 import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
@@ -44,6 +47,7 @@ fun Route.movieRouting(
     movieRepository: MovieRepository,
     personRepository: PersonRepository,
     tagRepository: TagRepository,
+    noteRepository: NoteRepository,
     tmdbClient: TmdbClient,
     tmdbImages: TmdbImages,
 ) {
@@ -66,7 +70,7 @@ fun Route.movieRouting(
                 )
                 getMovieDetails(movieService, personRepository, tagRepository, config, tmdbImages)
                 personRouting(tmdbClient)
-                movieMentionRouting(movieRepository)
+                movieNoteRouting(movieRepository, noteRepository)
             }
         }
     }
@@ -186,11 +190,11 @@ private fun Route.getMovieDetails(
                                 }
                                 dialog {
                                     this.id = "movie-notes-dialog"
+                                    hxGet("/html/movies/${movie.id}/notes")
+                                    hxTrigger("load")
+                                    hxSwap("beforeend")
                                     h1 {
                                         +"${movie.title} notes"
-                                    }
-                                    textArea {
-
                                     }
                                 }
                             }

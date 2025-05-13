@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.tmdb.TmdbImages
 import uk.matvey.vtornik.movie.MovieRepository
+import uk.matvey.vtornik.note.NoteRepository
 import uk.matvey.vtornik.person.MoviePersonRepository
 import uk.matvey.vtornik.person.PersonRepository
 import uk.matvey.vtornik.tag.TagRepository
@@ -29,6 +30,7 @@ class Services(
     val userRepository = UserRepository(db)
     val movieRepository = MovieRepository(db)
     val tagRepository = TagRepository(db)
+    val noteRepository = NoteRepository(db)
     val personRepository = PersonRepository(db)
     val moviePersonRepository = MoviePersonRepository(db)
 

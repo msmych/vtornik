@@ -1,4 +1,4 @@
-package uk.matvey.vtornik.web.movie.mention
+package uk.matvey.vtornik.web.movie.note
 
 import io.ktor.server.html.respondHtml
 import io.ktor.server.request.receiveParameters
@@ -18,6 +18,7 @@ import kotlinx.html.input
 import kotlinx.html.label
 import kotlinx.html.p
 import kotlinx.html.submitInput
+import kotlinx.html.textArea
 import kotlinx.serialization.json.put
 import uk.matvey.slon.html.hxDelete
 import uk.matvey.slon.html.hxGet
@@ -26,9 +27,33 @@ import uk.matvey.slon.html.hxSwap
 import uk.matvey.slon.html.hxTarget
 import uk.matvey.slon.html.hxVals
 import uk.matvey.vtornik.movie.MovieRepository
+import uk.matvey.vtornik.note.NoteRepository
+import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipal
 
-fun Route.movieMentionRouting(movieRepository: MovieRepository) {
-    route("/mentions") {
+fun Route.movieNoteRouting(
+    movieRepository: MovieRepository,
+    noteRepository: NoteRepository
+) {
+    route("/notes") {
+        get {
+            val principal = call.userPrincipal()
+            val movieId = call.pathParameters.getOrFail("movieId").toLong()
+            noteRepository.findByMovieAndUser(movieId, principal.id)?.let { note ->
+                call.respondHtml {
+                    body {
+                        p {
+                            +note.note
+                        }
+                    }
+                }
+            } ?: call.respondHtml {
+                body {
+                    textArea {
+                        maxLength = "4096"
+                    }
+                }
+            }
+        }
         route("/add") {
             get {
                 val movieId = call.pathParameters.getOrFail("movieId").toLong()
