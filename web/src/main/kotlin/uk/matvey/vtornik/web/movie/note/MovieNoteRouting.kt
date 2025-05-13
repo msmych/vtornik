@@ -27,6 +27,7 @@ import uk.matvey.slon.html.hxSwap
 import uk.matvey.slon.html.hxTarget
 import uk.matvey.slon.html.hxVals
 import uk.matvey.vtornik.movie.MovieRepository
+import uk.matvey.vtornik.note.Note
 import uk.matvey.vtornik.note.NoteRepository
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipal
 
@@ -41,15 +42,35 @@ fun Route.movieNoteRouting(
             noteRepository.findByMovieAndUser(movieId, principal.id)?.let { note ->
                 call.respondHtml {
                     body {
-                        p {
-                            +note.note
-                        }
+                        noteText(movieId, note)
                     }
                 }
             } ?: call.respondHtml {
                 body {
-                    textArea {
-                        maxLength = "4096"
+                    noteForm(movieId, null)
+                }
+            }
+        }
+        route("/edit") {
+            get {
+                val principal = call.userPrincipal()
+                val movieId = call.pathParameters.getOrFail("movieId").toLong()
+                val note = noteRepository.findByMovieAndUser(movieId, principal.id)
+                call.respondHtml {
+                    body {
+                        noteForm(movieId, note)
+                    }
+                }
+            }
+            post {
+                val params = call.receiveParameters()
+                val text = params.getOrFail("note")
+                val principal = call.userPrincipal()
+                val movieId = call.pathParameters.getOrFail("movieId").toLong()
+                val note = noteRepository.upsert(movieId, principal.id, text)
+                call.respondHtml {
+                    body {
+                        noteText(movieId, note)
                     }
                 }
             }
@@ -123,6 +144,38 @@ fun Route.movieNoteRouting(
                         addMovieMentionButton(movieId)
                     }
                 }
+            }
+        }
+    }
+}
+
+private fun HtmlBlockTag.noteText(movieId: Long, note: Note) {
+    div("col gap-8") {
+        div {
+            +note.note
+        }
+        button {
+            hxGet("/html/movies/$movieId/notes/edit")
+            hxTarget("closest .col")
+            hxSwap("outerHTML")
+            +"Edit"
+        }
+    }
+}
+
+private fun HtmlBlockTag.noteForm(movieId: Long, note: Note?) {
+    form("col gap-8") {
+        hxPost("/html/movies/$movieId/notes/edit")
+        hxSwap("outerHTML")
+        div {
+            textArea {
+                name = "note"
+                maxLength = "4096"
+                +(note?.note ?: "")
+            }
+        }
+        div {
+            submitInput {
             }
         }
     }

@@ -190,6 +190,7 @@ private fun Route.getMovieDetails(
                                 }
                                 dialog {
                                     this.id = "movie-notes-dialog"
+                                    attributes["closedby"] = "any"
                                     hxGet("/html/movies/${movie.id}/notes")
                                     hxTrigger("load")
                                     hxSwap("beforeend")

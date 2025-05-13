@@ -22,6 +22,22 @@ class NoteRepository(
         ).rows.singleOrNull()?.let { toNote(it) }
     }
 
+    suspend fun upsert(
+        movieId: Long,
+        userId: Int,
+        note: String,
+    ): Note {
+        return db.execute(
+            """
+                |insert into $NOTES (movie_id, user_id, note, created_at, updated_at)
+                | values (?, ?, ?, now(), now())
+                | on conflict (movie_id, user_id) do update set note = ?, updated_at = now()
+                | returning *
+                |""".trimMargin(),
+            listOf(movieId, userId, note, note)
+        ).rows.single().let { toNote(it) }
+    }
+
     private fun toNote(row: RowData): Note {
         return Note(
             movieId = row.getLongOrFail("movie_id"),
