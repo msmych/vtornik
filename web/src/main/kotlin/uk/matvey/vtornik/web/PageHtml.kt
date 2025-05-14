@@ -92,8 +92,13 @@ fun HTML.page(
                     }
                     a(classes = menuTabClasses(activeTab == "now-playing")) {
                         href = "/html/movies/now-playing"
-                        this.title = "Now playing in cinema"
+                        this.title = "Now playing"
                         +"Now"
+                    }
+                    a(classes = menuTabClasses(activeTab == "upcoming")) {
+                        href = "/html/movies/upcoming"
+                        this.title = "Coming soon"
+                        +"Soon"
                     }
                 }
                 div("row gap-8") {

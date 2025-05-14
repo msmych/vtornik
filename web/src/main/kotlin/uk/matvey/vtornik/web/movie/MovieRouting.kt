@@ -9,8 +9,6 @@ import kotlinx.html.a
 import kotlinx.html.button
 import kotlinx.html.dialog
 import kotlinx.html.div
-import kotlinx.html.figcaption
-import kotlinx.html.figure
 import kotlinx.html.h1
 import kotlinx.html.h3
 import kotlinx.html.i
@@ -64,6 +62,9 @@ fun Route.movieRouting(
             route("/now-playing") {
                 getNowPlaying(config, tmdbClient, tmdbImages)
             }
+            route("/upcoming") {
+                getUpcoming(config, tmdbClient, tmdbImages)
+            }
             route("/{movieId}") {
                 movieTagRouting(
                     tagRepository = tagRepository,
@@ -87,21 +88,26 @@ private fun Route.getNowPlaying(config: WebConfig, tmdbClient: TmdbClient, tmdbI
                 }
                 div(classes = "row wrap") {
                     nowPlaying.results.forEach { movie ->
-                        a {
-                            title = movie.title
-                            href = "/html/movies/${movie.id}"
-                            figure {
-                                img(classes = "poster", alt = movie.title) {
-                                    src = movie.posterPath?.let {
-                                        tmdbImages.posterUrl(it, "w500")
-                                    } ?: config.assetUrl("/no-poster.jpg")
-                                    alt = movie.title
-                                }
-                                figcaption {
-                                    +movie.title
-                                }
-                            }
-                        }
+                        movieCardHtml(movie, tmdbImages, config)
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun Route.getUpcoming(config: WebConfig, tmdbClient: TmdbClient, tmdbImages: TmdbImages) {
+    get {
+        val upcoming = tmdbClient.upcomingMovies()
+        val principal = call.userPrincipalOrNull()
+        call.respondHtml {
+            page(config, principal, "Upcoming", "upcoming") {
+                h3 {
+                    +"Upcoming"
+                }
+                div(classes = "row wrap") {
+                    upcoming.results.forEach { movie ->
+                        movieCardHtml(movie, tmdbImages, config)
                     }
                 }
             }

@@ -190,4 +190,8 @@ class TmdbClient(
     suspend fun nowPlayingMovies(): SearchMovieResponse {
         return httpClient.get("https://api.themoviedb.org/3/movie/now_playing").body()
     }
+
+    suspend fun upcomingMovies(): SearchMovieResponse {
+        return httpClient.get("https://api.themoviedb.org/3/movie/upcoming").body()
+    }
 }
