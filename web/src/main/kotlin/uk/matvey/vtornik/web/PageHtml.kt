@@ -4,7 +4,6 @@ import kotlinx.html.HTML
 import kotlinx.html.MAIN
 import kotlinx.html.ScriptCrossorigin
 import kotlinx.html.a
-import kotlinx.html.b
 import kotlinx.html.body
 import kotlinx.html.button
 import kotlinx.html.dialog
@@ -99,16 +98,24 @@ fun HTML.page(
                 }
                 div("row gap-8") {
                     if (principal != null) {
-                        div {
-                            +"Logged in as "
-                            b {
-                                +principal.username
-                            }
+                        button(classes = "menu-tab") {
+                            onClick = "openDialog('user-dialog')"
+                            this.title = "User settings"
+                            +principal.username
                         }
-                        a(classes = "menu-tab") {
-                            href = "/logout"
-                            this.title = "Logout from Vtornik"
-                            +"Logout"
+                        dialog {
+                            id = "user-dialog"
+                            attributes["closedby"] = "any"
+                            h1 {
+                                +"Logged in as ${principal.username}"
+                            }
+                            div(classes = "col gap-8") {
+                                a(classes = "menu-tab") {
+                                    href = "/logout"
+                                    this.title = "Logout from Vtornik"
+                                    +"Logout"
+                                }
+                            }
                         }
                     } else {
                         button(classes = "menu-tab") {
