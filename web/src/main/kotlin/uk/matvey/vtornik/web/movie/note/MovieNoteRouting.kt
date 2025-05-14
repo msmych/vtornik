@@ -20,16 +20,19 @@ import uk.matvey.slon.html.hxSwap
 import uk.matvey.slon.html.hxTarget
 import uk.matvey.vtornik.note.Note
 import uk.matvey.vtornik.note.NoteRepository
+import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtRequired
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipal
 
 fun Route.movieNoteRouting(
     noteRepository: NoteRepository
 ) {
-    route("/notes") {
-        getMovieNotes(noteRepository)
-        route("/edit") {
-            getEditNote(noteRepository)
-            postEditNote(noteRepository)
+    authJwtRequired {
+        route("/notes") {
+            getMovieNotes(noteRepository)
+            route("/edit") {
+                getEditNote(noteRepository)
+                postEditNote(noteRepository)
+            }
         }
     }
 }

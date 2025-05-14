@@ -94,7 +94,7 @@ private fun Route.getNowPlaying(config: WebConfig, tmdbClient: TmdbClient, tmdbI
                                 img(classes = "poster", alt = movie.title) {
                                     src = movie.posterPath?.let {
                                         tmdbImages.posterUrl(it, "w500")
-                                    } ?: "${config.assetsUrl}/no-poster.jpg"
+                                    } ?: config.assetUrl("/no-poster.jpg")
                                     alt = movie.title
                                 }
                                 figcaption {
@@ -134,7 +134,7 @@ private fun Route.getMovieDetails(
                     img(classes = "poster", alt = movie.title) {
                         src = movie.details.tmdb?.posterPath?.let {
                             tmdbImages.posterUrl(it, "w500")
-                        } ?: "${config.assetsUrl}/no-poster.jpg"
+                        } ?: config.assetUrl("/no-poster.jpg")
                         alt = movie.title
                     }
                     div("movie-details") {

@@ -55,23 +55,23 @@ fun HTML.page(
         link {
             rel = "apple-touch-icon"
             sizes = "180x180"
-            href = "${config.assetsUrl}/favicon/apple-touch-icon.png"
+            href = config.assetUrl("/favicon/apple-touch-icon.png")
         }
         link {
             rel = "icon"
             type = "image/png"
             sizes = "32x32"
-            href = "${config.assetsUrl}/favicon/favicon-32x32.png"
+            href = config.assetUrl("/favicon/favicon-32x32.png")
         }
         link {
             rel = "icon"
             type = "image/png"
             sizes = "16x16"
-            href = "${config.assetsUrl}/favicon/favicon-16x16.png"
+            href = config.assetUrl("/favicon/favicon-16x16.png")
         }
         link {
             rel = "manifest"
-            href = "${config.assetsUrl}/favicon/site.webmanifest"
+            href = config.assetUrl("/favicon/site.webmanifest")
         }
         script {
             src = "https://unpkg.com/htmx.org@2.0.4"

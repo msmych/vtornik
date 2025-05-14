@@ -14,6 +14,7 @@ import uk.matvey.slon.html.hxTarget
 import uk.matvey.slon.html.hxTrigger
 import uk.matvey.slon.html.hxVals
 import uk.matvey.vtornik.person.Person
+import uk.matvey.vtornik.web.config.WebConfig
 import java.time.LocalDate
 
 class MovieSearchResultItem(
@@ -25,8 +26,8 @@ class MovieSearchResultItem(
 )
 
 fun HtmlBlockTag.movieSearchResultItemHtml(
+    config: WebConfig,
     movie: MovieSearchResultItem,
-    assetsUrl: String,
     directors: List<Person>?,
 ) {
     div("row gap-8 search-result-item") {
@@ -34,7 +35,7 @@ fun HtmlBlockTag.movieSearchResultItemHtml(
         hxTarget("body")
         hxPushUrl()
         img(classes = "poster", alt = movie.title) {
-            src = movie.posterUrl ?: "$assetsUrl/no-poster.jpg"
+            src = movie.posterUrl ?: config.assetUrl("/no-poster.jpg")
         }
         div("col gap-8") {
             b {

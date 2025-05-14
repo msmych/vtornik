@@ -53,7 +53,7 @@ fun Route.movieSearchRouting(
                                             },
                                             releaseDate = movie.releaseDate(),
                                         ),
-                                        assetsUrl = config.assetsUrl,
+                                        config = config,
                                         directors = directors[movie.id],
                                     )
                                 }
@@ -79,7 +79,8 @@ fun Route.movieSearchRouting(
                                     .sortedByDescending { it.releaseDate() }
                                     .forEach { item ->
                                         movieSearchResultItemHtml(
-                                            MovieSearchResultItem(
+                                            config = config,
+                                            movie = MovieSearchResultItem(
                                                 id = item.id,
                                                 title = item.title,
                                                 originalTitle = item.originalTitle(),
@@ -88,7 +89,6 @@ fun Route.movieSearchRouting(
                                                 },
                                                 releaseDate = item.releaseDate(),
                                             ),
-                                            assetsUrl = config.assetsUrl,
                                             directors = directors[item.id],
                                         )
                                     }
@@ -113,7 +113,8 @@ fun Route.movieSearchRouting(
                             div("col gap-8") {
                                 movies.forEach { movie ->
                                     movieSearchResultItemHtml(
-                                        MovieSearchResultItem(
+                                        config = config,
+                                        movie = MovieSearchResultItem(
                                             id = movie.id,
                                             title = movie.title,
                                             originalTitle = movie.details.tmdb?.originalTitle(),
@@ -122,7 +123,6 @@ fun Route.movieSearchRouting(
                                             },
                                             releaseDate = movie.details.tmdb?.releaseDateOrNull(),
                                         ),
-                                        assetsUrl = config.assetsUrl,
                                         directors = directors[movie.id],
                                     )
                                 }

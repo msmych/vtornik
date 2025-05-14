@@ -31,6 +31,8 @@ class WebConfig(
 
     fun jksPass() = requireNotNull(jksPass) { "JKS password is not set" }
 
+    fun assetUrl(path: String) = "$assetsUrl/$path"
+
     fun githubClientId() = requireNotNull(githubClientId) { "GitHub client ID is not set" }
 
     fun githubClientSecret() = requireNotNull(githubClientSecret) { "GitHub client secret is not set" }
