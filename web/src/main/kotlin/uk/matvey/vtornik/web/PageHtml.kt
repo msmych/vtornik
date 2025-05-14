@@ -106,6 +106,10 @@ fun HTML.page(
                         dialog {
                             id = "user-dialog"
                             attributes["closedby"] = "any"
+                            button {
+                                onClick = "closeDialog('user-dialog')"
+                                +"Close"
+                            }
                             h1 {
                                 +"Logged in as ${principal.username}"
                             }
@@ -127,6 +131,10 @@ fun HTML.page(
                         dialog {
                             id = "login-dialog"
                             attributes["closedby"] = "any"
+                            button {
+                                onClick = "closeDialog('login-dialog')"
+                                +"Close"
+                            }
                             h1 {
                                 +"Login to Vtornik"
                             }

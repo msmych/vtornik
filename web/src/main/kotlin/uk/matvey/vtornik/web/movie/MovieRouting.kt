@@ -195,6 +195,10 @@ private fun Route.getMovieDetails(
                                     hxGet("/html/movies/${movie.id}/notes")
                                     hxTrigger("load")
                                     hxSwap("beforeend")
+                                    button {
+                                        onClick = "closeDialog('movie-notes-dialog')"
+                                        +"Close"
+                                    }
                                     h1 {
                                         +"${movie.title} notes"
                                     }
