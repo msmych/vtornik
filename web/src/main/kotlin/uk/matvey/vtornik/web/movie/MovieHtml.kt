@@ -6,12 +6,17 @@ import kotlinx.html.figcaption
 import kotlinx.html.figure
 import kotlinx.html.img
 import kotlinx.html.title
-import uk.matvey.tmdb.TmdbClient
 import uk.matvey.tmdb.TmdbImages
 import uk.matvey.vtornik.web.config.WebConfig
 
+class MovieCard(
+    val id: Long,
+    val title: String,
+    val posterPath: String?,
+)
+
 fun HtmlBlockTag.movieCardHtml(
-    movie: TmdbClient.SearchMovieResponse.ResultItem,
+    movie: MovieCard,
     tmdbImages: TmdbImages,
     config: WebConfig
 ) {

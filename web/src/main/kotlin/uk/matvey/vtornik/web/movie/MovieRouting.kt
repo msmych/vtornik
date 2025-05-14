@@ -88,7 +88,11 @@ private fun Route.getNowPlaying(config: WebConfig, tmdbClient: TmdbClient, tmdbI
                 }
                 div(classes = "row wrap") {
                     nowPlaying.results.forEach { movie ->
-                        movieCardHtml(movie, tmdbImages, config)
+                        movieCardHtml(
+                            movie = MovieCard(movie.id, movie.title, movie.posterPath),
+                            tmdbImages = tmdbImages,
+                            config = config,
+                        )
                     }
                 }
             }
@@ -107,7 +111,11 @@ private fun Route.getUpcoming(config: WebConfig, tmdbClient: TmdbClient, tmdbIma
                 }
                 div(classes = "row wrap") {
                     upcoming.results.forEach { movie ->
-                        movieCardHtml(movie, tmdbImages, config)
+                        movieCardHtml(
+                            movie = MovieCard(movie.id, movie.title, movie.posterPath),
+                            tmdbImages = tmdbImages,
+                            config = config,
+                        )
                     }
                 }
             }

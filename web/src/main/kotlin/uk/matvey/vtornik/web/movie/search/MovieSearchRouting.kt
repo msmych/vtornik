@@ -18,6 +18,8 @@ import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipal
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.config.WebConfig
+import uk.matvey.vtornik.web.movie.MovieCard
+import uk.matvey.vtornik.web.movie.movieCardHtml
 import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
 import uk.matvey.vtornik.web.page
 
@@ -65,31 +67,23 @@ fun Route.movieSearchRouting(
                     val directorId = call.parameters.getOrFail("director").toLong()
                     val directorDetails = tmdbClient.getPersonDetails(directorId)
                     val credits = tmdbClient.getPersonMovieCredits(directorId)
-                    val directors = personRepository.findAllPeopleByMoviesIds(
-                        credits.crew.filter { it.job == "Director" }.map { it.id },
-                        Movie.Role.DIRECTOR
-                    )
                     call.respondHtml {
                         page(config, principal, directorDetails.name, "vtornik") {
                             h3 {
-                                +"Movies directed by ${directorDetails.name}"
+                                +"Directed by ${directorDetails.name}"
                             }
-                            div("col gap-8") {
+                            div("row gap-8 wrap") {
                                 credits.crew.filter { it.job == "Director" }
                                     .sortedByDescending { it.releaseDate() }
                                     .forEach { item ->
-                                        movieSearchResultItemHtml(
-                                            config = config,
-                                            movie = MovieSearchResultItem(
+                                        movieCardHtml(
+                                            movie = MovieCard(
                                                 id = item.id,
                                                 title = item.title,
-                                                originalTitle = item.originalTitle(),
-                                                posterUrl = item.posterPath?.let {
-                                                    tmdbImages.posterUrl(it, "w92")
-                                                },
-                                                releaseDate = item.releaseDate(),
+                                                posterPath = item.posterPath,
                                             ),
-                                            directors = directors[item.id],
+                                            tmdbImages = tmdbImages,
+                                            config = config,
                                         )
                                     }
                             }
@@ -100,30 +94,22 @@ fun Route.movieSearchRouting(
                     val tag = call.parameters.getOrFail("tag")
                     val tags = tagRepository.findAllByUserAndTag(principal.id, tag)
                     val movies = movieRepository.findAllByIds(tags.map { it.movieId })
-                    val directors = personRepository.findAllPeopleByMoviesIds(
-                        movies.map { it.id },
-                        Movie.Role.DIRECTOR
-                    )
                     call.respondHtml {
                         val tagLabel = STANDARD_TAGS.find { it.tag == tag }?.label ?: tag
                         page(config, principal, tagLabel, "vtornik") {
                             h3 {
                                 +tagLabel
                             }
-                            div("col gap-8") {
+                            div("row gap-8 wrap") {
                                 movies.forEach { movie ->
-                                    movieSearchResultItemHtml(
-                                        config = config,
-                                        movie = MovieSearchResultItem(
+                                    movieCardHtml(
+                                        movie = MovieCard(
                                             id = movie.id,
                                             title = movie.title,
-                                            originalTitle = movie.details.tmdb?.originalTitle(),
-                                            posterUrl = movie.details.tmdb?.posterPath?.let {
-                                                tmdbImages.posterUrl(it, "w92")
-                                            },
-                                            releaseDate = movie.details.tmdb?.releaseDateOrNull(),
+                                            posterPath = movie.details.tmdb?.posterPath,
                                         ),
-                                        directors = directors[movie.id],
+                                        tmdbImages = tmdbImages,
+                                        config = config,
                                     )
                                 }
                             }
