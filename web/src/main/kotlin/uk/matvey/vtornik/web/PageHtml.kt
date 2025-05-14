@@ -114,7 +114,7 @@ fun HTML.page(
                         button(classes = "menu-tab") {
                             id = "login-button"
                             this.title = "Login to Vtornik"
-                            onClick = "openLoginDialog()"
+                            onClick = "openDialog('login-dialog')"
                             +"Login"
                         }
                         dialog {

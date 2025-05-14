@@ -185,7 +185,8 @@ private fun Route.getMovieDetails(
                         p {
                             principal?.let {
                                 button {
-                                    onClick = "openMovieNotesDialog()"
+                                    this.title = "Your private notes"
+                                    onClick = "openDialog('movie-notes-dialog')"
                                     +"Notes"
                                 }
                                 dialog {

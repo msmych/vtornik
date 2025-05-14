@@ -8,12 +8,7 @@ document.addEventListener('click', function (event) {
     }
 })
 
-function openLoginDialog() {
-    const loginDialog = document.getElementById("login-dialog");
-    loginDialog.showModal()
-}
-
-function openMovieNotesDialog() {
-    const loginDialog = document.getElementById("movie-notes-dialog");
-    loginDialog.showModal()
+function openDialog(id) {
+    const dialog = document.getElementById(id);
+    dialog.showModal()
 }

@@ -13,15 +13,22 @@ a {
 dialog {
     background-color: black;
     color: white;
+    width: 420px;
+    max-width: 80%;
+    height: 360px;
+    max-height: 80%;
     border: lightgray 2px dotted;
     border-radius: 8px;
 }
+
+/* Button */
 
 button, input[type="submit"] {
     color: white;
     background-color: black;
     border: lightgray 2px solid;
     border-radius: 4px;
+    cursor: pointer;
 }
 
 .row {

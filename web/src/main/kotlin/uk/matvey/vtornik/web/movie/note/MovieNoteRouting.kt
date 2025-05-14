@@ -95,19 +95,15 @@ private fun HtmlBlockTag.noteText(movieId: Long, note: Note) {
 }
 
 private fun HtmlBlockTag.noteForm(movieId: Long, note: Note?) {
-    form("col gap-8") {
+    form(classes = "col gap-8") {
         hxPost("/html/movies/$movieId/notes/edit")
         hxSwap("outerHTML")
-        div {
-            textArea {
-                name = "note"
-                maxLength = "4096"
-                +(note?.note ?: "")
-            }
+        textArea {
+            name = "note"
+            maxLength = "4096"
+            +(note?.note ?: "")
         }
-        div {
-            submitInput {
-            }
+        submitInput {
         }
     }
 }
