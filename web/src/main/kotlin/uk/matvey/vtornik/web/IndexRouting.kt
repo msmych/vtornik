@@ -8,6 +8,7 @@ import kotlinx.html.p
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.auth.UserPrincipal
 import uk.matvey.vtornik.web.config.WebConfig
+import uk.matvey.vtornik.web.page.page
 
 fun Routing.indexRouting(config: WebConfig) {
     authJwtOptional {

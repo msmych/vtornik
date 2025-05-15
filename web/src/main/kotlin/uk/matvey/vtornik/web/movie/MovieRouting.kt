@@ -33,11 +33,11 @@ import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.movie.note.movieNoteRouting
 import uk.matvey.vtornik.web.movie.person.personRouting
-import uk.matvey.vtornik.web.movie.search.movieSearchRouting
+import uk.matvey.vtornik.web.movie.search.MovieSearchResource
 import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
 import uk.matvey.vtornik.web.movie.tag.movieTagRouting
 import uk.matvey.vtornik.web.movie.tag.tagToggle
-import uk.matvey.vtornik.web.page
+import uk.matvey.vtornik.web.page.page
 
 fun Route.movieRouting(
     config: WebConfig,
@@ -51,14 +51,19 @@ fun Route.movieRouting(
 ) {
     authJwtOptional {
         route("/movies") {
-            movieSearchRouting(
-                config = config,
-                tmdbClient = tmdbClient,
-                tagRepository = tagRepository,
-                movieRepository = movieRepository,
-                personRepository = personRepository,
-                tmdbImages = tmdbImages,
-            )
+            with(
+                MovieSearchResource(
+                    config = config,
+                    tmdbClient = tmdbClient,
+                    tagRepository = tagRepository,
+                    movieRepository = movieRepository,
+                    personRepository = personRepository,
+                    tmdbImages = tmdbImages,
+                    noteRepository = noteRepository,
+                )
+            ) {
+                routing()
+            }
             route("/now-playing") {
                 getNowPlaying(config, tmdbClient, tmdbImages)
             }

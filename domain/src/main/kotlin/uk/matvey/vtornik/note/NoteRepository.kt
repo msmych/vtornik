@@ -22,6 +22,15 @@ class NoteRepository(
         ).rows.singleOrNull()?.let { toNote(it) }
     }
 
+    suspend fun findAllByUser(
+        userId: Int,
+    ): List<Note> {
+        return db.execute(
+            "select * from $NOTES where user_id = ?",
+            listOf(userId)
+        ).rows.map { toNote(it) }
+    }
+
     suspend fun upsert(
         movieId: Long,
         userId: Int,

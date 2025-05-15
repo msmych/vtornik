@@ -1,4 +1,4 @@
-package uk.matvey.vtornik.web
+package uk.matvey.vtornik.web.page
 
 import kotlinx.html.HTML
 import kotlinx.html.MAIN
@@ -21,14 +21,11 @@ import kotlinx.html.script
 import kotlinx.html.searchInput
 import kotlinx.html.section
 import kotlinx.html.title
-import kotlinx.serialization.json.put
 import uk.matvey.slon.html.HTMX_INDICATOR
 import uk.matvey.slon.html.SEARCH.Companion.search
-import uk.matvey.slon.html.hxBoost
 import uk.matvey.slon.html.hxGet
 import uk.matvey.slon.html.hxTarget
 import uk.matvey.slon.html.hxTrigger
-import uk.matvey.slon.html.hxVals
 import uk.matvey.vtornik.web.auth.UserPrincipal
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.config.WebConfig.Profile
@@ -178,15 +175,9 @@ fun HTML.page(
                 div("row gap-8") {
                     principal?.let {
                         STANDARD_TAGS.forEach { tag ->
-                            a {
-                                href = "/html/movies/search"
-                                hxBoost()
-                                hxVals {
-                                    put("tag", tag.tag)
-                                }
-                                +tag.label
-                            }
+                            tagFilter(tag.tag, tag.label)
                         }
+                        commentedFilter("Commented")
                     }
                 }
             }
