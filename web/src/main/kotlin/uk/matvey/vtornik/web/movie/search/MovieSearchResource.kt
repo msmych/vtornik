@@ -44,7 +44,7 @@ class MovieSearchResource(
                         searchByQuery()
                     } else if (call.parameters.contains("director")) {
                         searchByDirector()
-                    } else if (call.parameters.contains("director")) {
+                    } else if (call.parameters.contains("tag")) {
                         searchByTag()
                     } else if (call.parameters.contains("commented")) {
                         searchCommented()
@@ -64,20 +64,24 @@ class MovieSearchResource(
         call.respondHtml {
             body {
                 div("col gap-8 pane") {
-                    movies.results.forEach { movie ->
-                        movieSearchResultItemHtml(
-                            movie = MovieSearchResultItem(
-                                id = movie.id,
-                                title = movie.title,
-                                originalTitle = movie.originalTitle(),
-                                posterUrl = movie.posterPath?.let {
-                                    tmdbImages.posterUrl(it, "w92")
-                                },
-                                releaseDate = movie.releaseDate(),
-                            ),
-                            config = config,
-                            directors = directors[movie.id],
-                        )
+                    if (movies.results.isEmpty()) {
+                        +"Nothing found for '$q'"
+                    } else {
+                        movies.results.forEach { movie ->
+                            movieSearchResultItemHtml(
+                                movie = MovieSearchResultItem(
+                                    id = movie.id,
+                                    title = movie.title,
+                                    originalTitle = movie.originalTitle(),
+                                    posterUrl = movie.posterPath?.let {
+                                        tmdbImages.posterUrl(it, "w92")
+                                    },
+                                    releaseDate = movie.releaseDate(),
+                                ),
+                                config = config,
+                                directors = directors[movie.id],
+                            )
+                        }
                     }
                 }
             }
