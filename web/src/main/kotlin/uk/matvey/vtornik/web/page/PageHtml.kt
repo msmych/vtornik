@@ -23,6 +23,7 @@ import kotlinx.html.section
 import kotlinx.html.title
 import uk.matvey.slon.html.HTMX_INDICATOR
 import uk.matvey.slon.html.SEARCH.Companion.search
+import uk.matvey.slon.html.hxBoost
 import uk.matvey.slon.html.hxGet
 import uk.matvey.slon.html.hxTarget
 import uk.matvey.slon.html.hxTrigger
@@ -90,11 +91,13 @@ fun HTML.page(
                     a(classes = menuTabClasses(activeTab == "now-playing")) {
                         href = "/html/movies/now-playing"
                         this.title = "Now playing"
+                        hxBoost()
                         +"Now"
                     }
                     a(classes = menuTabClasses(activeTab == "upcoming")) {
                         href = "/html/movies/upcoming"
                         this.title = "Coming soon"
+                        hxBoost()
                         +"Soon"
                     }
                 }

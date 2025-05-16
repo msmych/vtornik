@@ -137,6 +137,8 @@ input[type="search"] {
     border: lightgray 2px dotted;
     max-height: 82%;
     width: 480px;
+    min-width: 360px;
+    max-width: 100%;
     z-index: 32;
     overflow-y: scroll;
     background-color: black;
