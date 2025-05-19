@@ -11,7 +11,10 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.parameter
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders.Accept
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -38,6 +41,8 @@ class TmdbClient(
     private val httpClient = HttpClient(engine) {
         defaultRequest {
             bearerAuth(apiKey)
+            url("https://api.themoviedb.org")
+            header(Accept, ContentType.Application.Json)
         }
         install(ContentNegotiation) {
             json(JSON)
@@ -49,7 +54,7 @@ class TmdbClient(
     }
 
     suspend fun getConfiguration(): TmdbConfiguration {
-        return httpClient.get("https://api.themoviedb.org/3/configuration").body()
+        return httpClient.get("/3/configuration").body()
     }
 
     @Serializable
@@ -78,7 +83,7 @@ class TmdbClient(
         movieId: Long,
         appendToResponse: List<String> = emptyList()
     ): MovieDetailsResponse {
-        val result: JsonObject = httpClient.get("https://api.themoviedb.org/3/movie/$movieId") {
+        val result: JsonObject = httpClient.get("/3/movie/$movieId") {
             appendToResponse.takeIf { it.isNotEmpty() }
                 ?.let { parameter("append_to_response", it.joinToString(",")) }
         }.body()
@@ -112,7 +117,7 @@ class TmdbClient(
     }
 
     suspend fun getMovieCredits(movieId: Long): MovieCreditsResponse {
-        return httpClient.get("https://api.themoviedb.org/3/movie/$movieId/credits").body()
+        return httpClient.get("/3/movie/$movieId/credits").body()
     }
 
     @Serializable
@@ -124,7 +129,7 @@ class TmdbClient(
     )
 
     suspend fun getPersonDetails(personId: Long): PersonDetailsResponse {
-        return httpClient.get("https://api.themoviedb.org/3/person/$personId").body()
+        return httpClient.get("/3/person/$personId").body()
     }
 
     @Serializable
@@ -155,7 +160,7 @@ class TmdbClient(
     }
 
     suspend fun getPersonMovieCredits(personId: Long): PersonMovieCreditsResponse {
-        return httpClient.get("https://api.themoviedb.org/3/person/$personId/movie_credits").body()
+        return httpClient.get("/3/person/$personId/movie_credits").body()
     }
 
     @Serializable
@@ -182,16 +187,16 @@ class TmdbClient(
     }
 
     suspend fun searchMovies(query: String): SearchMovieResponse {
-        return httpClient.get("https://api.themoviedb.org/3/search/movie") {
+        return httpClient.get("/3/search/movie") {
             parameter("query", query)
         }.body()
     }
 
     suspend fun nowPlayingMovies(): SearchMovieResponse {
-        return httpClient.get("https://api.themoviedb.org/3/movie/now_playing").body()
+        return httpClient.get("/3/movie/now_playing").body()
     }
 
     suspend fun upcomingMovies(): SearchMovieResponse {
-        return httpClient.get("https://api.themoviedb.org/3/movie/upcoming").body()
+        return httpClient.get("/3/movie/upcoming").body()
     }
 }
