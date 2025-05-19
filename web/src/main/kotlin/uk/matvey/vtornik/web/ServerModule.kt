@@ -13,7 +13,7 @@ import io.ktor.util.date.GMTDate
 import uk.matvey.vtornik.web.auth.Auth.Companion.JWT_COOKIE
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.config.WebConfig.Profile
-import uk.matvey.vtornik.web.movie.movieRouting
+import uk.matvey.vtornik.web.movie.MovieResource
 
 fun Application.serverModule(config: WebConfig, services: Services) {
     install(Authentication) {
@@ -44,16 +44,20 @@ fun Application.serverModule(config: WebConfig, services: Services) {
             call.respondRedirect("/")
         }
         route("/html") {
-            movieRouting(
-                config = config,
-                movieService = services.movieService,
-                movieRepository = services.movieRepository,
-                personRepository = services.personRepository,
-                tagRepository = services.tagRepository,
-                noteRepository = services.noteRepository,
-                tmdbClient = services.tmdbClient,
-                tmdbImages = services.tmdbImages,
-            )
+            with(
+                MovieResource(
+                    config = config,
+                    movieService = services.movieService,
+                    movieRepository = services.movieRepository,
+                    personRepository = services.personRepository,
+                    tagRepository = services.tagRepository,
+                    noteRepository = services.noteRepository,
+                    tmdbClient = services.tmdbClient,
+                    tmdbImages = services.tmdbImages,
+                )
+            ) {
+                routing()
+            }
         }
     }
 }
