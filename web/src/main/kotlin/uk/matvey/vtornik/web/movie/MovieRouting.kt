@@ -205,17 +205,17 @@ private fun Route.getMovieDetails(
                             principal?.let {
                                 button {
                                     this.title = "Your private notes"
-                                    onClick = "openDialog('movie-notes-dialog')"
+                                    onClick = "movieNotesDialog.showModal()"
                                     +"Notes"
                                 }
                                 dialog {
-                                    this.id = "movie-notes-dialog"
+                                    this.id = "movieNotesDialog"
                                     attributes["closedby"] = "any"
                                     hxGet("/html/movies/${movie.id}/notes")
                                     hxTrigger("load")
                                     hxSwap("beforeend")
                                     button {
-                                        onClick = "closeDialog('movie-notes-dialog')"
+                                        onClick = "movieNotesDialog.close()"
                                         +"Close"
                                     }
                                     h1 {

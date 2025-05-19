@@ -104,15 +104,15 @@ fun HTML.page(
                 div("row gap-8") {
                     if (principal != null) {
                         button(classes = "menu-tab") {
-                            onClick = "openDialog('user-dialog')"
+                            onClick = "userDialog.showModal()"
                             this.title = "User settings"
                             +principal.username
                         }
                         dialog {
-                            id = "user-dialog"
+                            id = "userDialog"
                             attributes["closedby"] = "any"
                             button {
-                                onClick = "closeDialog('user-dialog')"
+                                onClick = "userDialog.close()"
                                 +"Close"
                             }
                             h1 {
@@ -130,14 +130,14 @@ fun HTML.page(
                         button(classes = "menu-tab") {
                             id = "login-button"
                             this.title = "Login to Vtornik"
-                            onClick = "openDialog('login-dialog')"
+                            onClick = "loginDialog.showModal()"
                             +"Login"
                         }
                         dialog {
-                            id = "login-dialog"
+                            id = "loginDialog"
                             attributes["closedby"] = "any"
                             button {
-                                onClick = "closeDialog('login-dialog')"
+                                onClick = "loginDialog.close()"
                                 +"Close"
                             }
                             h1 {
