@@ -43,10 +43,19 @@ private fun Route.postEditNote(noteRepository: NoteRepository) {
         val text = params.getOrFail("note")
         val principal = call.userPrincipal()
         val movieId = call.pathParameters.getOrFail("movieId").toLong()
-        val note = noteRepository.upsert(movieId, principal.id, text)
-        call.respondHtml {
-            body {
-                noteText(movieId, note)
+        if (text.isNotBlank()) {
+            val note = noteRepository.upsert(movieId, principal.id, text)
+            call.respondHtml {
+                body {
+                    noteText(movieId, note)
+                }
+            }
+        } else {
+            noteRepository.delete(movieId, principal.id)
+            call.respondHtml {
+                body {
+                    noteForm(movieId, null)
+                }
             }
         }
     }
@@ -103,6 +112,7 @@ private fun HtmlBlockTag.noteForm(movieId: Long, note: Note?) {
         hxSwap("outerHTML")
         textArea {
             name = "note"
+            rows = "8"
             maxLength = "4096"
             +(note?.note ?: "")
         }

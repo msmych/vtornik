@@ -47,6 +47,16 @@ class NoteRepository(
         ).rows.single().let { toNote(it) }
     }
 
+    suspend fun delete(
+        movieId: Long,
+        userId: Int,
+    ) {
+        db.execute(
+            "delete from $NOTES where movie_id = ? and user_id = ?",
+            listOf(movieId, userId)
+        )
+    }
+
     private fun toNote(row: RowData): Note {
         return Note(
             movieId = row.getLongOrFail("movie_id"),
