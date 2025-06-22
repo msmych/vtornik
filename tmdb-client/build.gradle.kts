@@ -4,11 +4,11 @@ plugins {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-client-core:3.1.1")
-    implementation("io.ktor:ktor-client-cio:3.1.1")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.1.1")
-    implementation("io.ktor:ktor-client-content-negotiation:3.1.1")
-    implementation("io.ktor:ktor-client-logging:3.1.1")
+    implementation("io.ktor:ktor-client-core:3.2.0")
+    implementation("io.ktor:ktor-client-cio:3.2.0")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.2.0")
+    implementation("io.ktor:ktor-client-content-negotiation:3.2.0")
+    implementation("io.ktor:ktor-client-logging:3.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
     testFixturesImplementation(project(":slon"))

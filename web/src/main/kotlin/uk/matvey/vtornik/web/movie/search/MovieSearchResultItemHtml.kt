@@ -1,18 +1,17 @@
 package uk.matvey.vtornik.web.movie.search
 
+import io.ktor.htmx.HxCss.Indicator
+import io.ktor.htmx.HxSwap.outerHtml
+import io.ktor.htmx.html.hx
+import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.HtmlBlockTag
 import kotlinx.html.b
 import kotlinx.html.div
 import kotlinx.html.i
 import kotlinx.html.img
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import uk.matvey.slon.html.HTMX_INDICATOR
-import uk.matvey.slon.html.hxGet
-import uk.matvey.slon.html.hxPushUrl
-import uk.matvey.slon.html.hxSwap
-import uk.matvey.slon.html.hxTarget
-import uk.matvey.slon.html.hxTrigger
-import uk.matvey.slon.html.hxVals
 import uk.matvey.vtornik.person.Person
 import uk.matvey.vtornik.web.config.WebConfig
 import java.time.LocalDate
@@ -25,15 +24,18 @@ class MovieSearchResultItem(
     val posterUrl: String?,
 )
 
+@OptIn(ExperimentalKtorApi::class)
 fun HtmlBlockTag.movieSearchResultItemHtml(
     config: WebConfig,
     movie: MovieSearchResultItem,
     directors: List<Person>?,
 ) {
     div("row gap-8 search-result-item") {
-        hxGet("/html/movies/${movie.id}")
-        hxTarget("body")
-        hxPushUrl()
+        attributes.hx {
+            get = "/html/movies/${movie.id}"
+            target = "body"
+            pushUrl = "true"
+        }
         img(classes = "poster", alt = movie.title) {
             src = movie.posterUrl ?: config.assetUrl("/no-poster.jpg")
         }
@@ -55,21 +57,23 @@ fun HtmlBlockTag.movieSearchResultItemHtml(
                 }
             } else {
                 div {
-                    hxGet("/html/movies/${movie.id}/people")
-                    hxTrigger("intersect once")
-                    hxTarget("this")
-                    hxSwap("outerHTML")
-                    hxPushUrl(false)
-                    hxVals {
-                        put("role", "Director")
+                    attributes.hx {
+                        get = "/html/movies/${movie.id}/people"
+                        trigger = "intersect once"
+                        target = "this"
+                        swap = outerHtml
+                        pushUrl = "false"
+                        vals = Json.encodeToString(buildJsonObject {
+                            put("role", "Director")
+                        })
                     }
-                    div(HTMX_INDICATOR) {
+                    div(Indicator) {
                         +"Directed by..."
                     }
                 }
             }
         }
-        div(HTMX_INDICATOR) {
+        div(Indicator) {
             +"Loading..."
         }
     }

@@ -1,5 +1,7 @@
 package uk.matvey.vtornik.web.movie.note
 
+import io.ktor.htmx.HxSwap.outerHtml
+import io.ktor.htmx.html.hx
 import io.ktor.server.html.respondHtml
 import io.ktor.server.request.receiveParameters
 import io.ktor.server.routing.Route
@@ -7,6 +9,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.util.getOrFail
+import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.HtmlBlockTag
 import kotlinx.html.body
 import kotlinx.html.button
@@ -14,10 +17,6 @@ import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.submitInput
 import kotlinx.html.textArea
-import uk.matvey.slon.html.hxGet
-import uk.matvey.slon.html.hxPost
-import uk.matvey.slon.html.hxSwap
-import uk.matvey.slon.html.hxTarget
 import uk.matvey.vtornik.note.Note
 import uk.matvey.vtornik.note.NoteRepository
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtRequired
@@ -92,24 +91,30 @@ private fun Route.getMovieNotes(noteRepository: NoteRepository) {
     }
 }
 
+@OptIn(ExperimentalKtorApi::class)
 private fun HtmlBlockTag.noteText(movieId: Long, note: Note) {
     div("col gap-8") {
         div {
             +note.note
         }
         button {
-            hxGet("/html/movies/$movieId/notes/edit")
-            hxTarget("closest .col")
-            hxSwap("outerHTML")
+            attributes.hx {
+                get = "/html/movies/$movieId/notes/edit"
+                target = "closest .col"
+                swap = outerHtml
+            }
             +"Edit"
         }
     }
 }
 
+@OptIn(ExperimentalKtorApi::class)
 private fun HtmlBlockTag.noteForm(movieId: Long, note: Note?) {
     form(classes = "col gap-8") {
-        hxPost("/html/movies/$movieId/notes/edit")
-        hxSwap("outerHTML")
+        attributes.hx {
+            post = "/html/movies/$movieId/notes/edit"
+            swap = outerHtml
+        }
         textArea {
             name = "note"
             rows = "8"

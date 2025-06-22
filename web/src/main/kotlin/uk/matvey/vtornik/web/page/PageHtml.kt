@@ -1,5 +1,9 @@
 package uk.matvey.vtornik.web.page
 
+import io.ktor.htmx.HxAttributeKeys.Boost
+import io.ktor.htmx.HxCss.Indicator
+import io.ktor.htmx.html.hx
+import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.HTML
 import kotlinx.html.MAIN
 import kotlinx.html.ScriptCrossorigin
@@ -21,17 +25,13 @@ import kotlinx.html.script
 import kotlinx.html.searchInput
 import kotlinx.html.section
 import kotlinx.html.title
-import uk.matvey.slon.html.HTMX_INDICATOR
 import uk.matvey.slon.html.SEARCH.Companion.search
-import uk.matvey.slon.html.hxBoost
-import uk.matvey.slon.html.hxGet
-import uk.matvey.slon.html.hxTarget
-import uk.matvey.slon.html.hxTrigger
 import uk.matvey.vtornik.web.auth.UserPrincipal
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.config.WebConfig.Profile
 import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
 
+@OptIn(ExperimentalKtorApi::class)
 fun HTML.page(
     config: WebConfig,
     principal: UserPrincipal?,
@@ -91,13 +91,13 @@ fun HTML.page(
                     a(classes = menuTabClasses(activeTab == "now-playing")) {
                         href = "/html/movies/now-playing"
                         this.title = "Now playing"
-                        hxBoost()
+                        attributes[Boost] = "true"
                         +"Now"
                     }
                     a(classes = menuTabClasses(activeTab == "upcoming")) {
                         href = "/html/movies/upcoming"
                         this.title = "Coming soon"
-                        hxBoost()
+                        attributes[Boost] = "true"
                         +"Soon"
                     }
                 }
@@ -161,15 +161,17 @@ fun HTML.page(
             section("col gap-8") {
                 search {
                     form(classes = "row gap-8") {
-                        hxGet("/html/movies/search")
-                        hxTrigger("submit, input changed delay:500ms")
-                        hxTarget("#search-results")
+                        attributes.hx {
+                            get = "/html/movies/search"
+                            trigger = "submit, input changed delay:500ms"
+                            target = "#search-results"
+                        }
                         searchInput {
                             name = "q"
                             placeholder = "Perfect Days"
                             required = true
                         }
-                        div(classes = HTMX_INDICATOR) {
+                        div(classes = Indicator) {
                             id = "search-indicator"
                             +"Searching..."
                         }
