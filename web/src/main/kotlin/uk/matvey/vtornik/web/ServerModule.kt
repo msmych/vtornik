@@ -51,7 +51,6 @@ fun Application.serverModule(config: WebConfig, services: Services) {
                     movieRepository = services.movieRepository,
                     personRepository = services.personRepository,
                     tagRepository = services.tagRepository,
-                    noteRepository = services.noteRepository,
                     tmdbClient = services.tmdbClient,
                     tmdbImages = services.tmdbImages,
                 )

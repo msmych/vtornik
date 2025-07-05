@@ -17,70 +17,63 @@ import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.submitInput
 import kotlinx.html.textArea
-import uk.matvey.vtornik.note.Note
-import uk.matvey.vtornik.note.NoteRepository
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonPrimitive
+import uk.matvey.vtornik.tag.Tag
+import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtRequired
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipal
 
 fun Route.movieNoteRouting(
-    noteRepository: NoteRepository
+    tagRepository: TagRepository,
 ) {
     authJwtRequired {
         route("/notes") {
-            getMovieNotes(noteRepository)
+            getMovieNotes(tagRepository)
             route("/edit") {
-                getEditNote(noteRepository)
-                postEditNote(noteRepository)
+                getEditNote(tagRepository)
+                postEditNote(tagRepository)
             }
         }
     }
 }
 
-private fun Route.postEditNote(noteRepository: NoteRepository) {
+private fun Route.postEditNote(tagRepository: TagRepository) {
     post {
         val params = call.receiveParameters()
         val text = params.getOrFail("note")
         val principal = call.userPrincipal()
         val movieId = call.pathParameters.getOrFail("movieId").toLong()
-        if (text.isNotBlank()) {
-            val note = noteRepository.upsert(movieId, principal.id, text)
-            call.respondHtml {
-                body {
-                    noteText(movieId, note)
-                }
-            }
-        } else {
-            noteRepository.delete(movieId, principal.id)
-            call.respondHtml {
-                body {
-                    noteForm(movieId, null)
-                }
-            }
-        }
-    }
-}
-
-private fun Route.getEditNote(noteRepository: NoteRepository) {
-    get {
-        val principal = call.userPrincipal()
-        val movieId = call.pathParameters.getOrFail("movieId").toLong()
-        val note = noteRepository.findByMovieAndUser(movieId, principal.id)
+        tagRepository.set(principal.id, movieId, Tag.Type.NOTE, JsonPrimitive(text))
         call.respondHtml {
             body {
-                noteForm(movieId, note)
+                noteText(movieId, text)
             }
         }
     }
 }
 
-private fun Route.getMovieNotes(noteRepository: NoteRepository) {
+private fun Route.getEditNote(tagRepository: TagRepository) {
     get {
         val principal = call.userPrincipal()
         val movieId = call.pathParameters.getOrFail("movieId").toLong()
-        noteRepository.findByMovieAndUser(movieId, principal.id)?.let { note ->
+        val tag = tagRepository.findByUserIdMovieIdAndType(principal.id, movieId, Tag.Type.NOTE)
+        call.respondHtml {
+            body {
+                noteForm(movieId, tag)
+            }
+        }
+    }
+}
+
+private fun Route.getMovieNotes(tagRepository: TagRepository) {
+    get {
+        val principal = call.userPrincipal()
+        val movieId = call.pathParameters.getOrFail("movieId").toLong()
+        tagRepository.findByUserIdMovieIdAndType(principal.id, movieId, Tag.Type.NOTE)?.let { note ->
             call.respondHtml {
                 body {
-                    noteText(movieId, note)
+                    noteText(movieId, note.payload.jsonPrimitive.content)
                 }
             }
         } ?: call.respondHtml {
@@ -92,10 +85,10 @@ private fun Route.getMovieNotes(noteRepository: NoteRepository) {
 }
 
 @OptIn(ExperimentalKtorApi::class)
-private fun HtmlBlockTag.noteText(movieId: Long, note: Note) {
+private fun HtmlBlockTag.noteText(movieId: Long, text: String) {
     div("col gap-8") {
         div {
-            +note.note
+            +text
         }
         button {
             attributes.hx {
@@ -109,7 +102,7 @@ private fun HtmlBlockTag.noteText(movieId: Long, note: Note) {
 }
 
 @OptIn(ExperimentalKtorApi::class)
-private fun HtmlBlockTag.noteForm(movieId: Long, note: Note?) {
+private fun HtmlBlockTag.noteForm(movieId: Long, tag: Tag?) {
     form(classes = "col gap-8") {
         attributes.hx {
             post = "/html/movies/$movieId/notes/edit"
@@ -119,7 +112,7 @@ private fun HtmlBlockTag.noteForm(movieId: Long, note: Note?) {
             name = "note"
             rows = "8"
             maxLength = "4096"
-            +(note?.note ?: "")
+            +(tag?.payload?.jsonPrimitive?.content ?: "")
         }
         submitInput {
         }

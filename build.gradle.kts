@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.1.10"
+    alias(libs.plugins.kotlin.jvm)
 }
 
 group = "uk.matvey"
@@ -16,25 +16,14 @@ subprojects {
         mavenCentral()
     }
 
-    dependencies {
-        implementation("ch.qos.logback:logback-classic:1.5.17")
-        runtimeOnly("io.github.oshai:kotlin-logging:7.0.5")
-
-        testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
-        testImplementation("io.mockk:mockk:1.13.17")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-        testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
-        testImplementation("org.assertj:assertj-core:3.11.1")
-    }
-
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(23))
+            languageVersion.set(JavaLanguageVersion.of(21))
         }
     }
 
     kotlin {
-        jvmToolchain(23)
+        jvmToolchain(21)
     }
 
     tasks.test {

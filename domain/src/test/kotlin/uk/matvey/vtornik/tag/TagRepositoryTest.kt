@@ -1,6 +1,7 @@
 package uk.matvey.vtornik.tag
 
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.JsonPrimitive
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.matvey.vtornik.DomainTestSetup
@@ -8,23 +9,16 @@ import uk.matvey.vtornik.DomainTestSetup
 class TagRepositoryTest : DomainTestSetup() {
 
     @Test
-    fun `should add and delete tags`() = runTest {
+    fun `should set tags`() = runTest {
         // given
         val tagRepository = TagRepository(db)
 
         // when
-        tagRepository.add(1234, 9876,"tag1")
-        tagRepository.add(1234, 9876,"tag2")
+        tagRepository.set(1234, 9876, Tag.Type.WATCHED, JsonPrimitive(true))
+        tagRepository.set(1234, 9876, Tag.Type.WATCHLIST, JsonPrimitive(true))
 
         // then
         val tags = tagRepository.findAllByUserIdAndMovieId(1234, 9876)
-        assertThat(tags.map { it.tag }).contains("tag1", "tag2")
-
-        // when
-        tagRepository.delete(1234, 9876, "tag1")
-
-        // then
-        val tagsAfterDelete = tagRepository.findAllByUserIdAndMovieId(1234, 9876)
-        assertThat(tagsAfterDelete.map { it.tag }).doesNotContain("tag1")
+        assertThat(tags.map { it.type }).contains(Tag.Type.WATCHED, Tag.Type.WATCHLIST)
     }
 }

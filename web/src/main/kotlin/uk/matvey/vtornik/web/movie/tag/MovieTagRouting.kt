@@ -7,6 +7,8 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.util.getOrFail
 import kotlinx.html.body
+import kotlinx.serialization.json.JsonPrimitive
+import uk.matvey.vtornik.tag.Tag
 import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtRequired
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipal
@@ -19,22 +21,22 @@ fun Route.movieTagRouting(tagRepository: TagRepository) {
                 post {
                     val principal = call.userPrincipal()
                     val movieId = call.parameters.getOrFail("movieId").toLong()
-                    val tag = call.parameters.getOrFail("tag")
-                    tagRepository.add(principal.id, movieId, tag)
+                    val type = Tag.Type.valueOf(call.parameters.getOrFail("tag").uppercase())
+                    tagRepository.set(principal.id, movieId, type, JsonPrimitive(true))
                     call.respondHtml {
                         body {
-                            tagToggle(movieId, STANDARD_TAGS.first { it.tag == tag }, true)
+                            tagToggle(movieId, STANDARD_TAGS.first { it.tag == type.name.lowercase() }, true)
                         }
                     }
                 }
                 delete {
                     val principal = call.userPrincipal()
                     val movieId = call.parameters.getOrFail("movieId").toLong()
-                    val tag = call.parameters.getOrFail("tag")
-                    tagRepository.delete(principal.id, movieId, tag)
+                    val type = Tag.Type.valueOf(call.parameters.getOrFail("tag").uppercase())
+                    tagRepository.set(principal.id, movieId, type, JsonPrimitive(false))
                     call.respondHtml {
                         body {
-                            tagToggle(movieId, STANDARD_TAGS.first { it.tag == tag }, false)
+                            tagToggle(movieId, STANDARD_TAGS.first { it.tag == type.name.lowercase() }, false)
                         }
                     }
                 }

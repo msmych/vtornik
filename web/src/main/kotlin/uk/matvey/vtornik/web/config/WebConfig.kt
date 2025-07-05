@@ -1,11 +1,11 @@
 package uk.matvey.vtornik.web.config
 
 import com.auth0.jwt.algorithms.Algorithm
+import com.google.cloud.secretmanager.v1.SecretManagerServiceClient
 
 class WebConfig(
     val profile: Profile,
     val appSecret: String,
-    val jksPass: String?,
     val dbUrl: String,
     val dbUsername: String,
     val dbPassword: String,
@@ -29,8 +29,6 @@ class WebConfig(
 
     fun jwtAlgorithm(): Algorithm = Algorithm.HMAC256(appSecret)
 
-    fun jksPass() = requireNotNull(jksPass) { "JKS password is not set" }
-
     fun assetUrl(path: String) = "$assetsUrl/$path"
 
     fun githubClientId() = requireNotNull(githubClientId) { "GitHub client ID is not set" }
@@ -39,19 +37,41 @@ class WebConfig(
 
     companion object {
 
-        fun fromEnv(): WebConfig {
-            return WebConfig(
-                profile = Profile.valueOf(System.getenv("PROFILE")),
-                appSecret = System.getenv("APP_SECRET"),
-                jksPass = System.getenv("JKS_PASS"),
-                dbUrl = System.getenv("DB_URL"),
-                dbUsername = System.getenv("DB_USERNAME"),
-                dbPassword = System.getenv("DB_PASSWORD"),
-                assetsUrl = System.getenv("ASSETS_URL"),
-                githubClientId = System.getenv("GITHUB_CLIENT_ID"),
-                githubClientSecret = System.getenv("GITHUB_CLIENT_SECRET"),
-                tmdbApiKey = System.getenv("TMDB_API_KEY")
-            )
+        fun from(profile: Profile): WebConfig {
+            return when (profile) {
+                Profile.PROD -> {
+                    SecretManagerServiceClient.create().use { client ->
+                        WebConfig(
+                            profile = profile,
+                            appSecret = client.getSecretValue("APP_SECRET"),
+                            dbUrl = client.getSecretValue("DB_URL"),
+                            dbUsername = client.getSecretValue("DB_USERNAME"),
+                            dbPassword = client.getSecretValue("DB_PASSWORD"),
+                            assetsUrl = System.getenv("ASSETS_URL"),
+                            githubClientId = client.getSecretValue("GITHUB_CLIENT_ID"),
+                            githubClientSecret = client.getSecretValue("GITHUB_CLIENT_SECRET"),
+                            tmdbApiKey = client.getSecretValue("TMDB_API_KEY"),
+                        )
+                    }
+                }
+                else -> WebConfig(
+                    profile = profile,
+                    appSecret = System.getenv("APP_SECRET"),
+                    dbUrl = System.getenv("DB_URL"),
+                    dbUsername = System.getenv("DB_USERNAME"),
+                    dbPassword = System.getenv("DB_PASSWORD"),
+                    assetsUrl = System.getenv("ASSETS_URL"),
+                    githubClientId = System.getenv("GITHUB_CLIENT_ID"),
+                    githubClientSecret = System.getenv("GITHUB_CLIENT_SECRET"),
+                    tmdbApiKey = System.getenv("TMDB_API_KEY")
+                )
+            }
+        }
+
+        private fun SecretManagerServiceClient.getSecretValue(key: String): String {
+            val projectId = System.getenv("GCLOUD_PROJECT_ID")
+            return accessSecretVersion("projects/$projectId/secrets/$key/versions/latest")
+                .payload.data.toStringUtf8()
         }
     }
 }

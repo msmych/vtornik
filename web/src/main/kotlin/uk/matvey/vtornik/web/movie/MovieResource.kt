@@ -28,7 +28,6 @@ import uk.matvey.tmdb.TmdbClient
 import uk.matvey.tmdb.TmdbImages
 import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
-import uk.matvey.vtornik.note.NoteRepository
 import uk.matvey.vtornik.person.PersonRepository
 import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
@@ -49,7 +48,6 @@ class MovieResource(
     private val movieRepository: MovieRepository,
     private val personRepository: PersonRepository,
     private val tagRepository: TagRepository,
-    private val noteRepository: NoteRepository,
     private val tmdbClient: TmdbClient,
     private val tmdbImages: TmdbImages,
 ) : Resource {
@@ -65,7 +63,6 @@ class MovieResource(
                         movieRepository = movieRepository,
                         personRepository = personRepository,
                         tmdbImages = tmdbImages,
-                        noteRepository = noteRepository,
                     )
                 ) {
                     routing()
@@ -88,7 +85,7 @@ class MovieResource(
                     )
                     getMovieDetails()
                     personRouting(tmdbClient)
-                    movieNoteRouting(noteRepository)
+                    movieNoteRouting(tagRepository)
                 }
             }
         }
@@ -179,14 +176,14 @@ class MovieResource(
 
             val movieTags = principal?.let {
                 tagRepository.findAllByUserIdAndMovieId(it.id, movie.id)
-            }?.map { it.tag }
+            }?.map { it.type.name }
 
             call.respondHtml {
                 val principal = call.userPrincipalOrNull()
                 page(config, principal, movie.title, "vtornik") {
                     div("row gap-8 movie-page wrap") {
                         img(classes = "poster", alt = movie.title) {
-                            src = movie.details.tmdb?.posterPath?.let {
+                            src = movie.tmdb?.posterPath?.let {
                                 tmdbImages.posterUrl(it, "w500")
                             } ?: config.assetUrl("/no-poster.jpg")
                             alt = movie.title
@@ -195,7 +192,7 @@ class MovieResource(
                             h1 {
                                 +movie.title
                             }
-                            movie.details.tmdb?.originalTitle()?.let {
+                            movie.originalTitle?.let {
                                 h3 {
                                     i {
                                         +it
@@ -234,7 +231,7 @@ class MovieResource(
                                 }
                             }
                             p {
-                                +movie.details.tmdb().overview
+                                +movie.overview
                             }
                             p {
                                 principal?.let {

@@ -2,6 +2,8 @@ package uk.matvey.vtornik.tag
 
 import com.github.jasync.sql.db.RowData
 import com.github.jasync.sql.db.SuspendingConnection
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import uk.matvey.slon.sql.execute
 import uk.matvey.slon.sql.getDateOrFail
 import uk.matvey.slon.sql.getIntOrFail
@@ -14,21 +16,23 @@ class TagRepository(
     private val db: SuspendingConnection,
 ) {
 
-    suspend fun add(userId: Int, movieId: Long, tag: String) {
+    suspend fun set(userId: Int, movieId: Long, type: Tag.Type, payload: JsonElement) {
         db.execute(
             """
-                |insert into $TAGS (user_id, movie_id, tag, created_at)
-                | values (?, ?, ?, now())
+                |insert into $TAGS (user_id, movie_id, type, payload, created_at, updated_at)
+                | values (?, ?, ?, ?, now(), now())
+                | on conflict (user_id, movie_id, type) do update
+                | set payload = excluded.payload, updated_at = now()
                 |""".trimMargin(),
-            listOf(userId, movieId, tag)
+            listOf(userId, movieId, type, Json.encodeToString(payload))
         )
     }
 
-    suspend fun delete(userId: Int, movieId: Long, tag: String) {
-        db.execute(
-            "delete from $TAGS where user_id = ? and movie_id = ? and tag = ?",
-            listOf(userId, movieId, tag)
-        )
+    suspend fun findByUserIdMovieIdAndType(userId: Int, movieId: Long, type: Tag.Type): Tag? {
+        return db.execute(
+            "select * from $TAGS where user_id = ? and movie_id = ? and type = ?",
+            listOf(userId, movieId, type)
+        ).rows.singleOrNull()?.let { toTag(it) }
     }
 
     suspend fun findAllByUserIdAndMovieId(userId: Int, movieId: Long): List<Tag> {
@@ -38,10 +42,10 @@ class TagRepository(
         ).rows.map { toTag(it) }
     }
 
-    suspend fun findAllByUserAndTag(userId: Int, tag: String): List<Tag> {
+    suspend fun findAllByUserAndType(userId: Int, type: Tag.Type): List<Tag> {
         return db.execute(
-            "select * from $TAGS where user_id = ? and tag = ?",
-            listOf(userId, tag)
+            "select * from $TAGS where user_id = ? and type = ?",
+            listOf(userId, type)
         )
             .rows.map { toTag(it) }
     }
@@ -50,7 +54,8 @@ class TagRepository(
         return Tag(
             userId = data.getIntOrFail("user_id"),
             movieId = data.getLongOrFail("movie_id"),
-            tag = data.getStringOrFail("tag"),
+            type = Tag.Type.valueOf(data.getStringOrFail("type")),
+            payload = Json.parseToJsonElement(data.getStringOrFail("payload")),
             createdAt = data.getDateOrFail("created_at").toInstant(UTC),
         )
     }

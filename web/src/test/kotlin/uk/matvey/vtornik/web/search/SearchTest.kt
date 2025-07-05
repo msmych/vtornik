@@ -5,12 +5,13 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.server.testing.testApplication
 import io.mockk.coEvery
+import kotlinx.serialization.json.JsonPrimitive
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.matvey.slon.random.randomWord
 import uk.matvey.tmdb.aSearchMovieResponse
 import uk.matvey.tmdb.aSearchMovieResponseResultItem
-import uk.matvey.vtornik.movie.aMovieTmdbDetails
+import uk.matvey.vtornik.tag.Tag
 import uk.matvey.vtornik.web.WebTestSetup
 import kotlin.random.Random
 
@@ -45,29 +46,57 @@ class SearchTest : WebTestSetup() {
             testServerModule()
         }
         val userId = Random.nextInt()
-        val tag1 = randomWord()
-        val tag2 = randomWord()
-        val tmdbDetails1 = aMovieTmdbDetails()
-        val movieId1 = services.movieRepository.add(tmdbDetails1)
-        val tmdbDetails2 = aMovieTmdbDetails()
-        val movieId2 = services.movieRepository.add(tmdbDetails2)
-        val tmdbDetails3 = aMovieTmdbDetails()
-        val movieId3 = services.movieRepository.add(tmdbDetails3)
-        val tmdbDetails4 = aMovieTmdbDetails()
-        val movieId4 = services.movieRepository.add(tmdbDetails4)
-        services.tagRepository.add(userId, movieId1, tag1)
-        services.tagRepository.add(userId, movieId2, tag1)
-        services.tagRepository.add(userId, movieId3, tag2)
+        val title1 = randomWord()
+        val movieId1 = services.movieRepository.add(
+            id = Random.nextLong(),
+            title = title1,
+            runtime = Random.nextInt(60, 180),
+            overview = randomWord(),
+            originalTitle = randomWord(),
+            releaseDate = null,
+            tmdb = null
+        )
+        val title2 = randomWord()
+        val movieId2 = services.movieRepository.add(
+            id = Random.nextLong(),
+            title = title2,
+            runtime = Random.nextInt(60, 180),
+            overview = randomWord(),
+            originalTitle = randomWord(),
+            releaseDate = null,
+            tmdb = null
+        )
+        val movieId3 = services.movieRepository.add(
+            id = Random.nextLong(),
+            title = randomWord(),
+            runtime = Random.nextInt(60, 180),
+            overview = randomWord(),
+            originalTitle = randomWord(),
+            releaseDate = null,
+            tmdb = null
+        )
+        val movieId4 = services.movieRepository.add(
+            id = Random.nextLong(),
+            title = randomWord(),
+            runtime = Random.nextInt(60, 180),
+            overview = randomWord(),
+            originalTitle = randomWord(),
+            releaseDate = null,
+            tmdb = null
+        )
+        services.tagRepository.set(userId, movieId1, Tag.Type.WATCHED, JsonPrimitive(true))
+        services.tagRepository.set(userId, movieId2, Tag.Type.WATCHED, JsonPrimitive(true))
+        services.tagRepository.set(userId, movieId3, Tag.Type.WATCHLIST, JsonPrimitive(true))
 
         // when
-        val rs = client.get("/html/movies/search?tag=$tag1") {
+        val rs = client.get("/html/movies/search?tag=WATCHED") {
             appendJwtCookie(userId)
         }
 
         // then
         assertThat(rs.status).isEqualTo(OK)
         assertThat(rs.bodyAsText())
-            .contains(tmdbDetails1.title)
-            .contains(tmdbDetails2.title)
+            .contains(title1)
+            .contains(title2)
     }
 }

@@ -1,41 +1,40 @@
+
 import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
+import com.google.cloud.tools.gradle.appengine.appyaml.AppEngineAppYamlExtension
 
 plugins {
     application
-    kotlin("plugin.serialization") version "2.1.10"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.google.cloud.appengine)
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-core:3.2.0")
-    implementation("io.ktor:ktor-server-netty:3.2.0")
-    implementation("io.ktor:ktor-server-htmx:3.2.0")
-    implementation("io.ktor:ktor-htmx-html:3.2.0")
-    implementation("io.ktor:ktor-server-html-builder:3.2.0")
-    implementation("io.ktor:ktor-client-core:3.2.0")
-    implementation("io.ktor:ktor-client-cio:3.2.0")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.2.0")
-    implementation("io.ktor:ktor-client-content-negotiation:3.2.0")
-    implementation("io.ktor:ktor-client-logging:3.2.0")
-    implementation("io.ktor:ktor-server-auth:3.2.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
-    implementation("com.auth0:java-jwt:4.5.0")
-    implementation("org.flywaydb:flyway-core:11.0.1")
-    implementation("com.github.jasync-sql:jasync-postgresql:2.2.4")
+    implementation(libs.bundles.std.impl)
+    implementation(libs.bundles.ktor.server)
+    implementation(libs.bundles.ktor.client)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.java.jwt)
+    implementation(libs.flyway.core)
+    implementation(libs.jasync.postgresql)
+    implementation(libs.google.cloud.secretmanager)
 
-    runtimeOnly("org.flywaydb:flyway-database-postgresql:11.0.1")
-    testImplementation("org.testcontainers:postgresql:1.20.0")
-    runtimeOnly("org.postgresql:postgresql:42.7.4")
+    runtimeOnly(libs.bundles.std.runtime)
+    runtimeOnly(libs.flyway.database.postgresql)
+    runtimeOnly(libs.postgresql)
 
     implementation(project(":slon"))
     implementation(project(":domain"))
     implementation(project(":tmdb-client"))
 
-    testImplementation("io.ktor:ktor-client-mock:3.2.0")
-    testImplementation("io.ktor:ktor-server-test-host:3.2.0")
+    testImplementation(libs.bundles.std.test.impl)
+    testImplementation(libs.testcontainers.postgresql)
+    testImplementation(libs.bundles.ktor.test)
     testImplementation(testFixtures(project(":slon")))
     testImplementation(testFixtures(project(":domain")))
     testImplementation(testFixtures(project(":tmdb-client")))
+
+    testRuntimeOnly(libs.bundles.std.test.runtime)
 }
 
 application {
@@ -44,4 +43,14 @@ application {
 
 tasks.shadowJar {
     transform(ServiceFileTransformer::class.java)
+}
+
+configure<AppEngineAppYamlExtension> {
+    stage {
+        setArtifact("build/libs/web-all.jar")
+    }
+    deploy {
+        version = "GCLOUD_CONFIG"
+        projectId = "GCLOUD_CONFIG"
+    }
 }

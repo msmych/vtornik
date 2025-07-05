@@ -14,8 +14,8 @@ import uk.matvey.tmdb.TmdbClient
 import uk.matvey.tmdb.TmdbImages
 import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
-import uk.matvey.vtornik.note.NoteRepository
 import uk.matvey.vtornik.person.PersonRepository
+import uk.matvey.vtornik.tag.Tag
 import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipal
@@ -33,7 +33,6 @@ class MovieSearchResource(
     private val tagRepository: TagRepository,
     private val movieRepository: MovieRepository,
     private val personRepository: PersonRepository,
-    private val noteRepository: NoteRepository,
 ) : Resource {
 
     override fun Route.routing() {
@@ -119,11 +118,11 @@ class MovieSearchResource(
 
     private suspend fun RoutingContext.searchByTag() {
         val principal = call.userPrincipal()
-        val tag = call.parameters.getOrFail("tag")
-        val tags = tagRepository.findAllByUserAndTag(principal.id, tag)
+        val tag = Tag.Type.valueOf(call.parameters.getOrFail("tag"))
+        val tags = tagRepository.findAllByUserAndType(principal.id, tag)
         val movies = movieRepository.findAllByIds(tags.map { it.movieId })
         call.respondHtml {
-            val tagLabel = STANDARD_TAGS.find { it.tag == tag }?.label ?: tag
+            val tagLabel = STANDARD_TAGS.find { it.tag == tag.name }?.label ?: tag.name
             page(config, principal, tagLabel, "vtornik") {
                 h3 {
                     +tagLabel
@@ -134,7 +133,7 @@ class MovieSearchResource(
                             movie = MovieCard(
                                 id = movie.id,
                                 title = movie.title,
-                                posterPath = movie.details.tmdb?.posterPath,
+                                posterPath = movie.tmdb?.posterPath,
                             ),
                             tmdbImages = tmdbImages,
                             config = config,
@@ -147,7 +146,7 @@ class MovieSearchResource(
 
     private suspend fun RoutingContext.searchCommented() {
         val principal = call.userPrincipal()
-        val notes = noteRepository.findAllByUser(principal.id)
+        val notes = tagRepository.findAllByUserAndType(principal.id, Tag.Type.NOTE)
         val movies = movieRepository.findAllByIds(notes.map { it.movieId })
         call.respondHtml {
             page(config, principal, "Movies with notes", "vtornik") {
@@ -160,7 +159,7 @@ class MovieSearchResource(
                             movie = MovieCard(
                                 id = movie.id,
                                 title = movie.title,
-                                posterPath = movie.details.tmdb?.posterPath,
+                                posterPath = movie.tmdb?.posterPath,
                             ),
                             tmdbImages = tmdbImages,
                             config = config,

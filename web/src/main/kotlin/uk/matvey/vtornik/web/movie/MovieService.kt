@@ -4,7 +4,6 @@ import uk.matvey.tmdb.TmdbClient
 import uk.matvey.vtornik.movie.Movie
 import uk.matvey.vtornik.movie.MovieRepository
 import uk.matvey.vtornik.person.MoviePersonRepository
-import uk.matvey.vtornik.person.Person
 import uk.matvey.vtornik.person.PersonRepository
 
 class MovieService(
@@ -21,24 +20,22 @@ class MovieService(
                 appendToResponse = listOf("credits")
             )
             movieRepository.add(
-                Movie.Details.Tmdb(
-                    id = tmdbMovieId,
-                    title = movieDetails.title,
-                    overview = movieDetails.overview,
-                    runtime = movieDetails.runtime,
-                    releaseDate = movieDetails.releaseDate()?.toString(),
+                id = tmdbMovieId,
+                title = movieDetails.title,
+                overview = movieDetails.overview,
+                runtime = movieDetails.runtime,
+                releaseDate = movieDetails.releaseDate(),
+                originalTitle = movieDetails.originalTitle,
+                tmdb = Movie.Tmdb(
                     posterPath = movieDetails.posterPath,
                     backdropPath = movieDetails.backdropPath,
-                    originalTitle = movieDetails.originalTitle,
                 )
             )
             val (_, crew) = movieDetails.extraCredits()
             crew.filter { it.job == "Director" }.forEach {
                 val personId = personRepository.ensurePerson(
-                    Person.Details.Tmdb(
-                        id = it.id,
-                        name = it.name,
-                    ),
+                    id = it.id,
+                    name = it.name,
                 )
                 moviePersonRepository.addMoviePerson(tmdbMovieId, personId, Movie.Role.DIRECTOR)
             }

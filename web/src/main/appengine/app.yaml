@@ -1,0 +1,9 @@
+instance_class: F1
+automatic_scaling:
+  max_instances: 1
+runtime: java21
+entrypoint: 'java -jar web-all.jar'
+env_variables:
+  PROFILE: PROD
+  GCLOUD_PROJECT_ID: $GCLOUD_PROJECT_ID
+  ASSETS_URL: https://jjmkhlzlxgdlgnbxprgz.supabase.co/storage/v1/object/public/vtornik

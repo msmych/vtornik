@@ -35,19 +35,29 @@ class MovieRepository(
             .rows.map { toMovie(it) }
     }
 
-    suspend fun add(details: Movie.Details.Tmdb): Long {
+    suspend fun add(
+        id: Long,
+        title: String,
+        runtime: Int,
+        overview: String,
+        originalTitle: String?,
+        releaseDate: LocalDate?,
+        tmdb: Movie.Tmdb?,
+    ): Long {
         return db.execute(
             """
-                |insert into $MOVIES (id, title, runtime, release_date, details, created_at, updated_at)
-                | values (?, ?, ?, ?, ?, now(), now())
+                |insert into $MOVIES (id, title, runtime, overview, original_title, release_date, tmdb, created_at, updated_at)
+                | values (?, ?, ?, ?, ?, ?, ?, now(), now())
                 | returning id
                 |""".trimMargin(),
             listOf(
-                details.id,
-                details.title,
-                details.runtime,
-                details.releaseDateOrNull(),
-                Json.encodeToString(Movie.Details(tmdb = details)),
+                id,
+                title,
+                runtime,
+                overview,
+                originalTitle,
+                releaseDate,
+                tmdb?.let { Json.encodeToString(it) },
             )
         ).rows.single().getLongOrFail("id")
     }
@@ -68,13 +78,14 @@ class MovieRepository(
     }
 
     private fun toMovie(data: RowData): Movie {
-        val details = Json.decodeFromString<Movie.Details>(data.getStringOrFail("details"))
         return Movie(
             id = data.getLongOrFail("id"),
             title = data.getStringOrFail("title"),
             runtime = data.getIntOrFail("runtime"),
+            overview = data.getStringOrFail("overview"),
             releaseDate = data.getAs<LocalDate>("release_date"),
-            details = details,
+            originalTitle = data.getString("original_title"),
+            tmdb = data.getString("tmdb")?.let { Json.decodeFromString<Movie.Tmdb>(it) },
             createdAt = data.getDateOrFail("created_at").toInstant(UTC),
             updatedAt = data.getDateOrFail("updated_at").toInstant(UTC),
         )

@@ -1,19 +1,20 @@
 create table if not exists vtornik.movies
 (
-    id           bigint primary key,
-    title        varchar(255) not null,
-    runtime      int          not null,
-    release_date date         null,
-    details      jsonb        not null,
-    created_at   timestamp    not null,
-    updated_at   timestamp    not null
+    id             bigint primary key,
+    title          varchar(1023) not null,
+    runtime        int           not null,
+    overview       text          not null,
+    release_date   date          null,
+    original_title varchar(1023) null,
+    tmdb           jsonb         null,
+    created_at     timestamp     not null,
+    updated_at     timestamp     not null
 );
 
 create table if not exists vtornik.people
 (
     id         bigint primary key,
     name       varchar(255) not null,
-    details    jsonb        not null,
     created_at timestamp    not null,
     updated_at timestamp    not null
 );

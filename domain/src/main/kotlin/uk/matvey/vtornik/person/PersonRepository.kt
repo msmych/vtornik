@@ -2,7 +2,6 @@ package uk.matvey.vtornik.person
 
 import com.github.jasync.sql.db.RowData
 import com.github.jasync.sql.db.SuspendingConnection
-import kotlinx.serialization.json.Json
 import uk.matvey.slon.sql.execute
 import uk.matvey.slon.sql.getDateOrFail
 import uk.matvey.slon.sql.getLongOrFail
@@ -61,18 +60,17 @@ class PersonRepository(
             .mapValues { (_, v) -> v.map { it.second } }
     }
 
-    suspend fun ensurePerson(details: Person.Details.Tmdb): Long {
-        return findById(details.id)?.id ?: db.execute(
+    suspend fun ensurePerson(id: Long, name: String): Long {
+        return findById(id)?.id ?: db.execute(
             """
-            |insert into $PEOPLE (id, name, details, created_at, updated_at)
-            | values (?, ?, ?, now(), now())
+            |insert into $PEOPLE (id, name, created_at, updated_at)
+            | values (?, ?, now(), now())
             | on conflict do nothing
             | returning id
             |""".trimMargin(),
             listOf(
-                details.id,
-                details.name,
-                Json.encodeToString(Person.Details(tmdb = details)),
+                id,
+                name,
             )
         ).rows.single().getLongOrFail("id")
     }
@@ -81,7 +79,6 @@ class PersonRepository(
         return Person(
             id = data.getLongOrFail("id"),
             name = data.getStringOrFail("name"),
-            details = Json.decodeFromString(data.getStringOrFail("details")),
             createdAt = data.getDateOrFail("created_at").toInstant(UTC),
             updatedAt = data.getDateOrFail("updated_at").toInstant(UTC),
         )
