@@ -9,5 +9,7 @@ object VtornikSql {
     const val PEOPLE = "$VTORNIK.people"
     const val MOVIES_PEOPLE = "$VTORNIK.movies_people"
     const val TAGS = "$VTORNIK.tags"
-    const val NOTES = "$VTORNIK.notes"
+
+    const val CREATED_AT = "created_at"
+    const val UPDATED_AT = "updated_at"
 }

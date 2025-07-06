@@ -9,6 +9,7 @@ import io.ktor.server.util.getOrFail
 import kotlinx.html.body
 import kotlinx.html.div
 import kotlinx.html.h3
+import kotlinx.serialization.json.JsonPrimitive
 import uk.matvey.slon.ktor.Resource
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.tmdb.TmdbImages
@@ -119,7 +120,7 @@ class MovieSearchResource(
     private suspend fun RoutingContext.searchByTag() {
         val principal = call.userPrincipal()
         val tag = Tag.Type.valueOf(call.parameters.getOrFail("tag"))
-        val tags = tagRepository.findAllByUserAndType(principal.id, tag)
+        val tags = tagRepository.findAllByUserIdTypeAndValue(principal.id, tag, JsonPrimitive(true))
         val movies = movieRepository.findAllByIds(tags.map { it.movieId })
         call.respondHtml {
             val tagLabel = STANDARD_TAGS.find { it.tag == tag.name }?.label ?: tag.name
@@ -146,7 +147,7 @@ class MovieSearchResource(
 
     private suspend fun RoutingContext.searchCommented() {
         val principal = call.userPrincipal()
-        val notes = tagRepository.findAllByUserAndType(principal.id, Tag.Type.NOTE)
+        val notes = tagRepository.findAllNotesByUserId(principal.id)
         val movies = movieRepository.findAllByIds(notes.map { it.movieId })
         call.respondHtml {
             page(config, principal, "Movies with notes", "vtornik") {

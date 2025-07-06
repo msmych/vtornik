@@ -1,25 +1,24 @@
 package uk.matvey.vtornik.web.movie.tag
 
-import io.ktor.htmx.HxAttributeKeys.Delete
+import io.ktor.htmx.HxAttributeKeys.Put
 import io.ktor.htmx.HxSwap.outerHtml
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.HtmlBlockTag
 import kotlinx.html.checkBoxInput
 import kotlinx.html.label
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 
 @OptIn(ExperimentalKtorApi::class)
 fun HtmlBlockTag.tagToggle(movieId: Long, tag: TagView, current: Boolean) = label {
-    if (current) {
-        attributes.hx {
-            swap = outerHtml
-        }
-        attributes[Delete] = "/html/movies/$movieId/tags/${tag.tag}"
-    } else {
-        attributes.hx {
-            post = "/html/movies/$movieId/tags/${tag.tag}"
-            swap = outerHtml
-        }
+    attributes[Put] = "/html/movies/$movieId/tags/${tag.tag}"
+    attributes.hx {
+        swap = outerHtml
+        vals = Json.encodeToString(buildJsonObject {
+            put("value", JsonPrimitive(!current))
+        })
     }
     checkBoxInput {
         checked = current

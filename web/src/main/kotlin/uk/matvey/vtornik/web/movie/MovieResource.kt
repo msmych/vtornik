@@ -36,8 +36,8 @@ import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.movie.note.movieNoteRouting
 import uk.matvey.vtornik.web.movie.person.personRouting
 import uk.matvey.vtornik.web.movie.search.MovieSearchResource
+import uk.matvey.vtornik.web.movie.tag.TagResource
 import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
-import uk.matvey.vtornik.web.movie.tag.movieTagRouting
 import uk.matvey.vtornik.web.movie.tag.tagToggle
 import uk.matvey.vtornik.web.page.page
 
@@ -80,9 +80,9 @@ class MovieResource(
                     }
                 }
                 route("/{movieId}") {
-                    movieTagRouting(
-                        tagRepository = tagRepository,
-                    )
+                    with(TagResource(tagRepository)) {
+                        routing()
+                    }
                     getMovieDetails()
                     personRouting(tmdbClient)
                     movieNoteRouting(tagRepository)

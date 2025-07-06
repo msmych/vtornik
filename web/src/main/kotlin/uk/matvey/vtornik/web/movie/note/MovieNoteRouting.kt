@@ -73,7 +73,7 @@ private fun Route.getMovieNotes(tagRepository: TagRepository) {
         tagRepository.findByUserIdMovieIdAndType(principal.id, movieId, Tag.Type.NOTE)?.let { note ->
             call.respondHtml {
                 body {
-                    noteText(movieId, note.payload.jsonPrimitive.content)
+                    noteText(movieId, note.value.jsonPrimitive.content)
                 }
             }
         } ?: call.respondHtml {
@@ -112,7 +112,7 @@ private fun HtmlBlockTag.noteForm(movieId: Long, tag: Tag?) {
             name = "note"
             rows = "8"
             maxLength = "4096"
-            +(tag?.payload?.jsonPrimitive?.content ?: "")
+            +(tag?.value?.jsonPrimitive?.content ?: "")
         }
         submitInput {
         }

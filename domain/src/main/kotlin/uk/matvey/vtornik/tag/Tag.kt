@@ -7,8 +7,9 @@ data class Tag(
     val userId: Int,
     val movieId: Long,
     val type: Type,
-    val payload: JsonElement,
+    val value: JsonElement,
     val createdAt: Instant,
+    val updatedAt: Instant,
 ) {
 
     enum class Type {

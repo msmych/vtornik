@@ -8,18 +8,18 @@ class TagView(
     companion object {
 
         val WATCHLIST_TAG = TagView(
-            tag = "watchlist",
+            tag = "WATCHLIST",
             label = "Watchlist",
         )
 
         val WATCHED_TAG = TagView(
-            tag = "watched",
+            tag = "WATCHED",
             label = "Watched",
         )
 
         val STAR_TAG = TagView(
-            tag = "star",
-            label = "Star",
+            tag = "LIKE",
+            label = "Like",
         )
 
         val STANDARD_TAGS = listOf(
