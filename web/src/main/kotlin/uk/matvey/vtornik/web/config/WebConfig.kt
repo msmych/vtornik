@@ -2,6 +2,8 @@ package uk.matvey.vtornik.web.config
 
 import com.auth0.jwt.algorithms.Algorithm
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient
+import io.ktor.server.request.host
+import io.ktor.server.routing.RoutingRequest
 
 class WebConfig(
     val profile: Profile,
@@ -21,10 +23,10 @@ class WebConfig(
         MOCK,
     }
 
-    fun baseUrl() = when (profile) {
-        Profile.PROD -> System.getenv("HTTP_HOST")
-        Profile.DEV -> "http://localhost:8080"
-        Profile.MOCK -> "http://localhost:8080"
+    fun baseUrl(request: RoutingRequest) = when (profile) {
+        Profile.PROD -> "https://${request.host()}"
+        Profile.DEV,
+        Profile.MOCK -> "http://${request.host()}:${request.local.remotePort}"
     }
 
     fun jwtAlgorithm(): Algorithm = Algorithm.HMAC256(appSecret)

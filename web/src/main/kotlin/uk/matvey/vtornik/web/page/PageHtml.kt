@@ -3,6 +3,7 @@ package uk.matvey.vtornik.web.page
 import io.ktor.htmx.HxAttributeKeys.Boost
 import io.ktor.htmx.HxCss.Indicator
 import io.ktor.htmx.html.hx
+import io.ktor.server.routing.RoutingRequest
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.HTML
 import kotlinx.html.MAIN
@@ -36,6 +37,7 @@ fun HTML.page(
     config: WebConfig,
     principal: UserPrincipal?,
     title: String,
+    request: RoutingRequest,
     activeTab: String?,
     block: MAIN.() -> Unit,
 ) {
@@ -149,7 +151,7 @@ fun HTML.page(
                                 } else {
                                     """https://github.com/login/oauth/authorize
                                     |?client_id=${config.githubClientId}
-                                    |&redirect_uri=${config.baseUrl()}/github/callback
+                                    |&redirect_uri=${config.baseUrl(request)}/github/callback
                                     |""".trimMargin()
                                 }
                                 +"Login with GitHub"

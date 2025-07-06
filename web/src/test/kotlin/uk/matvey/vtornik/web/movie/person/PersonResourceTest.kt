@@ -11,7 +11,7 @@ import uk.matvey.tmdb.aMovieCreditsResponse
 import uk.matvey.vtornik.web.WebTestSetup
 import kotlin.random.Random
 
-class PersonRoutingTest : WebTestSetup() {
+class PersonResourceTest : WebTestSetup() {
 
     @Test
     fun `should return movie directors`() = testApplication {

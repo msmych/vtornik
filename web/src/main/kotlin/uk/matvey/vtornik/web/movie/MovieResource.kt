@@ -34,7 +34,7 @@ import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.movie.note.NoteResource
-import uk.matvey.vtornik.web.movie.person.personRouting
+import uk.matvey.vtornik.web.movie.person.PersonResource
 import uk.matvey.vtornik.web.movie.search.MovieSearchResource
 import uk.matvey.vtornik.web.movie.tag.TagResource
 import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
@@ -84,7 +84,9 @@ class MovieResource(
                         routing()
                     }
                     getMovieDetails()
-                    personRouting(tmdbClient)
+                    with(PersonResource(tmdbClient)) {
+                        routing()
+                    }
                     with(NoteResource(tagRepository)) {
                         routing()
                     }
@@ -97,7 +99,7 @@ class MovieResource(
         get {
             val principal = call.userPrincipalOrNull()
             call.respondHtml {
-                page(config, principal, "Now playing", "now-playing") {
+                page(config, principal, "Now playing", call.request, "now-playing") {
                     h3 {
                         +"Now playing"
                     }
@@ -136,7 +138,7 @@ class MovieResource(
         get {
             val principal = call.userPrincipalOrNull()
             call.respondHtml {
-                page(config, principal, "Upcoming", "upcoming") {
+                page(config, principal, "Upcoming", call.request,"upcoming") {
                     h3 {
                         +"Upcoming"
                     }
@@ -182,7 +184,7 @@ class MovieResource(
 
             call.respondHtml {
                 val principal = call.userPrincipalOrNull()
-                page(config, principal, movie.title, "vtornik") {
+                page(config, principal, movie.title, call.request,"vtornik") {
                     div("row gap-8 movie-page wrap") {
                         img(classes = "poster", alt = movie.title) {
                             src = movie.tmdb?.posterPath?.let {

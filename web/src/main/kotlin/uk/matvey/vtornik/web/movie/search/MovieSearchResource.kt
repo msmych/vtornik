@@ -94,7 +94,7 @@ class MovieSearchResource(
         val directorDetails = tmdbClient.getPersonDetails(directorId)
         val credits = tmdbClient.getPersonMovieCredits(directorId)
         call.respondHtml {
-            page(config, principal, directorDetails.name, "vtornik") {
+            page(config, principal, directorDetails.name, call.request,"vtornik") {
                 h3 {
                     +"Directed by ${directorDetails.name}"
                 }
@@ -124,7 +124,7 @@ class MovieSearchResource(
         val movies = movieRepository.findAllByIds(tags.map { it.movieId })
         call.respondHtml {
             val tagLabel = STANDARD_TAGS.find { it.tag == tag.name }?.label ?: tag.name
-            page(config, principal, tagLabel, "vtornik") {
+            page(config, principal, tagLabel, call.request,"vtornik") {
                 h3 {
                     +tagLabel
                 }
@@ -150,7 +150,7 @@ class MovieSearchResource(
         val notes = tagRepository.findAllNotesByUserId(principal.id)
         val movies = movieRepository.findAllByIds(notes.map { it.movieId })
         call.respondHtml {
-            page(config, principal, "Movies with notes", "vtornik") {
+            page(config, principal, "Movies with notes", call.request,"vtornik") {
                 h3 {
                     +"Movies with notes"
                 }
