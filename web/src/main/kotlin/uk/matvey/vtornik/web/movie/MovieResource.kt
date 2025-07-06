@@ -33,7 +33,7 @@ import uk.matvey.vtornik.tag.TagRepository
 import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.config.WebConfig
-import uk.matvey.vtornik.web.movie.note.movieNoteRouting
+import uk.matvey.vtornik.web.movie.note.NoteResource
 import uk.matvey.vtornik.web.movie.person.personRouting
 import uk.matvey.vtornik.web.movie.search.MovieSearchResource
 import uk.matvey.vtornik.web.movie.tag.TagResource
@@ -85,7 +85,9 @@ class MovieResource(
                     }
                     getMovieDetails()
                     personRouting(tmdbClient)
-                    movieNoteRouting(tagRepository)
+                    with(NoteResource(tagRepository)) {
+                        routing()
+                    }
                 }
             }
         }

@@ -22,7 +22,7 @@ class WebConfig(
     }
 
     fun baseUrl() = when (profile) {
-        Profile.PROD -> "https://matvey.uk"
+        Profile.PROD -> System.getenv("HTTP_HOST")
         Profile.DEV -> "http://localhost:8080"
         Profile.MOCK -> "http://localhost:8080"
     }
