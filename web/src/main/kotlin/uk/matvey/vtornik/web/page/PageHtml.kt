@@ -184,7 +184,7 @@ fun HTML.page(
                         STANDARD_TAGS.forEach { tag ->
                             tagFilter(tag.tag, tag.label)
                         }
-                        commentedFilter("Commented")
+                        tagFilter("NOTE", "Note")
                     }
                 }
             }

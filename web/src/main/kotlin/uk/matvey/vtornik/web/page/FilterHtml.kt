@@ -20,9 +20,3 @@ fun HtmlBlockTag.tagFilter(name: String, label: String) = a {
     }
     +label
 }
-
-fun HtmlBlockTag.commentedFilter(label: String) = a {
-    href = "/html/movies/search?commented"
-    attributes[Boost] = "true"
-    +label
-}

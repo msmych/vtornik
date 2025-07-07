@@ -46,8 +46,6 @@ class MovieSearchResource(
                         searchByDirector()
                     } else if (call.parameters.contains("tag")) {
                         searchByTag()
-                    } else if (call.parameters.contains("commented")) {
-                        searchCommented()
                     }
                 }
             }
@@ -94,7 +92,7 @@ class MovieSearchResource(
         val directorDetails = tmdbClient.getPersonDetails(directorId)
         val credits = tmdbClient.getPersonMovieCredits(directorId)
         call.respondHtml {
-            page(config, principal, directorDetails.name, call.request,"vtornik") {
+            page(config, principal, directorDetails.name, call.request, "vtornik") {
                 h3 {
                     +"Directed by ${directorDetails.name}"
                 }
@@ -119,40 +117,22 @@ class MovieSearchResource(
 
     private suspend fun RoutingContext.searchByTag() {
         val principal = call.userPrincipal()
-        val tag = Tag.Type.valueOf(call.parameters.getOrFail("tag"))
-        val tags = tagRepository.findAllByUserIdTypeAndValue(principal.id, tag, JsonPrimitive(true))
+        val type = Tag.Type.valueOf(call.parameters.getOrFail("tag"))
+        val tags = if (type == Tag.Type.NOTE) {
+            tagRepository.findAllNotesByUserId(principal.id)
+        } else {
+            tagRepository.findAllByUserIdTypeAndValue(principal.id, type, JsonPrimitive(true))
+        }
         val movies = movieRepository.findAllByIds(tags.map { it.movieId })
         call.respondHtml {
-            val tagLabel = STANDARD_TAGS.find { it.tag == tag.name }?.label ?: tag.name
-            page(config, principal, tagLabel, call.request,"vtornik") {
+            val tagLabel = if (type == Tag.Type.NOTE) {
+                "Movies with notes"
+            } else {
+                STANDARD_TAGS.find { it.tag == type.name }?.label ?: type.name
+            }
+            page(config, principal, tagLabel, call.request, "vtornik") {
                 h3 {
                     +tagLabel
-                }
-                div("row gap-8 wrap") {
-                    movies.forEach { movie ->
-                        movieCardHtml(
-                            movie = MovieCard(
-                                id = movie.id,
-                                title = movie.title,
-                                posterPath = movie.tmdb?.posterPath,
-                            ),
-                            tmdbImages = tmdbImages,
-                            config = config,
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private suspend fun RoutingContext.searchCommented() {
-        val principal = call.userPrincipal()
-        val notes = tagRepository.findAllNotesByUserId(principal.id)
-        val movies = movieRepository.findAllByIds(notes.map { it.movieId })
-        call.respondHtml {
-            page(config, principal, "Movies with notes", call.request,"vtornik") {
-                h3 {
-                    +"Movies with notes"
                 }
                 div("row gap-8 wrap") {
                     movies.forEach { movie ->
