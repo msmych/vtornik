@@ -138,7 +138,7 @@ class MovieResource(
         get {
             val principal = call.userPrincipalOrNull()
             call.respondHtml {
-                page(config, principal, "Upcoming", call.request,"upcoming") {
+                page(config, principal, "Upcoming", call.request, "upcoming") {
                     h3 {
                         +"Upcoming"
                     }
@@ -184,7 +184,7 @@ class MovieResource(
 
             call.respondHtml {
                 val principal = call.userPrincipalOrNull()
-                page(config, principal, movie.title, call.request,"vtornik") {
+                page(config, principal, movie.title, call.request, "vtornik") {
                     div("row gap-8 movie-page wrap") {
                         img(classes = "poster", alt = movie.title) {
                             src = movie.tmdb?.posterPath?.let {
@@ -196,7 +196,7 @@ class MovieResource(
                             h1 {
                                 +movie.title
                             }
-                            movie.originalTitle?.let {
+                            movie.nativeTitle()?.let {
                                 h3 {
                                     i {
                                         +it

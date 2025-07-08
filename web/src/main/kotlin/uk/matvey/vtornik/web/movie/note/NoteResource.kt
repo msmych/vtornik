@@ -89,7 +89,7 @@ class NoteResource(
 
     @OptIn(ExperimentalKtorApi::class)
     private fun HtmlBlockTag.noteText(movieId: Long, text: String) {
-        div("col gap-8") {
+        div("col gap-32") {
             div {
                 +text
             }

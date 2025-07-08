@@ -27,7 +27,5 @@ data class Movie(
         ACTOR,
     }
 
-    fun addMention(link: String, name: String): Movie {
-        return copy()
-    }
+    fun nativeTitle() = originalTitle?.takeUnless { it == title }
 }
