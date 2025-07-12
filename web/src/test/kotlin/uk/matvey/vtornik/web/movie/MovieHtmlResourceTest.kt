@@ -63,6 +63,7 @@ class MovieHtmlResourceTest : WebTestSetup() {
         }
         val userId = Random.nextInt()
         services.tagRepository.set(userId, movieId, Tag.Type.WATCHLIST, JsonPrimitive(false))
+        services.tagRepository.set(userId, movieId, Tag.Type.WATCHED, JsonPrimitive(true))
 
         // when
         val rs = client.get("/html/movies/$movieId") {
@@ -73,8 +74,9 @@ class MovieHtmlResourceTest : WebTestSetup() {
         assertThat(rs.status).isEqualTo(OK)
         assertThat(rs.bodyAsText())
             .contains("Watchlist")
-            .contains("Watched")
-            .contains("Like")
             .contains("""<label hx-put="/html/movies/$movieId/tags/WATCHLIST" hx-swap="outerHTML" hx-vals="{&quot;value&quot;:true}">""")
+            .contains("Watched")
+            .contains("""<label hx-put="/html/movies/$movieId/tags/WATCHED" hx-swap="outerHTML" hx-vals="{&quot;value&quot;:false}">""")
+            .contains("Like")
     }
 }

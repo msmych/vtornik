@@ -227,7 +227,7 @@ class MovieHtmlResource(
                                         tagToggle(
                                             movieId = movie.id,
                                             tag = tag,
-                                            current = movieTags?.any { it.value.jsonPrimitive.boolean } == true
+                                            current = movieTags?.any { it.type.name == tag.tag && it.value.jsonPrimitive.boolean } == true
                                         )
                                     }
                                 }
