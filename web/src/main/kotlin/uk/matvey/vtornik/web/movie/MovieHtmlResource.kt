@@ -23,6 +23,8 @@ import kotlinx.html.img
 import kotlinx.html.onClick
 import kotlinx.html.p
 import kotlinx.html.title
+import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.jsonPrimitive
 import uk.matvey.slon.ktor.Resource
 import uk.matvey.tmdb.TmdbClient
 import uk.matvey.tmdb.TmdbImages
@@ -42,7 +44,7 @@ import uk.matvey.vtornik.web.movie.tag.tagToggle
 import uk.matvey.vtornik.web.page.page
 
 @OptIn(ExperimentalKtorApi::class)
-class MovieResource(
+class MovieHtmlResource(
     private val config: WebConfig,
     private val movieService: MovieService,
     private val movieRepository: MovieRepository,
@@ -119,15 +121,11 @@ class MovieResource(
 
     private fun Route.getNowPlayingContent() {
         get {
-            val nowPlaying = tmdbClient.nowPlayingMovies()
+            val movies = movieService.getNowPlaying()
             call.respondHtml {
                 body {
-                    nowPlaying.results.forEach { movie ->
-                        movieCardHtml(
-                            movie = MovieCard(movie.id, movie.title, movie.posterPath),
-                            tmdbImages = tmdbImages,
-                            config = config,
-                        )
+                    movies.forEach { movie ->
+                        movieCardHtml(movie = movie, config = config)
                     }
                 }
             }
@@ -155,15 +153,11 @@ class MovieResource(
 
     private fun Route.getUpcomingContent() {
         get {
-            val upcoming = tmdbClient.upcomingMovies()
+            val movies = movieService.getUpcoming()
             call.respondHtml {
                 body {
-                    upcoming.results.forEach { movie ->
-                        movieCardHtml(
-                            movie = MovieCard(movie.id, movie.title, movie.posterPath),
-                            tmdbImages = tmdbImages,
-                            config = config,
-                        )
+                    movies.forEach { movie ->
+                        movieCardHtml(movie = movie, config = config)
                     }
                 }
             }
@@ -180,7 +174,7 @@ class MovieResource(
 
             val movieTags = principal?.let {
                 tagRepository.findAllByUserIdAndMovieId(it.id, movie.id)
-            }?.map { it.type.name }
+            }
 
             call.respondHtml {
                 val principal = call.userPrincipalOrNull()
@@ -230,7 +224,11 @@ class MovieResource(
                             principal?.let {
                                 div("row gap-8") {
                                     STANDARD_TAGS.forEach { tag ->
-                                        tagToggle(movie.id, tag, movieTags?.contains(tag.tag) == true)
+                                        tagToggle(
+                                            movieId = movie.id,
+                                            tag = tag,
+                                            current = movieTags?.any { it.value.jsonPrimitive.boolean } == true
+                                        )
                                     }
                                 }
                             }

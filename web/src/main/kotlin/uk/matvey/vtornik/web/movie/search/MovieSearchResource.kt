@@ -22,7 +22,7 @@ import uk.matvey.vtornik.web.auth.Auth.Companion.authJwtOptional
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipal
 import uk.matvey.vtornik.web.auth.UserPrincipal.Companion.userPrincipalOrNull
 import uk.matvey.vtornik.web.config.WebConfig
-import uk.matvey.vtornik.web.movie.MovieCard
+import uk.matvey.vtornik.web.movie.MovieService.MovieDetails
 import uk.matvey.vtornik.web.movie.movieCardHtml
 import uk.matvey.vtornik.web.movie.tag.TagView.Companion.STANDARD_TAGS
 import uk.matvey.vtornik.web.page.page
@@ -101,12 +101,11 @@ class MovieSearchResource(
                         .sortedByDescending { it.releaseDate() }
                         .forEach { item ->
                             movieCardHtml(
-                                movie = MovieCard(
+                                movie = MovieDetails(
                                     id = item.id,
                                     title = item.title,
-                                    posterPath = item.posterPath,
+                                    posterUrl = item.posterPath?.let { tmdbImages.posterUrl(it, "w500") },
                                 ),
-                                tmdbImages = tmdbImages,
                                 config = config,
                             )
                         }
@@ -137,12 +136,11 @@ class MovieSearchResource(
                 div("row gap-8 wrap") {
                     movies.forEach { movie ->
                         movieCardHtml(
-                            movie = MovieCard(
+                            movie = MovieDetails(
                                 id = movie.id,
                                 title = movie.title,
-                                posterPath = movie.tmdb?.posterPath,
+                                posterUrl = movie.tmdb?.posterPath?.let { tmdbImages.posterUrl(it, "w500") },
                             ),
-                            tmdbImages = tmdbImages,
                             config = config,
                         )
                     }

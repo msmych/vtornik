@@ -1,6 +1,5 @@
 package uk.matvey.vtornik.web
 
-import io.ktor.http.ContentType
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
@@ -12,13 +11,12 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.util.date.GMTDate
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import org.slf4j.event.Level
 import uk.matvey.vtornik.web.auth.Auth.Companion.JWT_COOKIE
 import uk.matvey.vtornik.web.config.WebConfig
 import uk.matvey.vtornik.web.config.WebConfig.Profile
-import uk.matvey.vtornik.web.movie.MovieResource
+import uk.matvey.vtornik.web.movie.MovieHtmlResource
+import uk.matvey.vtornik.web.movie.MovieJsonResource
 
 fun Application.serverModule(config: WebConfig, services: Services) {
     install(Authentication) {
@@ -57,7 +55,7 @@ fun Application.serverModule(config: WebConfig, services: Services) {
         }
         route("/html") {
             with(
-                MovieResource(
+                MovieHtmlResource(
                     config = config,
                     movieService = services.movieService,
                     movieRepository = services.movieRepository,
@@ -71,20 +69,8 @@ fun Application.serverModule(config: WebConfig, services: Services) {
             }
         }
         route("/json") {
-            @Serializable
-            data class MovieResponse(
-                val id: Long,
-                val title: String,
-                val posterPath: String?,
-            )
-            route("/movies/now-playing") {
-                get {
-                    val movies = services.tmdbClient.nowPlayingMovies().results
-                        .map { MovieResponse(it.id, it.title, it.posterPath?.let { path -> services.tmdbImages.posterUrl(path, "w500") }) }
-                    call.respondText(ContentType.Application.Json) {
-                        Json.encodeToString(movies)
-                    }
-                }
+            with(MovieJsonResource(services)) {
+                routing()
             }
         }
     }

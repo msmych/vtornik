@@ -4,7 +4,7 @@ import { ActionPanel, Action, Grid } from "@raycast/api"
 interface Movie {
   id: number
   title: string
-  posterPath: string
+  posterUrl: string
 }
 
 export default function Command() {
@@ -30,7 +30,7 @@ export default function Command() {
             <Grid.Item
               key={movie.id}
               content={{
-                value: movie.posterPath,
+                value: movie.posterUrl,
                 tooltip: movie.title,
               }}
               title={movie.title}

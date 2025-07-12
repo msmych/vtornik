@@ -13,6 +13,13 @@
       "subtitle": "Movies currently playing in theaters",
       "description": "",
       "mode": "view"
+    },
+    {
+      "name": "upcoming",
+      "title": "Upcoming",
+      "subtitle": "Movies upcoming in theaters",
+      "description": "",
+      "mode": "view"
     }
   ],
   "dependencies": {

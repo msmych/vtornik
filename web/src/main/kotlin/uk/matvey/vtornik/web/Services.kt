@@ -40,9 +40,10 @@ class Services(
 
     val auth = Auth(config)
     val movieService = MovieService(
-        movieRepository,
-        moviePersonRepository,
-        personRepository,
-        tmdbClient,
+        movieRepository = movieRepository,
+        moviePersonRepository = moviePersonRepository,
+        personRepository = personRepository,
+        tmdbClient = tmdbClient,
+        tmdbImages = tmdbImages,
     )
 }
